@@ -9,7 +9,7 @@ function App() {
   return (
     <>
       <div>
-        <a href="https://react.dev" target="_blank">
+        <a href="" target="_blank">
           <img src={fablab} className="logo react" alt="Fablab logo" />
         </a>
 
