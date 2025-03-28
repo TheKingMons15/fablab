@@ -1,0 +1,8 @@
+:root {
+  --color-primary-green: #006633;
+  --color-secondary-green: #009955;
+  --color-accent-yellow: #FFCE00;
+  --color-white: #ffffff;
+  --color-text-dark: #333333;
+  --transition-smooth: all 0.3s ease-in-out;
+}

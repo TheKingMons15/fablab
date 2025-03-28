@@ -1,0 +1,123 @@
+/* Header.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Oscine&display=swap'); /* Importar fuente Oscine */
+
+/* Contenedor principal del Header */
+.header {
+    background-color: rgba(0, 102, 51, 0.95); /* Verde institucional con transparencia */
+    border-bottom: 3px solid #FFCE00; /* Línea amarilla inferior */
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    position: fixed; /* Header fijo */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Asegura que está por encima de todo */
+    box-sizing: border-box; /* Incluye padding en el ancho total */
+    backdrop-filter: blur(10px); /* Efecto de desenfoque */
+    font-family: 'Oscine', sans-serif; /* Aplicar fuente Oscine */
+    transition: background-color 0.4s ease;
+}
+
+.header:hover {
+    background-color: rgba(0, 102, 51, 0.98); /* Ligero cambio al hacer hover */
+}
+
+/* Logo */
+.logo {
+    height: 45px; /* Altura ajustable */
+    margin-right: 4rem;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); /* Animación más suave */
+}
+
+.logo:hover {
+    transform: scale(1.08) rotate(3deg); /* Efecto hover más dinámico */
+}
+
+/* Lista de navegación */
+.navList {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    align-items: center;
+}
+
+/* Items del menú principal */
+.navItem {
+    color: white;
+    cursor: pointer;
+    position: relative;
+    padding: 0.8rem 1rem;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    border-radius: 8px; /* Bordes más redondeados */
+}
+
+.navItem:hover {
+    background-color: rgba(0, 85, 34, 0.7); /* Verde más oscuro con transparencia */
+}
+
+/* Indicador de submenú */
+.hasSubmenu::after {
+    content: "▾";
+    margin-left: 0.5rem;
+    font-size: 0.9em;
+    color: #FFCE00;
+    transition: transform 0.3s ease;
+}
+
+.navItem:hover .hasSubmenu::after {
+    transform: rotate(180deg);
+}
+
+/* Menú desplegable */
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: rgba(255, 255, 255, 0.9); /* Fondo transparente */
+    min-width: 250px;
+    box-shadow: 0 12px 20px rgba(0,0,0,0.15);
+    border-radius: 12px; /* Bordes más redondeados */
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: none;
+    overflow: hidden; /* Para mantener los bordes redondeados */
+}
+
+.navItem:hover .dropdown {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+/* Items del menú desplegable */
+.dropdownItem {
+    padding: 1rem;
+    color: #006633;
+    font-size: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.dropdownItem:last-child {
+    border-bottom: none;
+}
+
+.dropdownItem:hover {
+    background-color: rgba(0, 102, 51, 0.1);
+    padding-left: 1.5rem;
+    color: #004422;
+}
+
+/* Espacio para contenido debajo del header fijo */
+.mainContent {
+    margin-top: 70px; /* Igual a la altura del header */
+    min-height: calc(100vh - 70px - 250px); /* Ajusta según altura footer */
+}
