@@ -1,0 +1,462 @@
+/* Aseguramos que el padding y el border se incluyan en el cálculo del ancho */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Contenedor principal */
+.mediaContainer {
+  background-color: white;
+  width: 100vw;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+
+/* Sección del título con el logo */
+.titleSection {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding-top: 5%;
+}
+
+.mediaTitle {
+  display: flex;
+  justify-content: center;
+}
+
+.logo {
+  max-height: 90px;
+  object-fit: contain;
+}
+
+/* Navegación con botones */
+.navTabs {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0 2rem;
+  gap: 1.5rem;
+}
+
+.tab {
+  padding: 0.9rem 2.5rem;
+  background: #ecf0f1;
+  color: #7f8c8d;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  border: 2px solid transparent;
+  font-size: 1rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.tab:hover {
+  background: #e0e6e8;
+  transform: translateY(-2px);
+}
+
+.activeTab {
+  background: #27ae60;
+  color: white;
+  border-color: #27ae60;
+  box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
+}
+
+/* Contenedor de contenido */
+.contentContainer {
+  padding-top: 1rem;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Sección de equipos */
+.equipmentSection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.equipmentGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2.5rem;
+  padding: 1rem 0.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* Eliminamos propiedades relacionadas con el scroll horizontal */
+/* .equipmentGrid::-webkit-scrollbar {
+  height: 8px;
+}
+
+.equipmentGrid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.equipmentGrid::-webkit-scrollbar-thumb {
+  background: #27ae60;
+  border-radius: 10px;
+} */
+
+.equipmentCard {
+  /* Eliminamos flex: 0 0 300px que forzaba un ancho fijo */
+  min-height: 420px;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(39, 174, 96, 0.15);
+  transition: all 0.3s ease;
+  /* Eliminamos scroll-snap-align: start; */
+  border: 2px solid #27ae60;
+  display: flex;
+  flex-direction: column;
+}
+
+.equipmentCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(39, 174, 96, 0.25);
+}
+
+.cardHeader {
+  padding: 1.5rem;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(39, 174, 96, 0.1);
+}
+
+.equipmentIcon {
+  font-size: 1.6rem;
+  color: #27ae60;
+}
+
+.equipmentName {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.imageContainer {
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+
+.equipmentImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.equipmentCard:hover .equipmentImage {
+  transform: scale(1.08);
+}
+
+.equipmentDescription {
+  padding: 1.5rem;
+  color: #7f8c8d;
+  line-height: 1.6;
+  margin: 0;
+  flex-grow: 1;
+  font-size: 0.95rem;
+}
+
+.detailsButton {
+  width: calc(100% - 3rem);
+  margin: 0 1.5rem 1.5rem;
+  padding: 1rem;
+  background: #27ae60;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.detailsButton:hover {
+  background: #219a52;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25);
+}
+
+/* Media queries para asegurar responsividad */
+@media (max-width: 768px) {
+  .equipmentGrid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .equipmentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sección de proyectos */
+.projectsSection {
+  width: 100%;
+  max-width: 1200px;
+  padding: 1rem;
+}
+
+.projectsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.projectsTable {
+  width: 100%;
+  max-width: 900px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.responsiveTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.responsiveTable th,
+.responsiveTable td {
+  padding: 1.2rem 1.5rem;
+  text-align: left;
+}
+
+.responsiveTable th {
+  background: #27ae60;
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.responsiveTable td {
+  color: #2c3e50;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.responsiveTable tr:last-child td {
+  border-bottom: none;
+}
+
+.responsiveTable tr:hover td {
+  background-color: #f8fdf9;
+}
+
+.status {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 120px;
+}
+
+.enproducción {
+  background: rgba(241, 196, 15, 0.15);
+  color: #d4ac0d;
+  border: 1px solid rgba(241, 196, 15, 0.3);
+}
+
+.postproducción {
+  background: rgba(52, 152, 219, 0.15);
+  color: #2980b9;
+  border: 1px solid rgba(52, 152, 219, 0.3);
+}
+
+.finalizado {
+  background: rgba(39, 174, 96, 0.15);
+  color: #219a52;
+  border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.projectLink {
+  display: inline-block;
+  color: #27ae60;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+.projectLink:hover {
+  color: #219a52;
+  background: rgba(39, 174, 96, 0.1);
+}
+
+.projectsInfo {
+  width: 100%;
+  max-width: 900px;
+}
+
+.infoCard {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.infoTitle {
+  color: #2c3e50;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.infoText {
+  color: #7f8c8d;
+  line-height: 1.7;
+  font-size: 1.1rem;
+  max-width: 80%;
+  margin: 0 auto 2rem;
+}
+
+.statsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  margin: 2.5rem 0;
+}
+
+.statItem {
+  text-align: center;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease;
+}
+
+.statItem:hover {
+  transform: translateY(-5px);
+}
+
+.statNumber {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #27ae60;
+  margin-bottom: 0.5rem;
+}
+
+.statLabel {
+  font-size: 1rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.ctaButton {
+  padding: 1rem 2.5rem;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  box-shadow: 0 5px 15px rgba(39, 174, 96, 0.25);
+}
+
+.ctaButton:hover {
+  background: #219a52;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+}
+
+/* Media queries para responsividad */
+@media (max-width: 992px) {
+  .statsContainer {
+    gap: 2rem;
+  }
+  
+  .statItem {
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 768px) {
+  .projectsContainer {
+    padding: 1.5rem;
+  }
+  
+  .responsiveTable th, 
+  .responsiveTable td {
+    padding: 1rem;
+  }
+  
+  .infoText {
+    max-width: 100%;
+  }
+  
+  .statsContainer {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .statItem {
+    flex: 1 0 40%;
+  }
+}
+
+@media (max-width: 576px) {
+  .tab {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .equipmentGrid {
+    gap: 1.5rem;
+  }
+  
+  .equipmentCard {
+    flex: 0 0 260px;
+    min-height: 400px;
+  }
+  
+  .statsContainer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .statItem {
+    width: 100%;
+  }
+  
+  .ctaButton {
+    width: 100%;
+  }
+}

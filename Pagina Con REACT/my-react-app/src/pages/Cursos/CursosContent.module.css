@@ -1,0 +1,330 @@
+:root {
+  --color-primary-green: #006633;
+  --color-secondary-green: #009955;
+  --color-accent-yellow: #FFCE00;
+  --color-white: #ffffff;
+  --color-text-dark: #333333;
+  --color-background-light: #f7f7f7;
+  --transition-smooth: all 0.3s ease-in-out;
+}
+
+.mainContent {
+  width: 100vw;
+  font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color: var(--color-text-dark);
+}
+
+.contentWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Common section styling */
+.sectionTitle {
+  display: flex;
+  align-items: center;
+  font-size: 1.8rem;
+  margin: 1.5rem 0;
+  font-weight: 600;
+  position: relative;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 100px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: var(--color-accent-yellow);
+}
+
+/* Información de Cursos Section - Green Background */
+.informacionSection {
+  padding: 6rem 0;
+  background-color: var(--color-primary-green);
+  position: relative;
+}
+
+.informacionSection .sectionTitle {
+  color: var(--color-white);
+}
+
+.informacionSection::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-accent-yellow);
+}
+
+.cursosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  padding: 1.5rem 0;
+}
+
+.cursoCard {
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--color-white);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+  transition: var(--transition-smooth);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.cursoCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  border-bottom: 3px solid var(--color-accent-yellow);
+}
+
+.cursoImagen {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+}
+
+.cursoImagen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-smooth);
+}
+
+.cursoCard:hover .cursoImagen img {
+  transform: scale(1.05);
+}
+
+.cursoInfo {
+  padding: 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cursoInfo h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: var(--color-primary-green);
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.cursoInfo h3::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: var(--color-accent-yellow);
+}
+
+.cursoInfo p {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  color: var(--color-text-dark);
+  flex: 1;
+}
+
+.cursoMultimedia {
+  margin-top: auto;
+  width: 100%;
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--color-primary-green);
+}
+
+.cursoVideo {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: none;
+}
+
+/* Artículos y Recursos Section - White Background */
+.articulosSection {
+  padding: 3rem 0;
+  background-color: var(--color-white);
+  position: relative;
+}
+
+.articulosSection .sectionTitle {
+  color: var(--color-primary-green);
+}
+
+.articulosSection::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-accent-yellow);
+}
+
+.articulosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+}
+
+.articuloCard {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: var(--color-background-light);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: var(--transition-smooth);
+}
+
+.articuloCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+  border-bottom: 3px solid var(--color-secondary-green);
+}
+
+.articuloImagen {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  transition: var(--transition-smooth);
+}
+
+.articuloCard:hover .articuloImagen {
+  transform: scale(1.05);
+}
+
+.articuloInfo {
+  padding: 1.25rem;
+}
+
+.articuloInfo h3 {
+  margin-top: 0;
+  font-size: 1.3rem;
+  color: var(--color-primary-green);
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+.articuloInfo h3::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background-color: var(--color-accent-yellow);
+}
+
+.articuloInfo p {
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+}
+
+/* Additional sections would continue the pattern */
+/* To add more sections, alternate between green and white backgrounds */
+
+/* Example: Third section would be green again */
+.testimoniosSection {
+  padding: 3rem 0;
+  background-color: var(--color-primary-green);
+  position: relative;
+}
+
+.testimoniosSection .sectionTitle {
+  color: var(--color-white);
+}
+
+.testimoniosSection::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-accent-yellow);
+}
+
+/* Example: Fourth section would be white again */
+.registerSection {
+  padding: 3rem 0;
+  background-color: var(--color-white);
+  position: relative;
+}
+
+.registerSection .sectionTitle {
+  color: var(--color-primary-green);
+}
+
+.registerSection::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-accent-yellow);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .cursosGrid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .cursosGrid, 
+  .articulosGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .sectionTitle {
+    font-size: 1.5rem;
+  }
+  
+  .cursoInfo h3 {
+    font-size: 1.3rem;
+  }
+  
+  .contentWrapper {
+    padding: 0 1.5rem;
+  }
+  
+  .informacionSection,
+  .articulosSection,
+  .testimoniosSection,
+  .registerSection {
+    padding: 2rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .sectionTitle {
+    font-size: 1.3rem;
+  }
+  
+  .cursoImagen {
+    height: 180px;
+  }
+  
+  .cursoInfo {
+    padding: 1.25rem;
+  }
+  
+  .articuloImagen {
+    height: 160px;
+  }
+}

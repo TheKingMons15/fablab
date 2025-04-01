@@ -1,12 +1,11 @@
 import React from 'react';
 import styles from './Footer.module.css';
 
-// Datos reutilizables
 const socialMedia = [
   { name: 'LinkedIn', url: 'https://linkedin.com' },
   { name: 'Twitter', url: 'https://twitter.com' },
   { name: 'Instagram', url: 'https://instagram.com' },
-  { name: 'YouTube', url: 'https://youtube.com' }
+  { name: 'Facebook', url: 'https://youtube.com' }
 ];
 
 const quickLinks = [
@@ -19,7 +18,7 @@ const Footer: React.FC = () => {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerContent}>
-        {/* Logo */}
+        {/* Logo principal alineado a la izquierda */}
         <div className={styles.logoContainer}>
           <img 
             src="/img/Logo_Principal.png" 
@@ -29,28 +28,16 @@ const Footer: React.FC = () => {
           />
         </div>
 
-        {/* Sección de Directores */}
-        <div className={styles.footerSection}>
-          <div className={styles.directoresSection}>
-            <article>
-              <h3>Director de Carrera</h3>
-              <p>La demanda se encuentra acreditativa y el desarrollo profesional</p>
-            </article>
-            
-            <article>
-              <h3>Director del FabLab</h3>
-              <p>También es la innovación y la creatividad tecnológica</p>
-            </article>
-          </div>
-        </div>
-
         {/* Contacto */}
         <div className={styles.footerSection}>
           <h3>Contacto</h3>
           <address className={styles.contactInfo}>
-            <p>Teléfono: <a href="tel:+51123456789">+59300000000</a></p>
-            <p>Email: <a href="mailto:contacto@fablab.com">contacto@fablab.com</a></p>
-            <p>Dirección: Av. Innovación 123</p>
+            <p>Teléfono: <a href="tel:+51123456789">+: (06) 2980 837 - 2984 435
+            </a></p>
+            <p>Email: <a href="mailto:contacto@fablab.com">Email: info@upec.edu.ec
+            </a></p>
+            <p>Dirección: Calle Antisana y
+            Av. Universitaria</p>
           </address>
         </div>
 
@@ -73,23 +60,36 @@ const Footer: React.FC = () => {
         {/* Redes Sociales */}
         <div className={styles.footerSection}>
           <h3>Redes Sociales</h3>
-          <nav aria-label="Redes sociales">
-            <ul className={styles.socialLinks}>
-              {socialMedia.map((platform, index) => (
-                <li key={index}>
-                  <a 
-                    href={platform.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className={styles.socialLink}
-                  >
-                    {platform.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          <div className={styles.socialMediaContainer}>
+            <nav aria-label="Redes sociales">
+              <ul className={styles.socialLinks}>
+                {socialMedia.map((platform, index) => (
+                  <li key={index}>
+                    <a 
+                      href={platform.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className={styles.socialLink}
+                    >
+                      {platform.name}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
         </div>
+      </div>
+      
+      {/* Créditos de diseño */}
+      <div className={styles.designCredits}>
+        <a 
+          href="https://www.instagram.com/wlady_photograph" 
+          target="_blank" 
+          rel="noopener noreferrer"
+        >
+          Diseñado por: Wladimir Almeida
+        </a>
       </div>
     </footer>
   );

@@ -1,0 +1,326 @@
+/* MainContent.module.css */
+.mainContent {
+    flex: 1;
+    width: 100vw;
+    background: #000;
+  }
+  
+  .contentWrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  /* Carrusel Section */
+  .carruselSection {
+    background-color: var(--color-primary-green);
+    padding: 4rem 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+  
+  .carruselContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    min-height: 600px;
+  }
+  
+  .logoSection {
+    flex: 0 1 40%;
+  }
+  
+  .logo {
+    width: min(100%, 500px);
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+  
+  .imageSlider {
+    flex: 1;
+    height: 600px;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  
+  .slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease;
+  }
+  
+  .slide.active {
+    opacity: 1;
+    z-index: 1;
+  }
+  
+  /* Misión y Visión */
+  .misionVision {
+    background-color: var(--color-white);
+    padding: 4rem 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+  
+  .misionVisionGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 3rem;
+    padding: 2rem 0;
+  }
+  
+  .misionCard, .visionCard {
+    padding: 2rem;
+    background: rgba(0, 102, 51, 0.05);
+    border-radius: 15px;
+    transition: var(--transition-smooth);
+    text-align: center;
+    color: var(--color-primary-green);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .misionCard h2, .visionCard h2 {
+    color: var(--color-primary-green);
+    margin: 1rem 0;
+    font-size: 2rem;
+  }
+  
+  .misionCard p, .visionCard p {
+    color: var(--color-text-dark);
+    font-size: 1rem;
+    line-height: 1.6;
+    max-width: 400px;
+  }
+  
+  .icon {
+    font-size: 3rem;
+    color: var(--color-secondary-green);
+    margin-bottom: 1rem;
+  }
+  
+  .misionCard:hover, .visionCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  /* Laboratorios */
+  .laboratoriosSection {
+    background-color: var(--color-secondary-green);
+    color: var(--color-white);
+    padding: 4rem 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+  
+  .sectionTitle {
+    text-align: center;
+    margin-bottom: 3rem;
+    font-size: 2.5rem;
+  }
+  
+  .laboratoriosGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+  
+  .laboratorioCard {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+  }
+  
+  .laboratorioCard:hover {
+    transform: translateY(-10px);
+  }
+  
+  .laboratorioImage {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+  }
+  
+  .laboratorioInfo {
+    padding: 1.5rem;
+  }
+  
+  /* Servicios */
+  .serviciosSection {
+    background-color: var(--color-white);
+    padding: 4rem 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+  
+  .serviciosGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .servicioCard {
+    background-color: var(--color-secondary-green);
+    color: var(--color-white);
+    padding: 2rem;
+    border-radius: 15px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: var(--transition-smooth);
+  }
+  
+  .servicioCard:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Oportunidades */
+  .oportunidadesSection {
+    background-color: var(--color-primary-green);
+    color: var(--color-white);
+    padding: 4rem 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+  
+  .oportunidadesGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+  
+  .oportunidadesImage img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 15px;
+  }
+  
+  .proyectosList {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .proyectoItem {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    transition: var(--transition-smooth);
+  }
+  
+  .proyectoItem:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Directores */
+  .directoresSection {
+    background-color: var(--color-white);
+    padding: 4rem 0;
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+  
+  .directoresGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 3rem;
+  }
+  
+  .directorCard {
+    background-color: var(--color-secondary-green);
+    color: var(--color-white);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+  }
+  
+  .directorCard img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+  }
+  
+  .directorInfo {
+    padding: 1.5rem;
+    text-align: center;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .carruselContainer {
+      flex-direction: column;
+      min-height: auto;
+    }
+  
+    .imageSlider {
+      height: 400px;
+      width: 100%;
+    }
+  
+    .oportunidadesGrid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .sectionTitle {
+      font-size: 2rem;
+    }
+  
+    .misionVisionGrid {
+      grid-template-columns: 1fr;
+    }
+  
+    .serviciosGrid {
+      grid-template-columns: 1fr;
+    }
+  
+    .directorCard img {
+      height: 250px;
+    }
+  
+    .oportunidadesImage img {
+      height: 300px;
+    }
+  
+    .misionCard, .visionCard {
+      padding: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .carruselSection,
+    .misionVision,
+    .laboratoriosSection,
+    .serviciosSection,
+    .oportunidadesSection,
+    .directoresSection {
+      padding: 2rem 0;
+    }
+  
+    .logo {
+      max-width: 300px;
+    }
+  
+    .imageSlider {
+      height: 300px;
+    }
+  
+    .icon {
+      font-size: 2.5rem;
+    }
+  
+    .misionCard h2, .visionCard h2 {
+      font-size: 1.75rem;
+    }
+  }

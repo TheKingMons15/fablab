@@ -1,8 +1,16 @@
 import { FaBullseye, FaEye } from 'react-icons/fa';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './MainContent.module.css';
+import { FaRegGem} from 'react-icons/fa';
+import { GiSprint, GiHeatHaze, GiCircuitry, GiTeacher, GiRolledCloth } from 'react-icons/gi';
+import { FiTool, FiPrinter, FiPackage } from 'react-icons/fi';
+import { MdDesignServices } from "react-icons/md";
+import NeuralNetworkBackground from "./NeuralNetworkBackground.tsx";
+import { useNavigate } from "react-router-dom";
 
 const MainContent = () => {
+  const navigate = useNavigate();
+
   const images = [
     "/img/IMG_9656.JPG",
     "/img/IMG_9650.JPG",
@@ -22,26 +30,43 @@ const MainContent = () => {
 
   const laboratorios = [
     {
-      nombre: "Laboratorio de Prototipado",
-      descripcion: "Equipamiento de última generación para crear prototipos innovadores.",
-      imagen: "/img/laboratorio1.jpg"
+      nombre: "FABLAB",
+      imagen: "/img/Fablab.jpg",
+      ruta: "/laboratorios/fablab"
     },
     {
-      nombre: "Laboratorio de Diseño Digital",
-      descripcion: "Herramientas avanzadas para diseño y modelado 3D.",
-      imagen: "/img/laboratorio2.jpg"
+      nombre: "Laboratorio de Realidad Virtual",
+      imagen: "/img/labrealidad.jpg",
+      ruta: "/laboratorios/realidad-virtual"
     },
     {
-      nombre: "Laboratorio de Fabricación Digital",
-      descripcion: "Tecnología de punta para fabricación asistida por computadora.",
-      imagen: "/img/laboratorio3.jpg"
+      nombre: "Laboratorio de Diseño y estructura",
+      imagen: "/img/labdiseño.jpg",
+      ruta: "/laboratorios/diseno"
+    },
+    {
+      nombre: "MediaLab ",
+      imagen: "/img/medialab.jpg",
+      ruta: "/laboratorios/medialab"
+    },
+    {
+      nombre: "Laboratorio de Electrónica",
+      imagen: "/img/labelectronica.jpg",
+      ruta: "/laboratorios/electronica"
     }
   ];
+
 
   return (
     <main className={styles.mainContent}>
       {/* Carrusel */}
       <section className={styles.carruselSection}>
+        <div className={styles.backgroundContainer}>
+          <NeuralNetworkBackground 
+            color="rgba(255, 255, 255, 0.4)" 
+            nodeDensity={15}
+          />
+        </div>
         <div className={styles.contentWrapper}>
           <div className={styles.carruselContainer}>
             <div className={styles.logoSection}>
@@ -67,7 +92,7 @@ const MainContent = () => {
         </div>
       </section>
 
-      {/* Misión y Visión */}
+      {/* Resto del componente sin cambios */}
       <section className={styles.misionVision}>
         <div className={styles.contentWrapper}>
           <div className={styles.misionVisionGrid}>
@@ -91,16 +116,10 @@ const MainContent = () => {
           <h2 className={styles.sectionTitle}>LABORATORIOS</h2>
           <div className={styles.laboratoriosGrid}>
             {laboratorios.map((lab) => (
-              <article key={lab.nombre} className={styles.laboratorioCard}>
-                <img
-                  src={lab.imagen}
-                  alt={lab.nombre}
-                  className={styles.laboratorioImage}
-                  loading="lazy"
-                />
+              <article key={lab.nombre} className={styles.laboratorioCard} onClick={() => navigate(lab.ruta)} style={{ cursor: 'pointer' }}>
+                <img src={lab.imagen} alt={lab.nombre} className={styles.laboratorioImage} loading="lazy" />
                 <div className={styles.laboratorioInfo}>
                   <h3>{lab.nombre}</h3>
-                  <p>{lab.descripcion}</p>
                 </div>
               </article>
             ))}
@@ -111,19 +130,27 @@ const MainContent = () => {
       {/* Servicios */}
       <section className={styles.serviciosSection}>
         <div className={styles.contentWrapper}>
-          <h2 className={styles.sectionTitle}>Servicios y Equipos</h2>
+          <h2 className={styles.sectionTitle} style={{ color: "#006633" }}>
+            Servicios y Equipos
+          </h2>   
           <div className={styles.serviciosGrid}>
-            {['Impresión 3D', 'Corte Láser', 'Fresado CNC', 'Diseño Asistido'].map((servicio, index) => (
-              <div key={servicio} className={styles.servicioCard}>
-                <h3>{servicio}</h3>
-                <p>
-                  {[
-                    'Materializa tus diseños en una amplia gama de materiales y acabados.',
-                    'Corta y graba con alta precisión en diversos materiales.',
-                    'Mecanizado de piezas en madera, metal y otros materiales.',
-                    'Software y asesoría especializada en diseño 3D y modelado digital.'
-                  ][index]}
-                </p>
+            {[
+              { title: 'Corte y grabado láser', icon: <FaRegGem style={{ color: "#FFFFFF" }} /> },
+              { title: 'Corte de vinil', icon: <GiRolledCloth style={{ color: "#FFFFFF" }} /> },
+              { title: 'Impresión 3D', icon: <GiSprint style={{ color: "#FFFFFF" }} /> },
+              { title: 'Máquinado CNC', icon: <FiTool style={{ color: "#FFFFFF" }} /> },
+              { title: 'Sublimación', icon: <GiHeatHaze style={{ color: "#FFFFFF" }} /> },
+              { title: 'Impresión de gigantografías', icon: <FiPrinter style={{ color: "#FFFFFF" }} /> },
+              { title: 'Diseño electrónico', icon: <GiCircuitry style={{ color: "#FFFFFF" }} /> },
+              { title: 'Diseño Digital', icon: <MdDesignServices style={{ color: "#FFFFFF" }} /> },
+              { title: 'Educación continua', icon: <GiTeacher style={{ color: "#FFFFFF" }} /> },
+              { title: 'Laminado', icon: <FiPackage style={{ color: "#FFFFFF" }} /> }
+            ].map((servicio) => (
+              <div key={servicio.title} className={styles.servicioCard} style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#FFFFFF' }}>
+                  {servicio.icon}
+                </div>
+                <h3>{servicio.title}</h3>
               </div>
             ))}
           </div>
@@ -137,7 +164,7 @@ const MainContent = () => {
           <div className={styles.oportunidadesGrid}>
             <div className={styles.oportunidadesImage}>
               <img
-                src="/img/oportunidades.jpg"
+                src="/img/IMG_9584.JPG"
                 alt="Oportunidades académicas"
                 loading="lazy"
               />
