@@ -69,27 +69,30 @@ const MainContent = () => {
         </div>
         <div className={styles.contentWrapper}>
           <div className={styles.carruselContainer}>
-            <div className={styles.logoSection}>
-              <img
-                src="/img/FABLOGO.png"
-                alt="Logo"
-                className={styles.logo}
-                loading="lazy"
-              />
-            </div>
-            <div className={styles.imageSlider}>
-              {images.map((image, index) => (
-                <img
-                  key={image}
-                  src={image}
-                  alt={`Imagen ${index + 1}`}
-                  className={`${styles.slide} ${index === currentImageIndex ? styles.active : ''}`}
-                  loading="lazy"
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+          {/* Logo */}
+    <div className={styles.logoSection}>
+      <img
+        src="/img/FABLOGO.png"
+        alt="Logo"
+        className={styles.logo}
+        loading="lazy"
+      />
+    </div>
+
+    {/* Carrusel */}
+    <div className={styles.imageSlider}>
+      {images.map((image, index) => (
+        <img
+          key={image}
+          src={image}
+          alt={`Imagen ${index + 1}`}
+          className={`${styles.slide} ${index === currentImageIndex ? styles.active : ''}`}
+          loading="lazy"
+        />
+      ))}
+    </div>
+  </div>
+  </div>  
       </section>
 
       {/* Resto del componente sin cambios */}

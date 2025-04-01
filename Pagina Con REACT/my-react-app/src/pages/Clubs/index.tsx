@@ -1,195 +1,132 @@
-import { FaBullseye, FaEye } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import styles from './ClubsContent.module.css';
 
 const Clubs = () => {
-  const images = [
-    "/img/IMG_9656.JPG",
-    "/img/IMG_9650.JPG",
-    "/img/IMG_9640.JPG",
-    "/img/IMG_9533.JPG",
-    "/img/IMG_9497.JPG"
-  ];
-
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [images.length]);
-
-  const laboratorios = [
+  const areasMedialab = [
     {
-      nombre: "...",
-      descripcion: "...",
-      imagen: "..."
+      titulo: "Social Media",
+      descripcion: "Creamos y gestionamos estrategias digitales innovadoras para marcas",
+      imagenes: ["/img/Social1.jpg", "/img/Social2.jpg"],
+      detalles: [
+        "Gestión de redes sociales",
+        "Creación de contenido viral",
+        "Análisis de métricas",
+        "Campañas publicitarias digitales"
+      ]
     },
     {
-      nombre: "...",
-      descripcion: "...",
-      imagen: "..."
+      titulo: "Fotografía",
+      descripcion: "Producción de imágenes profesionales para diferentes plataformas",
+      imagenes: ["/img/foto1.jpg", "/img/foto2.jpg"],
+      detalles: [
+        "Fotografía de producto",
+        "Edición profesional",
+        "Sesiones creativas",
+        "Retoque digital"
+      ]
     },
     {
-      nombre: "...",
-      descripcion: "...",
-      imagen: "..."
-    },
-    {
-      nombre: "...",
-      descripcion: "...",
-      imagen: "..."
-    } ,
-    {
-      nombre: "...",
-      descripcion: "...",
-      imagen: "..."
-    }
-    ,
-    {
-      nombre: "...",
-      descripcion: "...",
-      imagen: "..."
+      titulo: "Diseño Web",
+      descripcion: "Desarrollo de sitios web modernos y funcionales",
+      imagenes: ["/img/web1.jpg", "/img/web2.jpg"],
+      detalles: [
+        "Diseño responsive",
+        "UX/UI avanzado",
+        "Desarrollo front-end",
+        "Optimización SEO"
+      ]
     }
   ];
 
   return (
     <main className={styles.mainContent}>
-      {/* Carrusel */}
-      <section className={styles.carruselSection}>
+      {/* Sección Principal */}
+      <section className={styles.heroSection}>
         <div className={styles.contentWrapper}>
-          <div className={styles.carruselContainer}>
-            <div className={styles.logoSection}>
-              <img
-                src="/img/FABLOGO.png"
-                alt="Logo"
-                className={styles.logo}
-                loading="lazy"
-              />
-            </div>
-            <div className={styles.imageSlider}>
-              {images.map((image, index) => (
-                <img
-                  key={image}
-                  src={image}
-                  alt={`Imagen ${index + 1}`}
-                  className={`${styles.slide} ${index === currentImageIndex ? styles.active : ''}`}
-                  loading="lazy"
-                />
-              ))}
+          <div className={styles.heroContent}>
+            <h1>MediaLab Club</h1>
+            <p className={styles.subtitulo}>Innovación digital en redes, fotografía y desarrollo web</p>
+            <div className={styles.heroImages}>
+              <img src="/img/Equipo.jpg" alt="Equipo MediaLab" loading="lazy" />
+              <img src="/img/Trbajao en Equipo.jpg" alt="Trabajo en equipo" loading="lazy" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Misión y Visión */}
-      <section className={styles.misionVision}>
-        <div className={styles.contentWrapper}>
-          <div className={styles.misionVisionGrid}>
-            <div className={styles.misionCard}>
-              <FaBullseye className={styles.icon} />
-              <h2>...</h2>
-              <p>...</p>
-            </div>
-            <div className={styles.visionCard}>
-              <FaEye className={styles.icon} />
-              <h2>...</h2>
-              <p>...</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Laboratorios */}
-      <section className={styles.laboratoriosSection}>
-        <div className={styles.contentWrapper}>
-          <h2 className={styles.sectionTitle}>CLUBS</h2>
-          <div className={styles.laboratoriosGrid}>
-            {laboratorios.map((lab) => (
-              <article key={lab.nombre} className={styles.laboratorioCard}>
-                <img
-                  src={lab.imagen}
-                  alt={lab.nombre}
-                  className={styles.laboratorioImage}
-                  loading="lazy"
-                />
-                <div className={styles.laboratorioInfo}>
-                  <h3>{lab.nombre}</h3>
-                  <p>{lab.descripcion}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Servicios */}
-      <section className={styles.serviciosSection}>
-        <div className={styles.contentWrapper}>
-          <h2 className={styles.sectionTitle}>....</h2>
-          <div className={styles.serviciosGrid}>
-            {['I....', '....', '....', '....'].map((servicio, index) => (
-              <div key={servicio} className={styles.servicioCard}>
-                <h3>{servicio}</h3>
-                <p>
-                  {[
-                    '....',
-                    '....',
-                    '....',
-                    '.....'
-                  ][index]}
-                </p>
+      {/* Áreas de Especialización */}
+      {areasMedialab.map((area, index) => (
+        <section key={area.titulo} className={styles.areaSection}>
+          <div className={styles.contentWrapper}>
+            <div className={`${styles.areaContent} ${index % 2 === 0 ? styles.reverse : ''}`}>
+              <div className={styles.areaImages}>
+                {area.imagenes.map((img, imgIndex) => (
+                  <img 
+                    key={imgIndex} 
+                    src={img} 
+                    alt={`${area.titulo} ${imgIndex + 1}`} 
+                    loading="lazy"
+                  />
+                ))}
               </div>
-            ))}
+              <div className={styles.areaInfo}>
+                <h2>{area.titulo}</h2>
+                <p>{area.descripcion}</p>
+                <ul className={styles.areaList}>
+                  {area.detalles.map((detalle, i) => (
+                    <li key={i}>{detalle}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+      ))}
+
+      {/* Proyectos Destacados */}
+      <section className={styles.proyectosSection}>
+        <div className={styles.contentWrapper}>
+          <h2>Proyectos Recientes</h2>
+          <div className={styles.proyectosGrid}>
+            <div className={styles.proyectoCard}>
+              <img src="/img/proyecto1.jpg" alt="Campaña Redes Sociales" />
+              <h3>Campaña Digital para Startup</h3>
+              <p>Aumento del 150% en engagement</p>
+            </div>
+            <div className={styles.proyectoCard}>
+              <img src="/img/proyecto2.jpg" alt="Sitio Web Corporativo" />
+              <h3>Rediseño Plataforma E-commerce</h3>
+              <p>Mejora en conversión de ventas</p>
+            </div>
+            <div className={styles.proyectoCard}>
+              <img src="/img/proyecto3.jpg" alt="Sesión Fotográfica" />
+              <h3>Producción Book Empresarial</h3>
+              <p>Imágenes profesionales para marca</p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Oportunidades Académicas */}
-      <section className={styles.oportunidadesSection}>
+      {/* Equipo Coordinador */}
+      <section className={styles.equipoSection}>
         <div className={styles.contentWrapper}>
-          <h2 className={styles.sectionTitle}>Oportunidades Académicas</h2>
-          <div className={styles.oportunidadesGrid}>
-            <div className={styles.oportunidadesImage}>
-              <img
-                src="/img/IMG_9584.JPG"
-                alt="Oportunidades académicas"
-                loading="lazy"
-              />
+          <h2>Colaboradores del Club</h2>
+          <div className={styles.equipoGrid}>
+            <div className={styles.integrante}>
+              <img src="/img/aida.jpg" alt="Coordinador Social Media" />
+              <h3>Adida Solis</h3>
+              <p>Especialista en Marketing Digital</p>
             </div>
-            <div className={styles.proyectosList}>
-              {['....', '....', '....'].map((proyecto) => (
-                <div key={proyecto} className={styles.proyectoItem}>
-                  {proyecto}
-                </div>
-              ))}
+            <div className={styles.integrante}>
+              <img src="/img/Wladimir.jpg" alt="Coordinador Fotografía" />
+              <h3>Wladimir Almeida</h3>
+              <p>Fotógrafo Profesional</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Directores */}
-      <section className={styles.directoresSection}>
-        <div className={styles.contentWrapper}>
-          <div className={styles.directoresGrid}>
-            {['....', '....'].map((cargo) => (
-              <article key={cargo} className={styles.directorCard}>
-                <img
-                  src="/img/direc.png"
-                  alt={cargo}
-                  loading="lazy"
-                />
-                <div className={styles.directorInfo}>
-                  <h3>{cargo}</h3>
-                  <p>
-                    {cargo.includes('Carrera')
-                      ? '....'
-                      : '....'}
-                  </p>
-                </div>
-              </article>
-            ))}
+            <div className={styles.integrante}>
+              <img src="/img/coordinador3.jpg" alt="Coordinador Desarrollo Web" />
+              <h3>Kevin Mejia</h3>
+              <p>Desarrollador Front-end</p>
+            </div>
           </div>
         </div>
       </section>

@@ -24,7 +24,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: 2rem;
-  padding-top: 5%;
+  padding-top: 30%;
 }
 
 .mediaTitle {
@@ -33,7 +33,7 @@
 }
 
 .logo {
-  max-height: 90px;
+  max-height: 70px;
   object-fit: contain;
 }
 

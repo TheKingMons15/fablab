@@ -23,7 +23,7 @@ const fablab = () => {
       nombre: "Impresora 3D con Resina 14K",
       icono: <Gi3dMeeple className={styles.equipmentIcon} />,
       imagen: "/img/Impresora 3D con Resina 14K.webp",
-      descripcion: "MEstas resinas se utilizan en joyería y prototipos donde se desea un aspecto similar al oro."
+      descripcion: "Estas resinas se utilizan en joyería y prototipos donde se desea un aspecto similar al oro."
     },
     {
       nombre: "Salon de video conferencia",
