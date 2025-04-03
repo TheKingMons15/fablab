@@ -1,6 +1,11 @@
 import { FaBullseye, FaEye } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import styles from './MainContent.module.css';
+import laboratiorio3 from "../../img/Fablab.jpg";
+import laboratiorio2 from "../../img/labdiseño.jpg";
+import laboratiorio5 from "../../img/labelectronica.jpg";
+import laboratiorio6 from "../../img/labrealidad.jpg";
+import laboratiorio4 from "../../img/medialab.jpg";
 
 const MainContent = () => {
   const images = [
@@ -24,33 +29,33 @@ const MainContent = () => {
     {
       nombre: "Laboratorio de Prototipado",
       descripcion: "Equipamiento de última generación para crear prototipos innovadores.",
-      imagen: "/img/laboratorio1.jpg"
+      imagen: "/img/IMG_9584.JPG"
     },
     {
       nombre: "Laboratorio de Diseño Digital",
       descripcion: "Herramientas avanzadas para diseño y modelado 3D.",
-      imagen: "/img/laboratorio2.jpg"
+      imagen: laboratiorio2
     },
     {
       nombre: "Laboratorio de Fabricación Digital",
       descripcion: "Tecnología de punta para fabricación asistida por computadora.",
-      imagen: "/img/laboratorio3.jpg"
+      imagen: laboratiorio3
     },
     {
       nombre: "Laboratorio de Medios ",
       descripcion: "Un laboratorio de medios es un espacio multidisciplinario dedicado a la creación, producción y análisis de contenidos multimedia.",
-      imagen: "/img/laboratorio4.jpg"
+      imagen: laboratiorio4
     } ,
     {
       nombre: "Laboratorio Fabricación electronica ",
       descripcion: "Un laboratorio de fabricación electrónica es un espacio equipado para el diseño, prototipado y producción de dispositivos y circuitos electrónicos.",
-      imagen: "/img/laboratorio5.jpg"
+      imagen: laboratiorio5
     }
     ,
     {
       nombre: "Laboratorio de Realidad Aumentada",
       descripcion: "Un laboratorio de realidad aumentada (RA) es un espacio dedicado a la investigación, el desarrollo y la experimentación con tecnologías de RA.",
-      imagen: "/img/laboratorio6.jpg"
+      imagen: laboratiorio6
     }
   ];
 

@@ -1,6 +1,7 @@
 /* MainContent.module.css */
 .mainContent {
   flex: 1;
+<<<<<<< Updated upstream
   width: 100vw;
   background: #000;
   overflow-x: hidden;
@@ -11,25 +12,81 @@
   max-width: min(1400px, 95%);
   margin: 0 auto;
   padding: 3 clamp(7rem, 7vw, 5rem);
+=======
+  width: 99vw;
+}
+.mainSection {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.contentWrapper {
+  margin: 0 auto;
+  padding: 0 5rem;
+  position: relative;
+  z-index: 3; /* Ensures content is above the animated background */
+>>>>>>> Stashed changes
 }
 
 /* Carrusel Section */
 .carruselSection {
   background-color: var(--color-primary-green);
+<<<<<<< Updated upstream
   padding: clamp(2rem, 5vw, 4rem) 0;
   width: 100%;
+=======
+  padding: 8rem 0;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  position: relative; /* Added for background positioning */
+  overflow: hidden; /* Ensures animations don't overflow */
+}
+.carruselContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem; /* Espaciado entre logo y carrusel */
+  width: 100%;
+  max-width: 1200px;
+}
+
+/* New background container for animated lines */
+.backgroundContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Between background and content */
+>>>>>>> Stashed changes
 }
 
 .carruselContainer {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+<<<<<<< Updated upstream
   gap: clamp(1rem, 3vw, 2rem);
   min-height: clamp(400px, 60vh, 600px);
+=======
+  min-height: 100px;
+  position: center;
+  z-index: 2; /* Above the animated background */
 }
-
+.logoContainer {
+  text-align: center;
+  margin-bottom: 2rem; /* Agrega separación */
+>>>>>>> Stashed changes
+}
 .logoSection {
+<<<<<<< Updated upstream
   flex: 0 1 clamp(300px, 40%, 500px);
+=======
+  flex: 0 1 40%;
+  text-align: center;
+>>>>>>> Stashed changes
 }
 
 .logo {
@@ -40,8 +97,14 @@
 }
 
 .imageSlider {
+  width: 80%;
+  max-width: 800px; 
   flex: 1;
+<<<<<<< Updated upstream
   height: clamp(400px, 60vh, 600px);
+=======
+  height: 500px;
+>>>>>>> Stashed changes
   position: relative;
   border-radius: clamp(10px, 2vw, 20px);
   overflow: hidden;
@@ -53,7 +116,8 @@
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 2s ease;
+  z-index:0 ;
 }
 
 .slide.active {
@@ -64,8 +128,15 @@
 /* Misión y Visión */
 .misionVision {
   background-color: var(--color-white);
+<<<<<<< Updated upstream
   padding: clamp(2rem, 5vw, 4rem) 0;
   width: 100%;
+=======
+  padding: 1rem 0;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  border-color: #000;
+>>>>>>> Stashed changes
 }
 
 .misionVisionGrid {
@@ -76,9 +147,15 @@
 }
 
 .misionCard, .visionCard {
+<<<<<<< Updated upstream
   padding: clamp(1.5rem, 3vw, 2rem);
   background: rgba(0, 102, 51, 0.05);
   border-radius: clamp(10px, 2vw, 15px);
+=======
+  padding: 2rem;
+  background: rgba(0, 102, 51, 0.2);
+  border-radius: 15px;
+>>>>>>> Stashed changes
   transition: var(--transition-smooth);
   text-align: center;
   color: var(--color-primary-green);
@@ -103,7 +180,11 @@
 .icon {
   font-size: clamp(2rem, 5vw, 3rem);
   color: var(--color-secondary-green);
+<<<<<<< Updated upstream
   margin-bottom: clamp(0.5rem, 2vw, 1rem);
+=======
+  margin-bottom: -1rem;
+>>>>>>> Stashed changes
 }
 
 .misionCard:hover, .visionCard:hover {
@@ -111,12 +192,25 @@
   box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
+/* Rest of your CSS remains unchanged */
 /* Laboratorios */
 .laboratoriosSection {
   background-color: var(--color-secondary-green);
   color: var(--color-white);
+<<<<<<< Updated upstream
   padding: clamp(2rem, 5vw, 4rem) 0;
   width: 100%;
+=======
+  padding: 1rem 2rem;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.sectionTitle {
+  text-align: center;
+  margin-bottom: 3rem;
+  font-size: 2.5rem;
+>>>>>>> Stashed changes
 }
 
 .laboratoriosGrid {
@@ -170,11 +264,32 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center; /* Added for icon centering */
+  transition: var(--transition-smooth);
+  text-align: center;
+}
+
+/* Iconos en blanco */
+.servicioCard .iconContainer {
+  color: var(--color-white) !important;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
   transition: var(--transition-smooth);
 }
 
 .servicioCard:hover {
   transform: scale(1.05);
+}
+
+.servicioCard:hover .iconContainer {
+  transform: rotate(-10deg) scale(1.1);
+}
+
+.servicioCard p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--color-white);
+  opacity: 0.9;
 }
 
 /* Oportunidades */
@@ -245,7 +360,12 @@
 
 .directorCard img {
   width: 100%;
+<<<<<<< Updated upstream
   height: clamp(200px, 40vh, 350px);
+=======
+  height: auto;
+  max-height: 250px; /* Evita imágenes demasiado grandes */
+>>>>>>> Stashed changes
   object-fit: cover;
 }
 
@@ -253,35 +373,139 @@
   padding: clamp(1rem, 3vw, 1.5rem);
   text-align: center;
 }
+.inactive {
+  opacity: 0.2;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .carruselContainer {
     flex-direction: column;
+<<<<<<< Updated upstream
   }
 
   .logoSection {
     flex: 0 1 auto;
     width: min(100%, 300px);
+=======
+    min-height: center;
+    align-items: center;
+    text-align: center;
+  }
+  .logoSection {
+    margin-bottom: 1rem;
+  }
+  .imageSlider {
+    width: 100%;
+    max-width: 90vw;
+    height: auto;
+    display: block;
+>>>>>>> Stashed changes
   }
 
   .sectionTitle {
     font-size: clamp(1.5rem, 5vw, 2.5rem);
   }
 
+<<<<<<< Updated upstream
   .laboratorioCard {
     max-width: 500px;
     margin: 0 auto;
+=======
+  .misionVisionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .serviciosGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .directorCard img {
+    width: 90%; /* Ajusta el tamaño en pantallas pequeñas */
+    max-width: 350px; /* Evita que se estire demasiado */
+  }
+  .directoresGrid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+  .directorCard img {
+    width: 100%;
+    height: auto;
+    max-height: 250px; /* Evita imágenes demasiado grandes */
+    object-fit: cover;
+  }
+
+  .directorInfo {
+    padding: 1rem;
+    text-align: center;
+  }
+  .oportunidadesImage img {
+    height: 300px;
+  }
+
+  .misionCard, .visionCard {
+    padding: 1.5rem;
+>>>>>>> Stashed changes
+  }
+  .carruselContainer {
+    align-items: center;
+    text-align: center;
+    display: flex;
+  }
+
+  .logoSection {
+    padding:10%;
+    position: center;
+    aspect-ratio: 21/13;
+  }
+
+  .imageSlider {
+    width: 300px;
+    height: auto;
+    max-width: 90vw; /* Para evitar que sea demasiado grande */
+    top: 50%;
+    position: center;
+    display: flex; /* Asegura que siempre se muestre */
+ padding: 15%;
+ aspect-ratio: 21/13;
+  }
+
+  .slide {
+    width: 100%;
+    height: 100%;
+    
+    max-height: 500px;
+  }
+  .logo {
+    max-width: 200px; /* Ajusta el tamaño del logo */
   }
 }
-
 @media (max-width: 480px) {
   .misionCard, .visionCard {
     padding: 1.5rem;
   }
 
+<<<<<<< Updated upstream
   .servicioCard {
     padding: 1.5rem;
     min-height: 150px;
+=======
+  .logo {
+    max-width: 300px;
+  }
+
+  .imageSlider {
+    height: 250px;
+  }
+
+  .icon {
+    font-size: 2.5rem;
+  }
+
+  .misionCard h2, .visionCard h2 {
+    font-size: 1.75rem;
+>>>>>>> Stashed changes
   }
 }

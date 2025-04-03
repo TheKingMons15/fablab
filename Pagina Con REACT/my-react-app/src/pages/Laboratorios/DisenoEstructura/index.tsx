@@ -87,10 +87,10 @@ const LabDiseno: React.FC = () => {
           <section className={styles.homeSection}>
             <div className={styles.homeHeader}>
               <div className={styles.logoContainer}>
-                <img src="/img/Diseño y estructura.png" alt="Logo de FabLab" className={styles.homeLogo} />
+                <img src="/img/Diseñoyestructura.png" alt="Logo de FabLab" className={styles.homeLogo} />
               </div>
               <div className={styles.heroImageContainer}>
-                <img src="/img/fablab-hero.jpg" alt="FabLab en acción" className={styles.heroImage} />
+                <img src="/img/labdiseño.jpg" alt="FabLab en acción" className={styles.heroImage} />
               </div>
             </div>
             <div className={styles.homeContent}>
