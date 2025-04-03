@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { FaCamera, FaVideo, FaMicrophoneAlt } from 'react-icons/fa';
+import { FaCamera, FaVideo, FaMicrophoneAlt, FaHome, FaTools, FaCode, FaCubes } from 'react-icons/fa';
 import styles from './MediaLab.module.css';
 
 const MediaLab: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'equipos' | 'proyectos'>('equipos');
+  const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'laboratorios'>('inicio');
 
   const equipmentItems = [
     {
@@ -32,48 +32,117 @@ const MediaLab: React.FC = () => {
     }
   ];
 
-  const proyectos = [
+  const laboratorios = [
     {
-      nombre: 'Documental "Voces Urbanas"',
+      nombre: 'Laboratorio de Impresión 3D',
+      icono: <FaCubes size={24} />,
+      descripcion: 'Espacio equipado con impresoras 3D de última generación para prototipado rápido y fabricación digital.',
       enlace: '#',
-      estado: 'En producción'
+      estado: 'Abierto'
     },
     {
-      nombre: 'Campaña "Conserva lo Nuestro"',
+      nombre: 'Laboratorio de Electrónica',
+      icono: <FaTools size={24} />,
+      descripcion: 'Herramientas y componentes para desarrollo de circuitos electrónicos y proyectos IoT.',
       enlace: '#',
-      estado: 'Postproducción'
+      estado: 'Abierto'
     },
     {
-      nombre: 'Serie Web "Tecnología Creativa"',
+      nombre: 'Laboratorio de Programación',
+      icono: <FaCode size={24} />,
+      descripcion: 'Estaciones de trabajo equipadas para desarrollo de software y aplicaciones interactivas.',
       enlace: '#',
-      estado: 'Finalizado'
+      estado: 'En mantenimiento'
     }
   ];
 
   return (
     <main className={styles.mediaContainer}>
-      <section className={styles.titleSection}>
-        <h1 className={styles.mediaTitle}>
-          <img src="/img/Medialab.png" alt="Logo de Media Lab" className={styles.logo} />
-        </h1>
-      </section>
       <nav className={styles.navTabs}>
+        <button
+          className={`${styles.tab} ${activeTab === 'inicio' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('inicio')}
+        >
+          <FaHome size={16} />
+          <span>Inicio</span>
+        </button>
         <button
           className={`${styles.tab} ${activeTab === 'equipos' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('equipos')}
         >
-          Equipos
+          <FaCamera size={16} />
+          <span>Equipos</span>
         </button>
         <button
-          className={`${styles.tab} ${activeTab === 'proyectos' ? styles.activeTab : ''}`}
-          onClick={() => setActiveTab('proyectos')}
+          className={`${styles.tab} ${activeTab === 'laboratorios' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('laboratorios')}
         >
-          Proyectos
+          <FaTools size={16} />
+          <span>Laboratorios</span>
         </button>
       </nav>
+      
       <div className={styles.contentContainer}>
+        {activeTab === 'inicio' && (
+          <section className={styles.homeSection}>
+            <div className={styles.homeHeader}>
+              <div className={styles.logoContainer}>
+                <img src="/img/Medialab.png" alt="Logo de Media Lab" className={styles.homeLogo} />
+              </div>
+              <div className={styles.heroImageContainer}>
+                <img src="/img/hero-image.jpg" alt="FabLab en acción" className={styles.heroImage} />
+              </div>
+            </div>
+            
+            <div className={styles.homeContent}>
+              <h1 className={styles.mainTitle}>MEDIALAB</h1>
+              <h2 className={styles.subtitle}>Centro de Fabricación Digital Universitario</h2>
+              
+              <div className={styles.infoBlocks}>
+                <div className={styles.infoBlock}>
+                  <h3>¿Qué es MEDIALAB?</h3>
+                  <p>
+                    MEDIALAB es un espacio de innovación y creatividad que combina tecnología multimedia y fabricación digital. 
+                    Nuestro FabLab universitario ofrece acceso a herramientas avanzadas de prototipado, impresión 3D, 
+                    producción audiovisual y desarrollo de proyectos multidisciplinarios.
+                  </p>
+                </div>
+                
+                <div className={styles.infoBlock}>
+                  <h3>Nuestra Misión</h3>
+                  <p>
+                    Fomentar la innovación tecnológica, el aprendizaje colaborativo y el desarrollo de proyectos 
+                    que respondan a necesidades reales de nuestra comunidad, equipando a los estudiantes con las 
+                    herramientas y conocimientos necesarios para afrontar los retos del futuro.
+                  </p>
+                </div>
+              </div>
+              
+              <div className={styles.statsContainer}>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>15+</span>
+                  <span className={styles.statLabel}>Equipos disponibles</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>3</span>
+                  <span className={styles.statLabel}>Laboratorios especializados</span>
+                </div>
+                <div className={styles.statItem}>
+                  <span className={styles.statNumber}>50+</span>
+                  <span className={styles.statLabel}>Proyectos realizados</span>
+                </div>
+              </div>
+              
+              <button className={styles.ctaButton}>
+                Reservar espacio
+              </button>
+            </div>
+          </section>
+        )}
+        
         {activeTab === 'equipos' && (
           <section className={styles.equipmentSection}>
+            <h2 className={styles.sectionTitle}>Nuestro Equipo Multimedia</h2>
             <div className={styles.equipmentGrid}>
               {equipmentItems.map((equipo) => (
                 <article key={equipo.nombre} className={styles.equipmentCard}>
@@ -98,58 +167,58 @@ const MediaLab: React.FC = () => {
             </div>
           </section>
         )}
-        {activeTab === 'proyectos' && (
-          <section className={styles.projectsSection}>
-            <div className={styles.projectsContainer}>
-              <div className={styles.projectsTable}>
-                <table className={styles.responsiveTable}>
-                  <thead>
-                    <tr>
-                      <th>Proyecto</th>
-                      <th>Estado</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {proyectos.map((proyecto) => (
-                      <tr key={proyecto.nombre}>
-                        <td>{proyecto.nombre}</td>
-                        <td>
-                          <span className={`${styles.status} ${styles[proyecto.estado.toLowerCase().replace(' ', '')]}`}>
-                            {proyecto.estado}
-                          </span>
-                        </td>
-                        <td>
-                          <a href={proyecto.enlace} className={styles.projectLink}>
-                            Ver detalles
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              <div className={styles.projectsInfo}>
-                <div className={styles.infoCard}>
-                  <h3 className={styles.infoTitle}>¿Cómo participar?</h3>
-                  <p className={styles.infoText}>
-                    Explora nuestros proyectos activos y descubre cómo puedes
-                    contribuir con tu talento creativo.
-                  </p>
-                  <div className={styles.statsContainer}>
-                    <div className={styles.statItem}>
-                      <span className={styles.statNumber}>15+</span>
-                      <span className={styles.statLabel}>Proyectos activos</span>
-                    </div>
-                    <div className={styles.statItem}>
-                      <span className={styles.statNumber}>50+</span>
-                      <span className={styles.statLabel}>Colaboradores</span>
-                    </div>
+        
+        {activeTab === 'laboratorios' && (
+          <section className={styles.labsSection}>
+            <h2 className={styles.sectionTitle}>Laboratorios Especializados</h2>
+            <p className={styles.labsIntro}>
+              Nuestros laboratorios están equipados con tecnología de punta para apoyar proyectos de investigación,
+              desarrollo e innovación en diversas áreas del conocimiento.
+            </p>
+            
+            <div className={styles.labsGrid}>
+              {laboratorios.map((lab) => (
+                <article key={lab.nombre} className={styles.labCard}>
+                  <div className={styles.labHeader}>
+                    <div className={styles.labIcon}>{lab.icono}</div>
+                    <h3 className={styles.labName}>{lab.nombre}</h3>
+                    <span className={`${styles.labStatus} ${styles[lab.estado.toLowerCase().replace(' ', '')]}`}>
+                      {lab.estado}
+                    </span>
                   </div>
-                  <button className={styles.ctaButton}>
-                    Unirse a la comunidad
-                  </button>
+                  
+                  <p className={styles.labDescription}>{lab.descripcion}</p>
+                  
+                  <div className={styles.labFooter}>
+                    <button className={styles.reserveButton}>
+                      Reservar horario
+                    </button>
+                    <a href={lab.enlace} className={styles.labLink}>
+                      Ver equipamiento
+                    </a>
+                  </div>
+                </article>
+              ))}
+            </div>
+            
+            <div className={styles.labsInfo}>
+              <div className={styles.infoCard}>
+                <h3 className={styles.infoTitle}>¿Cómo utilizar nuestros laboratorios?</h3>
+                <p className={styles.infoText}>
+                  Los laboratorios del MEDIALAB están disponibles para estudiantes, docentes e investigadores 
+                  de nuestra universidad. Para utilizarlos, debes contar con una capacitación básica y reservar 
+                  con anticipación.
+                </p>
+                <div className={styles.scheduleInfo}>
+                  <h4>Horarios de atención:</h4>
+                  <ul className={styles.scheduleList}>
+                    <li>Lunes a Viernes: 9:00 - 18:00</li>
+                    <li>Sábados: 10:00 - 14:00</li>
+                  </ul>
                 </div>
+                <button className={styles.ctaButton}>
+                  Solicitar capacitación
+                </button>
               </div>
             </div>
           </section>

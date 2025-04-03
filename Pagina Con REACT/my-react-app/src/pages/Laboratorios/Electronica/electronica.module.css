@@ -43,9 +43,12 @@
   justify-content: center;
   margin: 1rem 0 2rem;
   gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .tab {
+  display: flex;
+  align-items: center;
   padding: 0.9rem 2.5rem;
   background: #ecf0f1;
   color: #7f8c8d;
@@ -56,6 +59,11 @@
   border: 2px solid transparent;
   font-size: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.tabIcon {
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
 }
 
 .tab:hover {
@@ -78,6 +86,138 @@
   justify-content: center;
 }
 
+/* Sección de inicio */
+.homeSection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.homeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  width: 100%;
+}
+
+.logoContainer {
+  flex: 1;
+  padding-right: 2rem;
+}
+
+.homeLogo {
+  max-height: 90px;
+  width: auto;
+  margin-bottom: 1rem;
+}
+
+.homeTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.homeSubtitle {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+.heroImageContainer {
+  flex: 1;
+  text-align: right;
+}
+
+.heroImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(39, 174, 96, 0.15);
+  border: 2px solid #27ae60;
+}
+
+.homeContent {
+  margin-top: 2rem;
+}
+
+.homeDescription {
+  margin-bottom: 3rem;
+}
+
+.homeDescription h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.homeDescription p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #7f8c8d;
+  margin-bottom: 1rem;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2.5rem;
+  margin-top: 2.5rem;
+}
+
+.featureCard {
+  background: white;
+  border-radius: 15px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(39, 174, 96, 0.15);
+  transition: all 0.3s ease;
+  border: 2px solid #27ae60;
+}
+
+.featureCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(39, 174, 96, 0.25);
+}
+
+.featureIcon {
+  font-size: 2.8rem;
+  color: #27ae60;
+  margin-bottom: 1.5rem;
+}
+
+.featureCard h3 {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.featureCard p {
+  color: #7f8c8d;
+  line-height: 1.6;
+}
+
+/* Sección de títulos para cada tab */
+.sectionTitle {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.sectionTitle h2 {
+  color: #2c3e50;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.sectionTitle p {
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
 /* Sección de equipos */
 .equipmentSection {
   width: 100%;
@@ -94,30 +234,13 @@
   padding-bottom: 1.5rem;
 }
 
-/* Eliminamos propiedades relacionadas con el scroll horizontal */
-/* .equipmentGrid::-webkit-scrollbar {
-  height: 8px;
-}
-
-.equipmentGrid::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.equipmentGrid::-webkit-scrollbar-thumb {
-  background: #27ae60;
-  border-radius: 10px;
-} */
-
 .equipmentCard {
-  /* Eliminamos flex: 0 0 300px que forzaba un ancho fijo */
   min-height: 420px;
   background: white;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(39, 174, 96, 0.15);
   transition: all 0.3s ease;
-  /* Eliminamos scroll-snap-align: start; */
   border: 2px solid #27ae60;
   display: flex;
   flex-direction: column;
@@ -195,26 +318,6 @@
   box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25);
 }
 
-/* Media queries para asegurar responsividad */
-@media (max-width: 768px) {
-  .equipmentGrid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-  .titleSection {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2rem;
-    padding-top: 30%;
-  }
-}
-
-@media (max-width: 480px) {
-  .equipmentGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* Sección de proyectos */
 .projectsSection {
   width: 100%;
@@ -287,22 +390,29 @@
   min-width: 120px;
 }
 
-.enproducción {
+/* Estados de proyectos actualizados */
+.endesarrollo {
   background: rgba(241, 196, 15, 0.15);
   color: #d4ac0d;
   border: 1px solid rgba(241, 196, 15, 0.3);
 }
 
-.postproducción {
+.activo {
+  background: rgba(39, 174, 96, 0.15);
+  color: #219a52;
+  border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.finalizado {
   background: rgba(52, 152, 219, 0.15);
   color: #2980b9;
   border: 1px solid rgba(52, 152, 219, 0.3);
 }
 
-.finalizado {
-  background: rgba(39, 174, 96, 0.15);
-  color: #219a52;
-  border: 1px solid rgba(39, 174, 96, 0.3);
+.eninvestigación {
+  background: rgba(142, 68, 173, 0.15);
+  color: #8e44ad;
+  border: 1px solid rgba(142, 68, 173, 0.3);
 }
 
 .projectLink {
@@ -354,6 +464,7 @@
   justify-content: center;
   gap: 3rem;
   margin: 2.5rem 0;
+  flex-wrap: wrap;
 }
 
 .statItem {
@@ -384,6 +495,14 @@
   font-weight: 500;
 }
 
+/* Botones de acción */
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
 .ctaButton {
   padding: 1rem 2.5rem;
   background: #27ae60;
@@ -404,6 +523,25 @@
   box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
 }
 
+.secondaryButton {
+  padding: 1rem 2.5rem;
+  background: transparent;
+  color: #27ae60;
+  border: 2px solid #27ae60;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.secondaryButton:hover {
+  background: rgba(39, 174, 96, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(39, 174, 96, 0.15);
+}
+
 /* Media queries para responsividad */
 @media (max-width: 992px) {
   .statsContainer {
@@ -413,9 +551,29 @@
   .statItem {
     min-width: 120px;
   }
+  
+  .actionButtons {
+    flex-direction: column;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+  }
 }
 
 @media (max-width: 768px) {
+  .homeHeader {
+    flex-direction: column;
+  }
+  
+  .logoContainer, 
+  .heroImageContainer {
+    flex: none;
+    width: 100%;
+    text-align: center;
+    padding-right: 0;
+    margin-bottom: 2rem;
+  }
+  
   .projectsContainer {
     padding: 1.5rem;
   }
@@ -437,6 +595,14 @@
   .statItem {
     flex: 1 0 40%;
   }
+  
+  .titleSection {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding-top: 30%;
+  }
 }
 
 @media (max-width: 576px) {
@@ -450,7 +616,6 @@
   }
   
   .equipmentCard {
-    flex: 0 0 260px;
     min-height: 400px;
   }
   
@@ -463,7 +628,12 @@
     width: 100%;
   }
   
-  .ctaButton {
+  .ctaButton,
+  .secondaryButton {
     width: 100%;
+  }
+  
+  .featuresGrid {
+    grid-template-columns: 1fr;
   }
 }
