@@ -3,36 +3,37 @@
   flex: 1;
   width: 100vw;
   background: #000;
+  overflow-x: hidden;
+  padding: 5rem 0;
 }
 
 .contentWrapper {
-  max-width: 1400px;
+  max-width: min(1400px, 95%);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 3 clamp(7rem, 7vw, 5rem);
 }
 
 /* Carrusel Section */
 .carruselSection {
   background-color: var(--color-primary-green);
-  padding: 4rem 0;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
+  padding: clamp(2rem, 5vw, 4rem) 0;
+  width: 100%;
 }
 
 .carruselContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 2rem;
-  min-height: 600px;
+  gap: clamp(1rem, 3vw, 2rem);
+  min-height: clamp(400px, 60vh, 600px);
 }
 
 .logoSection {
-  flex: 0 1 40%;
+  flex: 0 1 clamp(300px, 40%, 500px);
 }
 
 .logo {
-  width: min(100%, 500px);
+  width: 100%;
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
@@ -40,9 +41,9 @@
 
 .imageSlider {
   flex: 1;
-  height: 600px;
+  height: clamp(400px, 60vh, 600px);
   position: relative;
-  border-radius: 20px;
+  border-radius: clamp(10px, 2vw, 20px);
   overflow: hidden;
 }
 
@@ -63,22 +64,21 @@
 /* Misión y Visión */
 .misionVision {
   background-color: var(--color-white);
-  padding: 4rem 0;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
+  padding: clamp(2rem, 5vw, 4rem) 0;
+  width: 100%;
 }
 
 .misionVisionGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 3rem;
-  padding: 2rem 0;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+  padding: clamp(1rem, 3vw, 2rem) 0;
 }
 
 .misionCard, .visionCard {
-  padding: 2rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
   background: rgba(0, 102, 51, 0.05);
-  border-radius: 15px;
+  border-radius: clamp(10px, 2vw, 15px);
   transition: var(--transition-smooth);
   text-align: center;
   color: var(--color-primary-green);
@@ -89,21 +89,21 @@
 
 .misionCard h2, .visionCard h2 {
   color: var(--color-primary-green);
-  margin: 1rem 0;
-  font-size: 2rem;
+  margin: clamp(0.5rem, 2vw, 1rem) 0;
+  font-size: clamp(1.5rem, 5vw, 2rem);
 }
 
 .misionCard p, .visionCard p {
   color: var(--color-text-dark);
-  font-size: 1rem;
+  font-size: clamp(0.8rem, 3vw, 1rem);
   line-height: 1.6;
   max-width: 400px;
 }
 
 .icon {
-  font-size: 3rem;
+  font-size: clamp(2rem, 5vw, 3rem);
   color: var(--color-secondary-green);
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.5rem, 2vw, 1rem);
 }
 
 .misionCard:hover, .visionCard:hover {
@@ -115,26 +115,20 @@
 .laboratoriosSection {
   background-color: var(--color-secondary-green);
   color: var(--color-white);
-  padding: 4rem 0;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
-}
-
-.sectionTitle {
-  text-align: center;
-  margin-bottom: 3rem;
-  font-size: 2.5rem;
+  padding: clamp(2rem, 5vw, 4rem) 0;
+  width: 100%;
 }
 
 .laboratoriosGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: clamp(1rem, 3vw, 2rem);
+  place-content: center;
 }
 
 .laboratorioCard {
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 15px;
+  border-radius: clamp(10px, 2vw, 15px);
   overflow: hidden;
   transition: var(--transition-smooth);
 }
@@ -145,34 +139,34 @@
 
 .laboratorioImage {
   width: 100%;
-  height: 250px;
+  height: clamp(200px, 40vh, 250px);
   object-fit: cover;
 }
 
 .laboratorioInfo {
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
 }
 
 /* Servicios */
 .serviciosSection {
   background-color: var(--color-white);
-  padding: 4rem 0;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
+  padding: clamp(2rem, 5vw, 4rem) 0;
+  width: 100%;
 }
 
 .serviciosGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: clamp(1rem, 2vw, 1.5rem);
+  place-content: center;
 }
 
 .servicioCard {
   background-color: var(--color-secondary-green);
   color: var(--color-white);
-  padding: 2rem;
-  border-radius: 15px;
-  min-height: 200px;
+  padding: clamp(1rem, 3vw, 2rem);
+  border-radius: clamp(10px, 2vw, 15px);
+  min-height: clamp(150px, 30vh, 200px);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -187,34 +181,38 @@
 .oportunidadesSection {
   background-color: var(--color-primary-green);
   color: var(--color-white);
-  padding: 4rem 0;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
+  padding: clamp(2rem, 5vw, 4rem) 0;
+  width: 100%;
 }
 
 .oportunidadesGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
   align-items: center;
+}
+
+.oportunidadesImage {
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  border-radius: clamp(10px, 2vw, 20px);
 }
 
 .oportunidadesImage img {
   width: 100%;
-  height: 400px;
+  height: 100%;
   object-fit: cover;
-  border-radius: 15px;
 }
 
 .proyectosList {
   display: grid;
-  gap: 1.5rem;
+  gap: clamp(1rem, 2vw, 1.5rem);
 }
 
 .proyectoItem {
   background: rgba(255, 255, 255, 0.1);
-  padding: 1.5rem;
-  border-radius: 10px;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border-radius: clamp(10px, 2vw, 15px);
   transition: var(--transition-smooth);
 }
 
@@ -225,102 +223,65 @@
 /* Directores */
 .directoresSection {
   background-color: var(--color-white);
-  padding: 4rem 0;
-  width: 100vw;
-  margin-left: calc(-50vw + 50%);
+  padding: clamp(2rem, 5vw, 4rem) 0;
+  width: 100%;
 }
 
 .directoresGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 350px), 1fr));
+  gap: clamp(1.5rem, 4vw, 3rem);
+  place-content: center;
+  padding: clamp(1rem, 3vw, 2rem) 0;
 }
 
 .directorCard {
   background-color: var(--color-secondary-green);
   color: var(--color-white);
-  border-radius: 15px;
+  border-radius: clamp(10px, 2vw, 15px);
   overflow: hidden;
   transition: var(--transition-smooth);
 }
 
 .directorCard img {
   width: 100%;
-  height: 350px;
+  height: clamp(200px, 40vh, 350px);
   object-fit: cover;
 }
 
 .directorInfo {
-  padding: 1.5rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
   text-align: center;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
+/* Responsive adjustments */
+@media (max-width: 768px) {
   .carruselContainer {
     flex-direction: column;
-    min-height: auto;
   }
 
-  .imageSlider {
-    height: 400px;
-    width: 100%;
+  .logoSection {
+    flex: 0 1 auto;
+    width: min(100%, 300px);
   }
 
-  .oportunidadesGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
   .sectionTitle {
-    font-size: 2rem;
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
   }
 
-  .misionVisionGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .serviciosGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .directorCard img {
-    height: 250px;
-  }
-
-  .oportunidadesImage img {
-    height: 300px;
-  }
-
-  .misionCard, .visionCard {
-    padding: 1.5rem;
+  .laboratorioCard {
+    max-width: 500px;
+    margin: 0 auto;
   }
 }
 
 @media (max-width: 480px) {
-  .carruselSection,
-  .misionVision,
-  .laboratoriosSection,
-  .serviciosSection,
-  .oportunidadesSection,
-  .directoresSection {
-    padding: 2rem 0;
+  .misionCard, .visionCard {
+    padding: 1.5rem;
   }
 
-  .logo {
-    max-width: 300px;
-  }
-
-  .imageSlider {
-    height: 300px;
-  }
-
-  .icon {
-    font-size: 2.5rem;
-  }
-
-  .misionCard h2, .visionCard h2 {
-    font-size: 1.75rem;
+  .servicioCard {
+    padding: 1.5rem;
+    min-height: 150px;
   }
 }
