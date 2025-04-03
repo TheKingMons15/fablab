@@ -1,0 +1,585 @@
+:root {
+  --color-primary-green: #006633;
+  --color-secondary-green: #009955;
+  --color-accent-yellow: #FFCE00;
+  --color-white: #ffffff;
+  --color-text-dark: #333333;
+  --transition-smooth: all 0.3s ease-in-out;
+}
+
+/* Reset y estilos base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Contenedor principal */
+.mediaContainer {
+  min-height: 100vh;
+  width: 100vw; /* Asegura que ocupe todo el ancho del viewport */
+  background: linear-gradient(135deg, #f5f7fa 0%, #e0f0e5 100%);
+  color: var(--color-text-dark);
+  position: relative;
+  overflow-x: hidden; /* Oculta cualquier overflow horizontal */
+  margin: 0;
+  padding: 0;
+}
+
+/* Fondo animado con símbolos matemáticos */
+.animatedBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; /* Usar viewport width */
+  height: 100vh; /* Usar viewport height */
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.mathSymbol {
+  position: absolute;
+  color: rgba(0, 102, 51, 0.15);
+  font-weight: bold;
+  user-select: none;
+}
+
+/* Loading screen */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #e0f0e5 100%);
+}
+
+.loadingSpinner {
+  margin-bottom: 2rem;
+  color: var(--color-primary-green);
+}
+
+.loadingText {
+  font-size: 1.5rem;
+  color: var(--color-text-dark);
+  font-weight: 500;
+}
+
+/* Header */
+.titleSection {
+  text-align: center;
+  padding: 2rem 1rem 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.logoContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.logo {
+  height: 80px;
+  margin-right: 1rem;
+}
+
+.mediaTitle {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(to right, var(--color-primary-green), var(--color-secondary-green));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--color-text-dark);
+  opacity: 0.8;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Pestañas de navegación */
+.navTabs {
+  display: flex;
+  justify-content: center;
+  margin: 1rem auto;
+  max-width: 800px;
+  position: relative;
+  z-index: 1;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  position: relative;
+  transition: var(--transition-smooth);
+  border-radius: 50px;
+  margin: 0 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.tabContent {
+  display: flex;
+  align-items: center;
+}
+
+.tabIcon {
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+.activeTab {
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  color: var(--color-primary-green);
+}
+
+/* Contenedor de contenido */
+.contentContainer {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+  position: relative;
+  z-index: 1;
+  overflow: hidden; /* Previene cualquier overflow */
+}
+
+/* Sección de indicaciones */
+.indicacionesSection {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.heroBanner {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.sectionTitle {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: var(--color-text-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.titleHighlight {
+  margin-right: 0.5rem;
+  font-size: 1.5em;
+  color: var(--color-accent-yellow);
+}
+
+.introText {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--color-text-dark);
+  opacity: 0.9;
+  max-width: 700px;
+  margin: 0 auto 1.5rem;
+}
+
+/* Grid de características */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.featureCard {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: var(--transition-smooth);
+  border-top: 3px solid;
+}
+
+.featureIconContainer {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.featureTitle {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-dark);
+}
+
+.featureDescription {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Grid de instrucciones */
+.instructionsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.instructionCard {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: var(--transition-smooth);
+}
+
+.instructionHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.instructionIcon {
+  font-size: 1.5rem;
+  margin-right: 0.8rem;
+}
+
+.instructionCard h3 {
+  font-size: 1.2rem;
+  color: var(--color-text-dark);
+}
+
+.instructionText {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.instructionImageContainer {
+  width: 100%;
+  height: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.instructionImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.instructionCard:hover .instructionImage {
+  transform: scale(1.05);
+}
+
+/* Botón de acción principal */
+.ctaContainer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.startTestButton {
+  background: linear-gradient(to right, var(--color-primary-green), var(--color-secondary-green));
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: var(--transition-smooth);
+  box-shadow: 0 4px 15px rgba(0, 102, 51, 0.2);
+}
+
+.startTestButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(0, 102, 51, 0.3);
+}
+
+.buttonIcon {
+  margin-right: 0.5rem;
+}
+
+.buttonArrow {
+  margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.startTestButton:hover .buttonArrow {
+  transform: translateX(3px);
+}
+
+/* Sección de pruebas */
+.pruebasSection {
+  background: white;
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.particlesContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.sectionSubtitle {
+  font-size: 1.1rem;
+  color: #666;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Grid de pruebas */
+.pruebasGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.pruebaCard {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+  border-top: 3px solid;
+}
+
+.pruebaCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.pruebaIcon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.pruebaContent {
+  margin-bottom: 1.5rem;
+}
+
+.pruebaName {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-dark);
+}
+
+.pruebaDescription {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.pruebaMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.pruebaMetaItem {
+  font-size: 0.8rem;
+  color: #666;
+  display: flex;
+  align-items: center;
+  background: #f5f7fa;
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+}
+
+.metaIcon {
+  margin-right: 0.3rem;
+  font-size: 0.7rem;
+}
+
+.cardHoverEffect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.05;
+  z-index: -1;
+}
+
+/* Testimonios */
+.testimonials {
+  margin-top: 3rem;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonialsTitle {
+  text-align: center;
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+  color: var(--color-text-dark);
+}
+
+.testimonialsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.testimonialCard {
+  background: white;
+  border-radius: 15px;
+  padding: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.testimonialContent {
+  font-style: italic;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.testimonialContent::before {
+  content: '"';
+  font-size: 3rem;
+  position: absolute;
+  top: -1rem;
+  left: -0.5rem;
+  color: rgba(0, 102, 51, 0.1);
+  font-family: serif;
+}
+
+.testimonialAuthor {
+  font-weight: 600;
+  color: var(--color-text-dark);
+  text-align: right;
+}
+
+/* Footer */
+.footer {
+  background: white;
+  padding: 2rem 1rem;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.footerContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footerLogo {
+  height: 60px;
+  margin-bottom: 1rem;
+}
+
+.footerText {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.footerLinks {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.footerLinks a {
+  color: var(--color-primary-green);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footerLinks a:hover {
+  color: var(--color-secondary-green);
+}
+
+/* Efectos responsivos */
+@media (max-width: 768px) {
+  .mediaTitle {
+    font-size: 2rem;
+  }
+  
+  .tab {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .featuresGrid, .instructionsGrid, .pruebasGrid, .testimonialsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+    margin: 2rem 0;
+    padding: 0 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo {
+    height: 60px;
+  }
+  
+  .mediaTitle {
+    font-size: 1.8rem;
+  }
+  
+  .navTabs {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .tab {
+    width: 100%;
+    max-width: 250px;
+    margin: 0.3rem 0;
+  }
+}

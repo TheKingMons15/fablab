@@ -81,30 +81,6 @@
   transform: translateX(5px);
 }
 
-/* Estilos para los créditos de diseño */
-.designCredits {
-  text-align: center;
-  padding: 0.5rem 0;
-  margin-top: 1rem;
-  width: 100%;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-}
-
-.designCredits a {
-  color: white;
-  text-decoration: none;
-  font-size: 0.9rem;
-  letter-spacing: 0.5px;
-  transition: color 0.3s ease;
-}
-
-.designCredits a:hover {
-  color: #FFCE00;
-}
-
 @media (max-width: 768px) {
   .footerContent {
     grid-template-columns: 1fr;

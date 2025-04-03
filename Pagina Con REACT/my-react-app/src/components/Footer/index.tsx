@@ -5,7 +5,7 @@ const socialMedia = [
   { name: 'LinkedIn', url: 'https://linkedin.com' },
   { name: 'Twitter', url: 'https://twitter.com' },
   { name: 'Instagram', url: 'https://instagram.com' },
-  { name: 'Facebook', url: 'https://youtube.com' }
+  { name: 'YouTube', url: 'https://youtube.com' }
 ];
 
 const quickLinks = [
@@ -32,12 +32,9 @@ const Footer: React.FC = () => {
         <div className={styles.footerSection}>
           <h3>Contacto</h3>
           <address className={styles.contactInfo}>
-            <p>Teléfono: <a href="tel:+51123456789">+: (06) 2980 837 - 2984 435
-            </a></p>
-            <p>Email: <a href="mailto:contacto@fablab.com">Email: info@upec.edu.ec
-            </a></p>
-            <p>Dirección: Calle Antisana y
-            Av. Universitaria</p>
+            <p>Teléfono: <a href="tel:+51123456789">+59300000000</a></p>
+            <p>Email: <a href="mailto:contacto@fablab.com">contacto@fablab.com</a></p>
+            <p>Dirección: Av. Innovación 123</p>
           </address>
         </div>
 
@@ -79,17 +76,6 @@ const Footer: React.FC = () => {
             </nav>
           </div>
         </div>
-      </div>
-      
-      {/* Créditos de diseño */}
-      <div className={styles.designCredits}>
-        <a 
-          href="https://www.instagram.com/wlady_photograph" 
-          target="_blank" 
-          rel="noopener noreferrer"
-        >
-          Diseñado por: Wladimir Almeida
-        </a>
       </div>
     </footer>
   );
