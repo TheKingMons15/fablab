@@ -3,13 +3,14 @@ import styles from './electronica.module.css';
 import { SiCncf } from 'react-icons/si';
 import { VscServerEnvironment } from 'react-icons/vsc';
 import { GiMicroscope, GiSolderingIron } from 'react-icons/gi';
+import { FaHome, FaRobot, FaShip, FaTools } from 'react-icons/fa';
 
 const LabElectronica = () => {
-  const [activeTab, setActiveTab] = useState<'equipos' | 'proyectos'>('equipos');
+  const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'proyectos'>('inicio');
 
   const equipmentItems = [
     {
-      nombre: "CNC  pequeña",
+      nombre: "CNC pequeña",
       icono: <SiCncf className={styles.equipmentIcon} />,
       imagen: "",
       descripcion: "es un equipo automatizado que utiliza instrucciones programadas por computadora para realizar operaciones de mecanizado con alta precisión. Aquí te presento una descripción detallada."
@@ -28,7 +29,7 @@ const LabElectronica = () => {
     },
     {
       nombre: "Estacion de soldadura",
-      icono: <GiSolderingIron  className={styles.equipmentIcon} />,
+      icono: <GiSolderingIron className={styles.equipmentIcon} />,
       imagen: "",
       descripcion: "Equipos para soldar componentes electronicos en placas de circuito impreso."
     },
@@ -36,52 +37,116 @@ const LabElectronica = () => {
       nombre: "Servidores",
       icono: <VscServerEnvironment className={styles.equipmentIcon} />,
       imagen: "",
-      descripcion: "Servidores dedicados para alamcenamiento de datos,m virtualizacion de entornos y desarrollo web."
+      descripcion: "Servidores dedicados para alamcenamiento de datos, virtualizacion de entornos y desarrollo web."
     }
   ];
 
   const proyectos = [
     {
-      nombre: 'Documental "Voces Urbanas"',
+      nombre: 'Diseño e implementación de sistemas embebidos',
       enlace: '#',
-      estado: 'En producción'
+      estado: 'En desarrollo'
     },
     {
-      nombre: 'Campaña "Conserva lo Nuestro"',
+      nombre: 'Prototipado rápido con Arduino y Raspberry Pi',
       enlace: '#',
-      estado: 'Postproducción'
+      estado: 'Activo'
     },
     {
-      nombre: 'Serie Web "Tecnología Creativa"',
+      nombre: 'IoT para Smart Campus',
       enlace: '#',
       estado: 'Finalizado'
+    },
+    {
+      nombre: 'Fabricación digital de componentes electrónicos',
+      enlace: '#',
+      estado: 'En investigación'
+    },
+    {
+      nombre: 'Robótica educativa para escuelas locales',
+      enlace: '#',
+      estado: 'Activo'
     }
   ];
 
   return (
     <main className={styles.mediaContainer}>
-      <section className={styles.titleSection}>
-        <h1 className={styles.mediaTitle}>
-          <img src="/img/Electronica.png" alt="Logo de Media Lab" className={styles.logo} />
-        </h1>
-      </section>
       <nav className={styles.navTabs}>
+        <button
+          className={`${styles.tab} ${activeTab === 'inicio' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('inicio')}
+        >
+          <FaHome className={styles.tabIcon} /> Inicio
+        </button>
         <button
           className={`${styles.tab} ${activeTab === 'equipos' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('equipos')}
         >
-          Equipos
+          <FaTools className={styles.tabIcon} /> Equipos
         </button>
         <button
           className={`${styles.tab} ${activeTab === 'proyectos' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('proyectos')}
         >
-          Proyectos
+          <FaShip className={styles.tabIcon} /> Proyectos
         </button>
       </nav>
+      
       <div className={styles.contentContainer}>
+        {activeTab === 'inicio' && (
+          <section className={styles.homeSection}>
+            <div className={styles.homeHeader}>
+              <div className={styles.logoContainer}>
+                <img src="/img/Electronica.png" alt="Logo de Electrónica Lab" className={styles.homeLogo} />
+                <h1 className={styles.homeTitle}>FABLAB Electrónica</h1>
+                <p className={styles.homeSubtitle}>Laboratorio de Fabricación Digital y Electrónica</p>
+              </div>
+              <div className={styles.heroImageContainer}>
+                <img src="/api/placeholder/600/400" alt="Laboratorio de Electrónica" className={styles.heroImage} />
+              </div>
+            </div>
+            
+            <div className={styles.homeContent}>
+              <div className={styles.homeDescription}>
+                <h2>Bienvenidos al FABLAB Electrónica</h2>
+                <p>
+                  Nuestro Laboratorio de Fabricación Digital y Electrónica universitario es un espacio dedicado al aprendizaje, experimentación 
+                  y desarrollo de proyectos tecnológicos innovadores. Equipado con herramientas de última generación para diseño, 
+                  prototipado y fabricación de sistemas electrónicos.
+                </p>
+                <p>
+                  Ofrecemos acceso a equipamiento especializado, asesoría técnica y un entorno colaborativo donde estudiantes, 
+                  profesores e investigadores pueden dar vida a sus ideas y proyectos tecnológicos.
+                </p>
+              </div>
+              
+              <div className={styles.featuresGrid}>
+                <div className={styles.featureCard}>
+                  <FaTools className={styles.featureIcon} />
+                  <h3>Fabricación Digital</h3>
+                  <p>Equipamiento de precisión para materializar diseños electrónicos</p>
+                </div>
+                <div className={styles.featureCard}>
+                  <FaShip className={styles.featureIcon} />
+                  <h3>Electrónica Avanzada</h3>
+                  <p>Componentes y herramientas para desarrollo de circuitos</p>
+                </div>
+                <div className={styles.featureCard}>
+                  <FaRobot className={styles.featureIcon} />
+                  <h3>Robótica</h3>
+                  <p>Plataformas para experimentación y creación de sistemas robóticos</p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+        
         {activeTab === 'equipos' && (
           <section className={styles.equipmentSection}>
+            <div className={styles.sectionTitle}>
+              <h2>Nuestro Equipamiento</h2>
+              <p>Herramientas y tecnologías disponibles para tus proyectos</p>
+            </div>
             <div className={styles.equipmentGrid}>
               {equipmentItems.map((equipo) => (
                 <article key={equipo.nombre} className={styles.equipmentCard}>
@@ -91,7 +156,7 @@ const LabElectronica = () => {
                   </div>
                   <div className={styles.imageContainer}>
                     <img
-                      src={equipo.imagen}
+                      src={equipo.imagen || "/api/placeholder/300/200"}
                       alt={equipo.nombre}
                       className={styles.equipmentImage}
                       loading="lazy"
@@ -106,8 +171,13 @@ const LabElectronica = () => {
             </div>
           </section>
         )}
+        
         {activeTab === 'proyectos' && (
           <section className={styles.projectsSection}>
+            <div className={styles.sectionTitle}>
+              <h2>Proyectos del FABLAB</h2>
+              <p>Investigación, desarrollo e innovación tecnológica</p>
+            </div>
             <div className={styles.projectsContainer}>
               <div className={styles.projectsTable}>
                 <table className={styles.responsiveTable}>
@@ -139,24 +209,34 @@ const LabElectronica = () => {
               </div>
               <div className={styles.projectsInfo}>
                 <div className={styles.infoCard}>
-                  <h3 className={styles.infoTitle}>¿Cómo participar?</h3>
+                  <h3 className={styles.infoTitle}>Participa en el FABLAB</h3>
                   <p className={styles.infoText}>
-                    Explora nuestros proyectos activos y descubre cómo puedes
-                    contribuir con tu talento creativo.
+                    Únete a nuestros proyectos de investigación, desarrollo de prototipos 
+                    o propón tu propia iniciativa tecnológica. Abierto a estudiantes, 
+                    docentes e investigadores.
                   </p>
                   <div className={styles.statsContainer}>
                     <div className={styles.statItem}>
-                      <span className={styles.statNumber}>15+</span>
+                      <span className={styles.statNumber}>12+</span>
                       <span className={styles.statLabel}>Proyectos activos</span>
                     </div>
                     <div className={styles.statItem}>
-                      <span className={styles.statNumber}>50+</span>
-                      <span className={styles.statLabel}>Colaboradores</span>
+                      <span className={styles.statNumber}>45+</span>
+                      <span className={styles.statLabel}>Estudiantes involucrados</span>
+                    </div>
+                    <div className={styles.statItem}>
+                      <span className={styles.statNumber}>8+</span>
+                      <span className={styles.statLabel}>Publicaciones académicas</span>
                     </div>
                   </div>
-                  <button className={styles.ctaButton}>
-                    Unirse a la comunidad
-                  </button>
+                  <div className={styles.actionButtons}>
+                    <button className={styles.ctaButton}>
+                      Solicitar acceso
+                    </button>
+                    <button className={styles.secondaryButton}>
+                      Proponer proyecto
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

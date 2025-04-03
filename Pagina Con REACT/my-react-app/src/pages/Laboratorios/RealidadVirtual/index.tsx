@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import styles from './realidad.module.css';
-import {MdScanner } from 'react-icons/md';
+import { MdScanner } from 'react-icons/md';
 import { PiVirtualRealityBold } from 'react-icons/pi';
 import { FaLaptopCode } from 'react-icons/fa';
+import { AiFillHome } from 'react-icons/ai';
 
 const RealidadVirtual = () => {
-  const [activeTab, setActiveTab] = useState<'equipos' | 'proyectos'>('equipos');
+  const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'proyectos'>('inicio');
 
   const equipmentItems = [
     {
@@ -48,12 +49,14 @@ const RealidadVirtual = () => {
 
   return (
     <main className={styles.mediaContainer}>
-      <section className={styles.titleSection}>
-        <h1 className={styles.mediaTitle}>
-          <img src="/img/Laboratorio de Realidad Virtual.png" alt="Logo de Media Lab" className={styles.logo} />
-        </h1>
-      </section>
+      {/* Navegación centrada en la parte superior */}
       <nav className={styles.navTabs}>
+        <button
+          className={`${styles.tab} ${activeTab === 'inicio' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('inicio')}
+        >
+          <AiFillHome className={styles.tabIcon} /> Inicio
+        </button>
         <button
           className={`${styles.tab} ${activeTab === 'equipos' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('equipos')}
@@ -67,9 +70,50 @@ const RealidadVirtual = () => {
           Proyectos
         </button>
       </nav>
+
       <div className={styles.contentContainer}>
+        {activeTab === 'inicio' && (
+          <section className={styles.homeSection}>
+            <div className={styles.homeContainer}>
+              <div className={styles.homeLogoContainer}>
+                <img src="/img/Laboratorio de Realidad Virtual.png" alt="Logo de Laboratorio de Realidad Virtual" className={styles.homeLogo} />
+              </div>
+              <div className={styles.homeImageContainer}>
+                <img 
+                  src="/img/laboratorio-realidad-virtual.jpg" 
+                  alt="Laboratorio de Realidad Virtual" 
+                  className={styles.homeImage} 
+                />
+              </div>
+            </div>
+            
+            <div className={styles.homeContent}>
+              <h1 className={styles.homeTitle}>Laboratorio de Realidad Virtual</h1>
+              <p className={styles.homeDescription}>
+                Bienvenidos al Laboratorio de Realidad Virtual, un espacio dedicado a la exploración, 
+                creación e innovación en tecnologías inmersivas. Nuestro laboratorio cuenta con equipamiento 
+                de última generación para el desarrollo de experiencias de realidad virtual que 
+                transforman la manera de interactuar con el mundo digital.
+              </p>
+              <p className={styles.homeDescription}>
+                Ofrecemos acceso a tecnología avanzada, capacitación especializada y la oportunidad 
+                de participar en proyectos innovadores que combinan arte, tecnología y comunicación.
+              </p>
+              <div className={styles.homeButtons}>
+                <button className={styles.primaryButton}>Explorar equipos</button>
+                <button className={styles.secondaryButton}>Ver proyectos</button>
+              </div>
+            </div>
+          </section>
+        )}
+
         {activeTab === 'equipos' && (
           <section className={styles.equipmentSection}>
+            <section className={styles.titleSection}>
+              <h1 className={styles.mediaTitle}>
+                <img src="/img/Laboratorio de Realidad Virtual.png" alt="Logo de Media Lab" className={styles.logo} />
+              </h1>
+            </section>
             <div className={styles.equipmentGrid}>
               {equipmentItems.map((equipo) => (
                 <article key={equipo.nombre} className={styles.equipmentCard}>
@@ -94,8 +138,14 @@ const RealidadVirtual = () => {
             </div>
           </section>
         )}
+
         {activeTab === 'proyectos' && (
           <section className={styles.projectsSection}>
+            <section className={styles.titleSection}>
+              <h1 className={styles.mediaTitle}>
+                <img src="/img/Laboratorio de Realidad Virtual.png" alt="Logo de Media Lab" className={styles.logo} />
+              </h1>
+            </section>
             <div className={styles.projectsContainer}>
               <div className={styles.projectsTable}>
                 <table className={styles.responsiveTable}>

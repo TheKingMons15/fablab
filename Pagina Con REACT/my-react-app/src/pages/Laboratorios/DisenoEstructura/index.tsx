@@ -4,13 +4,14 @@ import { GiLaserPrecision } from 'react-icons/gi';
 import { RiComputerFill } from 'react-icons/ri';
 import { SiCncf } from 'react-icons/si';
 import { AiOutlineBoxPlot } from 'react-icons/ai';
+import { AiFillHome } from 'react-icons/ai';
 
 const LabDiseno: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'equipos' | 'proyectos'>('equipos');
+  const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'proyectos'>('inicio');
 
   const equipmentItems = [
     {
-      nombre: "CNC mediana",
+      nombre: "CNC Formato Completo",
       icono: <SiCncf className={styles.equipmentIcon} />,
       imagen: "",
       descripcion: "Es un equipo automatizado que utiliza instrucciones programadas por computadora para realizar operaciones de mecanizado con alta precisión. Aquí te presento una descripción detallada."
@@ -37,30 +38,36 @@ const LabDiseno: React.FC = () => {
 
   const proyectos = [
     {
-      nombre: 'Documental "Voces Urbanas"',
+      nombre: 'Prototipo Sistemas de Riego Sostenible',
       enlace: '#',
-      estado: 'En producción'
+      estado: 'En desarrollo'
     },
     {
-      nombre: 'Campaña "Conserva lo Nuestro"',
+      nombre: 'Dispositivos IoT para Campus Inteligente',
       enlace: '#',
-      estado: 'Postproducción'
+      estado: 'Fase de pruebas'
     },
     {
-      nombre: 'Serie Web "Tecnología Creativa"',
+      nombre: 'Mobiliario Ergonómico para Bibliotecas',
       enlace: '#',
       estado: 'Finalizado'
+    },
+    {
+      nombre: 'Maquetas Arquitectónicas Sustentables',
+      enlace: '#',
+      estado: 'En planificación'
     }
   ];
 
   return (
     <main className={styles.mediaContainer}>
-      <section className={styles.titleSection}>
-        <h1 className={styles.mediaTitle}>
-          <img src="/img/Diseño y estructura.png" alt="Logo de Media Lab" className={styles.logo} />
-        </h1>
-      </section>
       <nav className={styles.navTabs}>
+        <button
+          className={`${styles.tab} ${activeTab === 'inicio' ? styles.activeTab : ''}`}
+          onClick={() => setActiveTab('inicio')}
+        >
+          <AiFillHome className={styles.homeIcon} /> Inicio
+        </button>
         <button
           className={`${styles.tab} ${activeTab === 'equipos' ? styles.activeTab : ''}`}
           onClick={() => setActiveTab('equipos')}
@@ -74,9 +81,45 @@ const LabDiseno: React.FC = () => {
           Proyectos
         </button>
       </nav>
+      
       <div className={styles.contentContainer}>
+        {activeTab === 'inicio' && (
+          <section className={styles.homeSection}>
+            <div className={styles.homeHeader}>
+              <div className={styles.logoContainer}>
+                <img src="/img/Diseño y estructura.png" alt="Logo de FabLab" className={styles.homeLogo} />
+              </div>
+              <div className={styles.heroImageContainer}>
+                <img src="/img/fablab-hero.jpg" alt="FabLab en acción" className={styles.heroImage} />
+              </div>
+            </div>
+            <div className={styles.homeContent}>
+              <h1 className={styles.homeTitle}>Diseño y Estructura</h1>
+              <p className={styles.homeDescription}>
+                Bienvenido al FabLab Universitario, un espacio de fabricación digital donde convergen la tecnología, 
+                la innovación y el aprendizaje colaborativo. Nuestro laboratorio está equipado con herramientas de 
+                vanguardia para dar vida a tus ideas y proyectos académicos.
+              </p>
+              <p className={styles.homeDescription}>
+                Como parte integral de la universidad, nuestro FabLab ofrece recursos y conocimientos técnicos 
+                para estudiantes de todas las disciplinas, promoviendo la experimentación, el prototipado rápido 
+                y el desarrollo de soluciones creativas a problemas reales.
+              </p>
+              <div className={styles.quickLinks}>
+                <button className={styles.quickLink} onClick={() => setActiveTab('equipos')}>
+                  Explorar Equipos
+                </button>
+                <button className={styles.quickLink} onClick={() => setActiveTab('proyectos')}>
+                  Ver Proyectos Académicos
+                </button>
+              </div>
+            </div>
+          </section>
+        )}
+        
         {activeTab === 'equipos' && (
           <section className={styles.equipmentSection}>
+            <h2 className={styles.sectionTitle}>Equipamiento del FabLab</h2>
             <div className={styles.equipmentGrid}>
               {equipmentItems.map((equipo) => (
                 <article key={equipo.nombre} className={styles.equipmentCard}>
@@ -86,7 +129,7 @@ const LabDiseno: React.FC = () => {
                   </div>
                   <div className={styles.imageContainer}>
                     <img
-                      src={equipo.imagen}
+                      src={equipo.imagen || "/img/equipment-placeholder.jpg"}
                       alt={equipo.nombre}
                       className={styles.equipmentImage}
                       loading="lazy"
@@ -101,8 +144,10 @@ const LabDiseno: React.FC = () => {
             </div>
           </section>
         )}
+        
         {activeTab === 'proyectos' && (
           <section className={styles.projectsSection}>
+            <h2 className={styles.sectionTitle}>Proyectos Académicos</h2>
             <div className={styles.projectsContainer}>
               <div className={styles.projectsTable}>
                 <table className={styles.responsiveTable}>
@@ -118,7 +163,7 @@ const LabDiseno: React.FC = () => {
                       <tr key={proyecto.nombre}>
                         <td>{proyecto.nombre}</td>
                         <td>
-                          <span className={`${styles.status} ${styles[proyecto.estado.toLowerCase().replace(' ', '')]}`}>
+                          <span className={`${styles.status} ${styles[proyecto.estado.toLowerCase().replace(/\s+/g, '')]}`}>
                             {proyecto.estado}
                           </span>
                         </td>
@@ -134,23 +179,32 @@ const LabDiseno: React.FC = () => {
               </div>
               <div className={styles.projectsInfo}>
                 <div className={styles.infoCard}>
-                  <h3 className={styles.infoTitle}>¿Cómo participar?</h3>
+                  <h3 className={styles.infoTitle}>Participa en el FabLab</h3>
                   <p className={styles.infoText}>
-                    Explora nuestros proyectos activos y descubre cómo puedes
-                    contribuir con tu talento creativo.
+                    Nuestro FabLab universitario está abierto a estudiantes, docentes e investigadores
+                    que deseen desarrollar proyectos innovadores utilizando nuestras instalaciones.
                   </p>
                   <div className={styles.statsContainer}>
                     <div className={styles.statItem}>
-                      <span className={styles.statNumber}>15+</span>
-                      <span className={styles.statLabel}>Proyectos activos</span>
+                      <span className={styles.statNumber}>20+</span>
+                      <span className={styles.statLabel}>Facultades participantes</span>
                     </div>
                     <div className={styles.statItem}>
-                      <span className={styles.statNumber}>50+</span>
-                      <span className={styles.statLabel}>Colaboradores</span>
+                      <span className={styles.statNumber}>75+</span>
+                      <span className={styles.statLabel}>Proyectos académicos</span>
                     </div>
                   </div>
+                  <div className={styles.academicInfo}>
+                    <h4 className={styles.academicTitle}>Recursos para estudiantes</h4>
+                    <ul className={styles.resourcesList}>
+                      <li>Asesoría técnica personalizada</li>
+                      <li>Talleres formativos mensuales</li>
+                      <li>Vinculación con industria local</li>
+                      <li>Apoyo a proyectos de titulación</li>
+                    </ul>
+                  </div>
                   <button className={styles.ctaButton}>
-                    Unirse a la comunidad
+                    Reservar hora de trabajo
                   </button>
                 </div>
               </div>

@@ -4,22 +4,34 @@ const CursosFabLab = () => {
   // Datos de los cursos ofrecidos en el FabLab
   const cursos = [
     {
-      nombre: "Impresión 3D y Diseño Digital",
-      descripcion: "Aprende a modelar e imprimir en 3D con tecnología de vanguardia para proyectos universitarios.",
-      imagen: "/img/Impresión 3D y Diseño Digital.jpeg",
-      video: "https://www.youtube.com/embed/videoID1"
+      nombre: "Programación",
+      descripcion: "Aprende los fundamentos de la programación y desarrolla aplicaciones innovadoras.",
+      imagen: "/img/programacion.jpeg"
     },
     {
-      nombre: "Robótica y Automatización",
-      descripcion: "Descubre el mundo de la robótica y la automatización en procesos productivos y académicos.",
-      imagen: "/img/Robótica y Automatizació.png",
-      video: "https://www.youtube.com/embed/videoID2"
+      nombre: "Impresión 3D",
+      descripcion: "Descubre el mundo de la impresión 3D y crea tus propios prototipos.",
+      imagen: "/img/impresion3d.jpeg"
     },
     {
-      nombre: "Electrónica y Programación",
-      descripcion: "Integra electrónica y programación para desarrollar proyectos innovadores.",
-      imagen: "/img/Electrónica y Programación.jpeg",
-      video: "https://www.youtube.com/embed/videoID3"
+      nombre: "Corte y Grabado Láser",
+      descripcion: "Domina el uso de máquinas de corte y grabado láser para proyectos creativos.",
+      imagen: "/img/corte_laser.jpeg"
+    },
+    {
+      nombre: "Diseño Gráfico",
+      descripcion: "Desarrolla tus habilidades en diseño gráfico con herramientas digitales avanzadas.",
+      imagen: "/img/diseno_grafico.jpeg"
+    },
+    {
+      nombre: "Robótica",
+      descripcion: "Explora el mundo de la robótica y aprende a construir y programar robots.",
+      imagen: "/img/robotica.jpeg"
+    },
+    {
+      nombre: "Vacacionales 'Fabricación Digital'",
+      descripcion: "Un curso especial para aprender sobre fabricación digital en vacaciones.",
+      imagen: "/img/vacacionales_fabricacion.jpeg"
     }
   ];
 
@@ -58,22 +70,12 @@ const CursosFabLab = () => {
                 <div className={styles.cursoInfo}>
                   <h3>{curso.nombre}</h3>
                   <p>{curso.descripcion}</p>
-                  <div className={styles.cursoMultimedia}>
-                    <iframe
-                      src={curso.video}
-                      title={curso.nombre}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className={styles.cursoVideo}
-                    ></iframe>
-                  </div>
                 </div>
               </article>
             ))}
           </div>
         </div>
       </section>
-
       {/* Artículos y Recursos (Estilo Revista) */}
       <section className={styles.articulosSection}>
         <div className={styles.contentWrapper}>

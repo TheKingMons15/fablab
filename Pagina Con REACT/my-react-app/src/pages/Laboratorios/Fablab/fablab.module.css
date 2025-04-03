@@ -14,39 +14,93 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 100vh;
-  padding: 2rem 1rem;
+  min-height: 80vh;
+  padding: 8rem 1rem;
 }
-
-/* Sección del título con el logo */
-.titleSection {
-  width: 100%;
+.headerSection {
   display: flex;
   justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+  margin-bottom: 1.5rem;
+}
+/* Estilos para la sección de inicio con logo a la izquierda y foto a la derecha */
+.inicioHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 2rem;
-  padding-top: 30%;
 }
 
-.mediaTitle {
+.logoContainer {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.logoLeft {
+  max-width: 450px;
+  height: auto;
+}
+
+.headerImageContainer {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.headerImage {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+@media (max-width: 768px) {
+  .inicioHeader {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .logoContainer, .headerImageContainer {
+    justify-content: center;
+  }
+  
+  .navTabsCenter {
+    flex-wrap: wrap;
+  }
+}
+/* Asegurarse de que el contenido fluya correctamente */
+.inicioDescription {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.navTabsCenter {
   display: flex;
   justify-content: center;
+  gap: 1rem;
 }
 
-.logo {
-  max-height: 90px;
-  object-fit: contain;
+.logoContainer {
+  flex-shrink: 0; /* Evita que el logo se reduzca */
 }
 
-/* Navegación con botones */
-.navTabs {
+.logoRight {
+  max-height: 90px; /* Tamaño del logo */
+  object-fit:cover;
+}
+
+.navTabsCenter {
   display: flex;
-  justify-content: center;
-  margin: 1rem 0 2rem;
-  gap: 1.5rem;
+  justify-content: flex-end;
+  gap: 1rem; /* Espacio más pequeño entre los botones */
+  flex-wrap: wrap;
 }
 
 .tab {
-  padding: 0.9rem 2.5rem;
+  padding: 1rem 2.5rem;
   background: #ecf0f1;
   color: #7f8c8d;
   border-radius: 30px;
@@ -56,6 +110,10 @@
   border: 2px solid transparent;
   font-size: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .tab:hover {
@@ -70,6 +128,10 @@
   box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
 }
 
+.tabIcon {
+  font-size: 1.2rem;
+}
+
 /* Contenedor de contenido */
 .contentContainer {
   padding-top: 1rem;
@@ -78,7 +140,230 @@
   justify-content: center;
 }
 
-/* Sección de equipos */
+/* Estilos para la sección de inicio */
+.inicioSection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.inicioHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.inicioTitle {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.inicioSubtitle {
+  font-size: 1.3rem;
+  color: #7f8c8d;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.inicioDescription {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+}
+
+@media (min-width: 992px) {
+  .inicioDescription {
+    grid-template-columns: 3fr 2fr;
+  }
+}
+
+.descripcionText {
+  line-height: 1.7;
+}
+
+.descripcionText h3 {
+  color: #2c3e50;
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+.descripcionText p {
+  color: #7f8c8d;
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.serviciosList {
+  list-style-type: none;
+  margin: 1.5rem 0 2rem;
+}
+
+.serviciosList li {
+  margin-bottom: 1rem;
+  padding-left: 2rem;
+  position: relative;
+  color: #7f8c8d;
+  font-size: 1.05rem;
+}
+
+.serviciosList li:before {
+  content: "•";
+  color: #27ae60;
+  font-size: 1.5rem;
+  position: absolute;
+  left: 0;
+  top: -0.2rem;
+}
+
+/* Galería en sección de inicio */
+.galeriaContainer {
+  margin-top: 2rem;
+}
+
+.galeriaTitle {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.galeriaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1.5rem;
+}
+
+.galeriaItem {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid #27ae60;
+}
+
+.galeriaItem:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(39, 174, 96, 0.25);
+}
+
+.galeriaImagen, .videoThumbnail {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.galeriaItem:hover .galeriaImagen,
+.galeriaItem:hover .videoThumbnail {
+  transform: scale(1.08);
+}
+
+.videoContainer {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.playButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background-color: rgba(39, 174, 96, 0.8);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+.playButton:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  border-style: solid;
+  border-width: 10px 0 10px 16px;
+  border-color: transparent transparent transparent white;
+}
+
+.videoContainer:hover .playButton {
+  background-color: rgba(33, 154, 82, 0.9);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.galeriaDescripcion {
+  padding: 1.2rem;
+  background-color: #f8f9fa;
+  font-size: 0.95rem;
+  color: #7f8c8d;
+}
+
+/* Próximos eventos */
+.proximosEventos {
+  margin-top: 3rem;
+}
+
+.proximosEventos h3 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.eventoCard {
+  display: flex;
+  margin-bottom: 1.5rem;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(39, 174, 96, 0.2);
+}
+
+.eventoCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(39, 174, 96, 0.2);
+}
+
+.eventoFecha {
+  background-color: #27ae60;
+  color: white;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  min-width: 100px;
+  flex-direction: column;
+}
+
+.eventoInfo {
+  padding: 1.5rem;
+  flex-grow: 1;
+}
+
+.eventoInfo h4 {
+  margin: 0 0 0.8rem 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.eventoInfo p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  line-height: 1.6;
+}
+
+/* Sección de equipos - mantenemos estilos existentes */
 .equipmentSection {
   width: 100%;
   max-width: 1200px;
@@ -94,30 +379,13 @@
   padding-bottom: 1.5rem;
 }
 
-/* Eliminamos propiedades relacionadas con el scroll horizontal */
-/* .equipmentGrid::-webkit-scrollbar {
-  height: 8px;
-}
-
-.equipmentGrid::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.equipmentGrid::-webkit-scrollbar-thumb {
-  background: #27ae60;
-  border-radius: 10px;
-} */
-
 .equipmentCard {
-  /* Eliminamos flex: 0 0 300px que forzaba un ancho fijo */
   min-height: 420px;
   background: white;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(39, 174, 96, 0.15);
   transition: all 0.3s ease;
-  /* Eliminamos scroll-snap-align: start; */
   border: 2px solid #27ae60;
   display: flex;
   flex-direction: column;
@@ -193,19 +461,6 @@
   background: #219a52;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25);
-}
-
-/* Media queries para asegurar responsividad */
-@media (max-width: 768px) {
-  .equipmentGrid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-}
-
-@media (max-width: 480px) {
-  .equipmentGrid {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Sección de proyectos */
@@ -406,9 +661,34 @@
   .statItem {
     min-width: 120px;
   }
+  
+  .inicioDescription {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
+  .headerSection {
+    padding-top: 5rem;
+  }
+  
+  .logoRight {
+    position: relative;
+    margin-bottom: 1rem;
+    right: auto;
+    top: auto;
+  }
+  
+  .navTabsCenter {
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+  
+  .tab {
+    width: 100%;
+  }
+  
   .projectsContainer {
     padding: 1.5rem;
   }
@@ -430,6 +710,10 @@
   .statItem {
     flex: 1 0 40%;
   }
+  
+  .galeriaGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 576px) {
@@ -442,9 +726,14 @@
     gap: 1.5rem;
   }
   
-  .equipmentCard {
-    flex: 0 0 260px;
-    min-height: 400px;
+  .eventoCard {
+    flex-direction: column;
+  }
+  
+  .eventoFecha {
+    padding: 1rem;
+    width: 100%;
+    min-width: auto;
   }
   
   .statsContainer {

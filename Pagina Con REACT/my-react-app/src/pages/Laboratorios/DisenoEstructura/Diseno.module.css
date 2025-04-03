@@ -1,4 +1,4 @@
-/* Aseguramos que el padding y el border se incluyan en el cálculo del ancho */
+/* Base styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -15,34 +15,21 @@
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  padding: 2rem 1rem;
+  padding: 4rem 1rem;
 }
 
-/* Sección del título con el logo */
-.titleSection {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 2rem;
-  padding-top: 30%;
-}
-
-.mediaTitle {
-  display: flex;
-  justify-content: center;
-}
-
-.logo {
-  max-height: 70px;
-  object-fit: contain;
-}
-
-/* Navegación con botones */
+/* Navegación con botones (ahora incluye botón inicio) */
 .navTabs {
   display: flex;
   justify-content: center;
   margin: 1rem 0 2rem;
   gap: 1.5rem;
+  width: 100%;
+  position: sticky;
+  top: 0;
+  background: white;
+  padding: 3rem 0;
+  z-index: 100;
 }
 
 .tab {
@@ -56,6 +43,9 @@
   border: 2px solid transparent;
   font-size: 1rem;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .tab:hover {
@@ -70,12 +60,145 @@
   box-shadow: 0 4px 10px rgba(39, 174, 96, 0.3);
 }
 
+.homeIcon {
+  font-size: 1.2rem;
+}
+
 /* Contenedor de contenido */
 .contentContainer {
   padding-top: 1rem;
   width: 100%;
   display: flex;
   justify-content: center;
+}
+
+/* Estilos para la sección de inicio */
+.homeSection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.homeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  gap: 2rem;
+}
+
+.logoContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.homeLogo {
+  max-height: 100px;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.heroImageContainer {
+  flex: 1;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(39, 174, 96, 0.2);
+}
+
+.heroImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.heroImage:hover {
+  transform: scale(1.05);
+}
+
+.homeContent {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.homeTitle {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.homeTitle:after {
+  content: '';
+  position: absolute;
+  width: 50%;
+  height: 4px;
+  background: #27ae60;
+  bottom: -10px;
+  left: 25%;
+  border-radius: 2px;
+}
+
+.homeDescription {
+  color: #7f8c8d;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  max-width: 80%;
+  margin: 0 auto 1.5rem;
+}
+
+.quickLinks {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+
+.quickLink {
+  padding: 1rem 2rem;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25);
+}
+
+.quickLink:hover {
+  background: #219a52;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(39, 174, 96, 0.3);
+}
+
+/* Encabezados de sección */
+.sectionTitle {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.sectionTitle:after {
+  content: '';
+  position: absolute;
+  width: 60%;
+  height: 4px;
+  background: #27ae60;
+  bottom: -10px;
+  left: 20%;
+  border-radius: 2px;
 }
 
 /* Sección de equipos */
@@ -94,30 +217,13 @@
   padding-bottom: 1.5rem;
 }
 
-/* Eliminamos propiedades relacionadas con el scroll horizontal */
-/* .equipmentGrid::-webkit-scrollbar {
-  height: 8px;
-}
-
-.equipmentGrid::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.equipmentGrid::-webkit-scrollbar-thumb {
-  background: #27ae60;
-  border-radius: 10px;
-} */
-
 .equipmentCard {
-  /* Eliminamos flex: 0 0 300px que forzaba un ancho fijo */
   min-height: 420px;
   background: white;
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 8px 25px rgba(39, 174, 96, 0.15);
   transition: all 0.3s ease;
-  /* Eliminamos scroll-snap-align: start; */
   border: 2px solid #27ae60;
   display: flex;
   flex-direction: column;
@@ -195,19 +301,6 @@
   box-shadow: 0 4px 12px rgba(39, 174, 96, 0.25);
 }
 
-/* Media queries para asegurar responsividad */
-@media (max-width: 768px) {
-  .equipmentGrid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  }
-}
-
-@media (max-width: 480px) {
-  .equipmentGrid {
-    grid-template-columns: 1fr;
-  }
-}
-
 /* Sección de proyectos */
 .projectsSection {
   width: 100%;
@@ -270,6 +363,7 @@
   background-color: #f8fdf9;
 }
 
+/* Estados de proyectos */
 .status {
   display: inline-block;
   padding: 0.5rem 1rem;
@@ -280,13 +374,13 @@
   min-width: 120px;
 }
 
-.enproducción {
+.endesarrollo {
   background: rgba(241, 196, 15, 0.15);
   color: #d4ac0d;
   border: 1px solid rgba(241, 196, 15, 0.3);
 }
 
-.postproducción {
+.fasedepruebas {
   background: rgba(52, 152, 219, 0.15);
   color: #2980b9;
   border: 1px solid rgba(52, 152, 219, 0.3);
@@ -296,6 +390,12 @@
   background: rgba(39, 174, 96, 0.15);
   color: #219a52;
   border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.enplanificación {
+  background: rgba(142, 68, 173, 0.15);
+  color: #8e44ad;
+  border: 1px solid rgba(142, 68, 173, 0.3);
 }
 
 .projectLink {
@@ -377,6 +477,44 @@
   font-weight: 500;
 }
 
+/* Estilos para la información académica */
+.academicInfo {
+  background: #f8f9fa;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.academicTitle {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.resourcesList {
+  list-style-position: inside;
+  padding-left: 1rem;
+  text-align: left;
+}
+
+.resourcesList li {
+  margin-bottom: 0.5rem;
+  color: #7f8c8d;
+  line-height: 1.6;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.resourcesList li::before {
+  content: "•";
+  color: #27ae60;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+}
+
 .ctaButton {
   padding: 1rem 2.5rem;
   background: #27ae60;
@@ -399,6 +537,10 @@
 
 /* Media queries para responsividad */
 @media (max-width: 992px) {
+  .homeHeader {
+    flex-direction: column;
+  }
+  
   .statsContainer {
     gap: 2rem;
   }
@@ -409,6 +551,24 @@
 }
 
 @media (max-width: 768px) {
+  .navTabs {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  
+  .homeHeader {
+    flex-direction: column;
+  }
+  
+  .homeDescription {
+    max-width: 100%;
+  }
+  
+  .quickLinks {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
   .projectsContainer {
     padding: 1.5rem;
   }
@@ -436,15 +596,32 @@
   .tab {
     padding: 0.8rem 1.5rem;
     font-size: 0.9rem;
+    flex: 1;
+    justify-content: center;
+  }
+  
+  .navTabs {
+    gap: 0.8rem;
+  }
+  
+  .homeTitle {
+    font-size: 1.8rem;
+  }
+  
+  .homeDescription {
+    font-size: 1rem;
+  }
+  
+  .quickLink {
+    width: 100%;
   }
   
   .equipmentGrid {
     gap: 1.5rem;
   }
   
-  .equipmentCard {
-    flex: 0 0 260px;
-    min-height: 400px;
+  .sectionTitle {
+    font-size: 1.6rem;
   }
   
   .statsContainer {
@@ -458,5 +635,14 @@
   
   .ctaButton {
     width: 100%;
+  }
+  
+  .responsiveTable {
+    font-size: 0.9rem;
+  }
+  
+  .responsiveTable th, 
+  .responsiveTable td {
+    padding: 0.8rem;
   }
 }

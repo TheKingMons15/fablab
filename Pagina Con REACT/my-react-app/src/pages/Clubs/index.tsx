@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import styles from './ClubsContent.module.css';
 
 const Clubs = () => {
@@ -123,7 +122,7 @@ const Clubs = () => {
               <p>Fotógrafo Profesional</p>
             </div>
             <div className={styles.integrante}>
-              <img src="/img/coordinador3.jpg" alt="Coordinador Desarrollo Web" />
+              <img src="/img/kevin.jpg" alt="Coordinador Desarrollo Web" />
               <h3>Kevin Mejia</h3>
               <p>Desarrollador Front-end</p>
             </div>

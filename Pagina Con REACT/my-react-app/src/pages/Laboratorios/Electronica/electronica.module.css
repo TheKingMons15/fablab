@@ -15,7 +15,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 100vh;
-  padding: 2rem 1rem;
+  padding: 4rem 1rem;
 }
 
 /* Sección del título con el logo */
@@ -24,7 +24,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: 2rem;
-  padding-top: 30%;
+  padding-top: 5%;
 }
 
 .mediaTitle {
@@ -199,6 +199,13 @@
 @media (max-width: 768px) {
   .equipmentGrid {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+  .titleSection {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    padding-top: 30%;
   }
 }
 
