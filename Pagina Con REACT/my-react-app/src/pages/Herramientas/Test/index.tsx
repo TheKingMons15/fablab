@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaTrophy, FaClock, FaSmile, FaGraduationCap } from 'react-icons/fa';
 import styles from './Test.module.css';
 
