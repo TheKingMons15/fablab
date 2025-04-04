@@ -36,7 +36,7 @@ const Header: React.FC = () => {
     {
       name: 'Herramientas',
       submenu: [
-        { name: 'Test', path: '/herramientas/reservas' },
+        { name: 'Test', path: '/herramientas/test' },
       ]
     },
     { name: 'Club', path: '/clubs' },
