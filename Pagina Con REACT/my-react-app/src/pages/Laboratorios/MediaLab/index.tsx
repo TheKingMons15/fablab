@@ -90,7 +90,7 @@ const MediaLab: React.FC = () => {
                 <img src="/img/Medialab.png" alt="Logo de Media Lab" className={styles.homeLogo} />
               </div>
               <div className={styles.heroImageContainer}>
-                <img src="/img/hero-image.jpg" alt="FabLab en acción" className={styles.heroImage} />
+                <img src="/img/IMG_9648.JPG" alt="FabLab en acción" className={styles.heroImage} />
               </div>
             </div>
             

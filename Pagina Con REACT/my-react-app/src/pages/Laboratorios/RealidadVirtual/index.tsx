@@ -80,7 +80,7 @@ const RealidadVirtual = () => {
               </div>
               <div className={styles.homeImageContainer}>
                 <img 
-                  src="/img/laboratorio-realidad-virtual.jpg" 
+                  src="/img/IMG_96562.jpg" 
                   alt="Laboratorio de Realidad Virtual" 
                   className={styles.homeImage} 
                 />

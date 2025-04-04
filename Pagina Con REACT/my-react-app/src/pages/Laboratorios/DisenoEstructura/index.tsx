@@ -13,25 +13,25 @@ const LabDiseno: React.FC = () => {
     {
       nombre: "CNC Formato Completo",
       icono: <SiCncf className={styles.equipmentIcon} />,
-      imagen: "",
+      imagen: "/img/CNC-Formato-Completo.jpg",
       descripcion: "Es un equipo automatizado que utiliza instrucciones programadas por computadora para realizar operaciones de mecanizado con alta precisión. Aquí te presento una descripción detallada."
     },
     {
       nombre: "Corte Laser Mediana",
       icono: <GiLaserPrecision className={styles.equipmentIcon} />,
-      imagen: "",
+      imagen: "/img/Corte-Laser-Mediana.jpg",
       descripcion: " Utiliza un láser para cortar y grabar materiales como madera, acrilico, cartón y tela."
     },
     {
       nombre: "Plotters",
       icono: <AiOutlineBoxPlot className={styles.equipmentIcon} />,
-      imagen: "",
+      imagen: "/img/Plotters.jpg",
       descripcion: "Dispositivos de salida que utilizan para imprimir gráficos vectoriales y dibujos lineales con alta precisión"
     },
     {
       nombre: "Laminadura de vinilo",
       icono: <RiComputerFill className={styles.equipmentIcon} />,
-      imagen: "",
+      imagen: "/img/Laminadura-de-vinilo.jpg",
       descripcion: "Aplica una capa protectora de vinilo sobre una superficie impresa."
     }
   ];
