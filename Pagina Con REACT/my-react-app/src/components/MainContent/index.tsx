@@ -184,29 +184,25 @@ const MainContent = () => {
       </section>
 
       {/* Directores */}
+      
       <section className={styles.directoresSection}>
-        <div className={styles.contentWrapper}>
-          <div className={styles.directoresGrid}>
-            {['Director de Carrera', 'Director del FabLab'].map((cargo) => (
-              <article key={cargo} className={styles.directorCard}>
-                <img
-                  src="/img/direc.png"
-                  alt={cargo}
-                  loading="lazy"
-                />
-                <div className={styles.directorInfo}>
-                  <h3>{cargo}</h3>
-                  <p>
-                    {cargo.includes('Carrera')
-                      ? 'Liderando la excelencia académica y el desarrollo profesional.'
-                      : 'Impulsando la innovación y la creatividad tecnológica.'}
-                  </p>
-                </div>
-              </article>
-            ))}
-          </div>
+  <div className={styles.contentWrapper}>
+    <div className={styles.directoresGrid}>
+      <article className={`${styles.directorCard} ${styles.singleDirector}`}>
+        <img
+          src="/img/IngJeffry.jpg"
+          alt="Director del FabLab"
+          loading="lazy"
+        />
+        <div className={styles.directorInfo}>
+          <h2>Msc. Jeffry Naranjo</h2>
+          <h3>Director del FabLab</h3>
+          <p>Impulsando la innovación y la creatividad tecnológica.</p>
         </div>
-      </section>
+      </article>
+    </div>
+  </div>
+</section>
     </main>
   );
 };

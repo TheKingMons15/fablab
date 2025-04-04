@@ -317,7 +317,44 @@
 .inactive {
   opacity: 0.2;
 }
+/* Estilo específico para la tarjeta única del director */
+.singleDirector {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 3px solid var(--color-primary-green); /* Línea verde alrededor de la tarjeta */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  border-radius: 15px;
+  overflow: hidden;
+  transition: var(--transition-smooth);
+}
 
+.singleDirector img {
+  width: 100%;
+  height: 650px; /* Altura aumentada para mostrar la imagen completa */
+  object-fit: cover;
+  object-position: top; /* Asegura que la cabeza sea visible */
+}
+
+.singleDirector .directorInfo {
+  width: 100%;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Media query para dispositivos más pequeños */
+@media (max-width: 768px) {
+  .singleDirector {
+    max-width: 90%;
+  }
+  
+  .singleDirector img {
+    height: 400px; /* Incluso más alto en dispositivos móviles si es necesario */
+  }
+}
 /* Responsive Design */
 @media (max-width: 1200px) {
   .carruselContainer {
