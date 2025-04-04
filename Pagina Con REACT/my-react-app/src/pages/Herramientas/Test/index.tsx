@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaTrophy, FaClock, FaSmile, FaGraduationCap } from 'react-icons/fa';
 import styles from './Test.module.css';
 
@@ -10,12 +10,12 @@ interface Feature {
   color: string;
 }
 
-interface PruebaNinos {
+interface PruebasNinos {
   id: number;
   nombre: string;
   descripcion: string;
   enlace: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
   color: string;
   nivel: string;
   tiempo: string;
@@ -27,14 +27,14 @@ const Test: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'indicaciones' | 'pruebas'>('indicaciones');
 
   // Data for tests
-  const pruebasNinos: PruebaNinos[] = [
+  const pruebasNinos: PruebasNinos[] = [
     {
       id: 1,
       nombre: 'Pro-Cálculo para 6 años',
       descripcion: 'Ejercicios básicos de sumas y restas con apoyo visual para primeros aprendizajes.',
       enlace: '/test/ProCalculo6',
       icon: <FaChild size={32} />,
-      color: '#006633', // Verde primario
+      color: '#006633',
       nivel: 'Inicial',
       tiempo: '5-10 min',
       preguntas: 10
@@ -45,7 +45,7 @@ const Test: React.FC = () => {
       descripcion: 'Operaciones matemáticas con lógica sencilla y problemas cotidianos.',
       enlace: '/test/pro-calculo-7',
       icon: <FaCalculator size={32} />,
-      color: '#009955', // Verde secundario
+      color: '#009955',
       nivel: 'Intermedio',
       tiempo: '10-15 min',
       preguntas: 15
@@ -56,21 +56,21 @@ const Test: React.FC = () => {
       descripcion: 'Desafíos matemáticos con múltiples pasos y ejercicios interactivos avanzados.',
       enlace: '/test/pro-calculo-8',
       icon: <FaGraduationCap size={32} />,
-      color: '#007744', // Verde intermedio
+      color: '#007744',
       nivel: 'Avanzado',
       tiempo: '15-20 min',
       preguntas: 20
     },
     {
       id: 4,
-      nombre: 'Reto Matemático Especial',
-      descripcion: 'Problemas desafiantes para mentes curiosas que quieren ir más allá.',
-      enlace: '/test/reto-matematico',
+      nombre: 'Memoria Matemática',
+      descripcion: 'Empareja operaciones con sus resultados en este divertido juego de memoria.',
+      enlace: '/test/ProCalculoEspecial',
       icon: <FaTrophy size={32} />,
-      color: '#FFCE00', // Amarillo acento
-      nivel: 'Experto',
-      tiempo: '20-25 min',
-      preguntas: 25
+      color: '#FFCE00',
+      nivel: 'Especial',
+      tiempo: '2 min',
+      preguntas: 6
     }
   ];
 
