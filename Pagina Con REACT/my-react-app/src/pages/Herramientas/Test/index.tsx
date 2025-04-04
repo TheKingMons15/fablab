@@ -1,5 +1,5 @@
 import React, { JSX, useState } from 'react';
-import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaTrophy, FaClock, FaSmile, FaGraduationCap } from 'react-icons/fa';
+import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaClock, FaSmile, FaGraduationCap } from 'react-icons/fa';
 import styles from './Test.module.css';
 
 // Interface definitions
@@ -90,7 +90,7 @@ const Test: React.FC = () => {
     <section className={styles.titleSection} style={{ width: '100%' }}>
       <div className={styles.logoContainer}>
         <img 
-          src="/img/Medialab.png" 
+          src="/img/test.png" 
           alt="Logo de Media Lab" 
           className={styles.logo}
         />

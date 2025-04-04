@@ -5,7 +5,7 @@ const Clubs = () => {
     {
       titulo: "Social Media",
       descripcion: "Creamos y gestionamos estrategias digitales innovadoras para marcas",
-      imagenes: ["/img/Social1.jpg", "/img/Social2.jpg"],
+      imagenes: ["/img/sm1.jpg", "/img/sm2.jpg"],
       detalles: [
         "Gestión de redes sociales",
         "Creación de contenido viral",
@@ -16,7 +16,7 @@ const Clubs = () => {
     {
       titulo: "Fotografía",
       descripcion: "Producción de imágenes profesionales para diferentes plataformas",
-      imagenes: ["/img/foto1.jpg", "/img/foto2.jpg"],
+      imagenes: ["/img/foto1.jpeg", "/img/foto2.jpg"],
       detalles: [
         "Fotografía de producto",
         "Edición profesional",
@@ -46,7 +46,7 @@ const Clubs = () => {
             <h1>MediaLab Club</h1>
             <p className={styles.subtitulo}>Innovación digital en redes, fotografía y desarrollo web</p>
             <div className={styles.heroImages}>
-              <img src="/img/Equipo.jpg" alt="Equipo MediaLab" loading="lazy" />
+              <img src="/img/equipo.jpg" alt="Equipo MediaLab" loading="lazy" />
               <img src="/img/Trbajao en Equipo.jpg" alt="Trabajo en equipo" loading="lazy" />
             </div>
           </div>
