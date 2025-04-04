@@ -12,31 +12,31 @@ const LabElectronica = () => {
     {
       nombre: "CNC pequeña",
       icono: <SiCncf className={styles.equipmentIcon} />,
-      imagen: "",
+      imagen: "/img/CNC-pequeña.jpg",
       descripcion: "es un equipo automatizado que utiliza instrucciones programadas por computadora para realizar operaciones de mecanizado con alta precisión. Aquí te presento una descripción detallada."
     },
     {
       nombre: "Microscopios",
       icono: <GiMicroscope className={styles.equipmentIcon} />,
-      imagen: "",
+      imagen: "/img/Microscopios.jpg",
       descripcion: "Utilizado para examinar la microestructura de los materiales."
     },
     {
       nombre: "Estacion de soladura de infrarojos",
       icono: <GiSolderingIron className={styles.equipmentIcon} />,
-      imagen: "",
+      imagen: "/img/estacion-de-soladura-de-infrarojos.jpg",
       descripcion: "Se utiliza para soldar y desoldar componentes de montaje superficial, la estacion emplea radiación infraroja paa calentar los componentes y la placa de circuitos impreso (PCB)."
     },
     {
       nombre: "Estacion de soldadura",
       icono: <GiSolderingIron className={styles.equipmentIcon} />,
-      imagen: "",
+      imagen: "/img/Estacion-de-soladura.jpg",
       descripcion: "Equipos para soldar componentes electronicos en placas de circuito impreso."
     },
     {
       nombre: "Servidores",
       icono: <VscServerEnvironment className={styles.equipmentIcon} />,
-      imagen: "",
+      imagen: "/img/Servidor.jpg",
       descripcion: "Servidores dedicados para alamcenamiento de datos, virtualizacion de entornos y desarrollo web."
     }
   ];
@@ -102,7 +102,7 @@ const LabElectronica = () => {
                 <p className={styles.homeSubtitle}>Laboratorio de Fabricación Digital y Electrónica</p>
               </div>
               <div className={styles.heroImageContainer}>
-                <img src="/api/placeholder/600/400" alt="Laboratorio de Electrónica" className={styles.heroImage} />
+                <img src="/img/IMG_9538.JPG" alt="Laboratorio de Electrónica" className={styles.heroImage} />
               </div>
             </div>
             
