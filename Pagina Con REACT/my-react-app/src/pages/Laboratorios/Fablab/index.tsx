@@ -10,13 +10,13 @@ const FabLab = () => {
     {
       nombre: "Impresora 3D Anycubic",
       icono: <Gi3dMeeple className={styles.equipmentIcon} />,
-      imagen: "/img/Impresora-3D-Anycubic.jpg",
+      imagen: "/img/anycubit.jpg",
       descripcion: "Estas impresoras utilizan resina líquida fotosensible que se solidifica mediante luz UV para crear objetos tridimensionales."
     },
     {
       nombre: "Impresora 3D BambuLab Carbon",
       icono: <Gi3dMeeple className={styles.equipmentIcon} />,
-      imagen: "/img/Impresora-3D-BambuLab-Carbon.jpg",
+      imagen: "/img/Impresora-3D-BambuLab-Carbo.jpg",
       descripcion: "En la impresión 3D de resina, la placa de construcción es la plataforma donde se adhiere la primera capa del objeto impreso."
     },
     {
@@ -34,7 +34,7 @@ const FabLab = () => {
     {
       nombre: "Lavadora de Resina",
       icono: <Gi3dMeeple className={styles.equipmentIcon} />,
-      imagen: "/img/Lavado-de-Resina.jpg",
+      imagen: "/img/Lavadora-de-Resina.jpg",
       descripcion: "Equipo especializado para el proceso de limpieza y curado de piezas impresas en resina."
     },
     {
@@ -46,13 +46,13 @@ const FabLab = () => {
     {
       nombre: "Grabado Láser de Escritorio Falcon 2",
       icono: <Gi3dMeeple className={styles.equipmentIcon} />,
-      imagen: "/img/Láser-de-Escritorio-Falcon-2.jpg",
+      imagen: "/img/Grabado-Láser-de-Escritorio-Falcon-2.jpg",
       descripcion: "Creality Falcon 2, equipo compacto de corte y grabado láser de alta precisión."
     },
     {
       nombre: "Sublimadora",
       icono: <Gi3dMeeple className={styles.equipmentIcon} />,
-      imagen: "/img/Sublimación.jpg",
+      imagen: "/img/Sublimadora.jpg",
       descripcion: "Equipo para sublimación en textiles, tazas y otros materiales personalizados."
     },
     {
@@ -128,7 +128,7 @@ const FabLab = () => {
               </div>
               <div className={styles.headerImageContainer}>
                 <img 
-                  src="/img/fablabg.jpg" 
+                  src="/img/IMG_9610.JPG" 
                   alt="Espacio principal del FabLab" 
                   className={styles.headerImage}
                 />
