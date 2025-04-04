@@ -61,17 +61,6 @@ const Test: React.FC = () => {
       tiempo: '15-20 min',
       preguntas: 20
     },
-    {
-      id: 4,
-      nombre: 'Memoria Matemática',
-      descripcion: 'Empareja operaciones con sus resultados en este divertido juego de memoria.',
-      enlace: '/test/ProCalculoEspecial',
-      icon: <FaTrophy size={32} />,
-      color: '#FFCE00',
-      nivel: 'Especial',
-      tiempo: '2 min',
-      preguntas: 6
-    }
   ];
 
   // Data for features
