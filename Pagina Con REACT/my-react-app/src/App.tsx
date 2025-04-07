@@ -12,7 +12,7 @@
   import RealidadVirtual from './pages/Laboratorios/RealidadVirtual';
   import FabLab from './pages/Laboratorios/Fablab';
   import Herramientas from './pages/Herramientas';
-  import Test from './pages/Herramientas/Test';
+  import Test from './pages/Herramientas/Test/index';
     import ProCalculo6 from './pages/Herramientas/Test/ProCalculo6';
     import ProCalculo7 from './pages/Herramientas/Test/ProCalculo7';
     import ProCalculo8 from './pages/Herramientas/Test/ProCalculo8';
