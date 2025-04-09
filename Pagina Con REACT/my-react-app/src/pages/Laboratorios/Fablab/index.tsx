@@ -81,16 +81,6 @@ const FabLab = () => {
     }
   ];
 
-  // Galería para la sección de inicio
-  const galeriaInicio = [
-
-    {
-      tipo: 'video',
-      url: '/videos/fablab-tour.mp4',
-      thumbnail: '/img/fablab-tour-thumbnail.jpg',
-      descripcion: 'Tour virtual por nuestras instalaciones'
-    },
-  ];
 
   return (
     <main className={styles.mediaContainer}>
@@ -162,38 +152,6 @@ const FabLab = () => {
                   <li>Talleres y capacitaciones</li>
                   <li>Espacio de coworking para proyectos creativos</li>
                 </ul>
-                
-                <button className={styles.ctaButton}>
-                  Reserva nuestros equipos
-                </button>
-              </div>
-              
-              <div className={styles.galeriaContainer}>
-                <h3 className={styles.galeriaTitle}></h3>
-                <div className={styles.galeriaGrid}>
-                  {galeriaInicio.map((item, index) => (
-                    <div key={index} className={styles.galeriaItem}>
-                      {item.tipo === 'imagen' ? (
-                        <img 
-                          src={item.url} 
-                          alt={item.descripcion} 
-                          className={styles.galeriaImagen}
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className={styles.videoContainer}>
-                          <img 
-                            src={item.thumbnail} 
-                            alt={item.descripcion} 
-                            className={styles.videoThumbnail}
-                          />
-                          <div className={styles.playButton}></div>
-                        </div>
-                      )}
-                      <p className={styles.galeriaDescripcion}>{item.descripcion}</p>
-                    </div>
-                  ))}
-                </div>
               </div>
             </div>
           </section>

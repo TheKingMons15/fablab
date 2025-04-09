@@ -30,7 +30,7 @@
 }
 
 .logo {
-  width: 350px; /* Aumentado más el tamaño */
+  width: 290px; /* Aumentado más el tamaño */
   height: auto;
   filter: brightness(0) invert(1);
 }

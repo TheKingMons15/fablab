@@ -117,25 +117,6 @@ const MediaLab: React.FC = () => {
                   </p>
                 </div>
               </div>
-              
-              <div className={styles.statsContainer}>
-                <div className={styles.statItem}>
-                  <span className={styles.statNumber}>15+</span>
-                  <span className={styles.statLabel}>Equipos disponibles</span>
-                </div>
-                <div className={styles.statItem}>
-                  <span className={styles.statNumber}>3</span>
-                  <span className={styles.statLabel}>Laboratorios especializados</span>
-                </div>
-                <div className={styles.statItem}>
-                  <span className={styles.statNumber}>50+</span>
-                  <span className={styles.statLabel}>Proyectos realizados</span>
-                </div>
-              </div>
-              
-              <button className={styles.ctaButton}>
-                Reservar espacio
-              </button>
             </div>
           </section>
         )}

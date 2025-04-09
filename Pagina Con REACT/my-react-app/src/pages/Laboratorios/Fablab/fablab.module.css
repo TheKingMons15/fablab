@@ -73,8 +73,10 @@
 /* Asegurarse de que el contenido fluya correctamente */
 .inicioDescription {
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  justify-content: center; /* centra horizontalmente */
+  align-items: center;     /* centra verticalmente */
+  padding: 2rem;
+  background-color: #f5f5f5; /* mantiene el color de fondo */
 }
 
 .navTabsCenter {
@@ -175,12 +177,16 @@
 
 @media (min-width: 992px) {
   .inicioDescription {
-    grid-template-columns: 3fr 2fr;
+    grid-template-columns: 1fr; /* Cambiado de 3fr 2fr a 1fr para centrar */
   }
 }
 
+/* Añadimos estilo para centrar el texto en descripcionText */
 .descripcionText {
   line-height: 1.7;
+  text-align: center; /* Centramos el texto */
+  max-width: 800px; /* Limitamos el ancho para mejor legibilidad */
+  margin: 0 auto; /* Centra el bloque de texto */
 }
 
 .descripcionText h3 {
@@ -196,17 +202,23 @@
   font-size: 1.1rem;
 }
 
+/* Modificamos el estilo de la lista para que se alinee mejor al centro */
 .serviciosList {
   list-style-type: none;
-  margin: 1.5rem 0 2rem;
+  margin: 1.5rem auto 2rem; /* Centrado horizontal con auto */
+  padding-left: 0; /* Eliminamos el padding izquierdo */
+  display: inline-block; /* Para que el ancho se ajuste al contenido */
+  text-align: left; /* El texto de los items sigue alineado a la izquierda */
 }
 
+/* Ajustamos el margen de los elementos de la lista */
 .serviciosList li {
   margin-bottom: 1rem;
-  padding-left: 2rem;
+  padding-left: 1.5rem; /* Reducimos el padding para mejor alineación */
   position: relative;
   color: #7f8c8d;
   font-size: 1.05rem;
+  text-align: left; /* Aseguramos que el texto de cada item esté alineado a la izquierda */
 }
 
 .serviciosList li:before {

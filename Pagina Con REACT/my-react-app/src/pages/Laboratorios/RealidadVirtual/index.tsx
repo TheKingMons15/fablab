@@ -100,8 +100,6 @@ const RealidadVirtual = () => {
                 de participar en proyectos innovadores que combinan arte, tecnología y comunicación.
               </p>
               <div className={styles.homeButtons}>
-                <button className={styles.primaryButton}>Explorar equipos</button>
-                <button className={styles.secondaryButton}>Ver proyectos</button>
               </div>
             </div>
           </section>

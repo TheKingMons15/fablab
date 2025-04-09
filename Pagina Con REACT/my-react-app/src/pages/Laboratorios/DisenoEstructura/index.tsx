@@ -105,14 +105,7 @@ const LabDiseno: React.FC = () => {
                 para estudiantes de todas las disciplinas, promoviendo la experimentación, el prototipado rápido 
                 y el desarrollo de soluciones creativas a problemas reales.
               </p>
-              <div className={styles.quickLinks}>
-                <button className={styles.quickLink} onClick={() => setActiveTab('equipos')}>
-                  Explorar Equipos
-                </button>
-                <button className={styles.quickLink} onClick={() => setActiveTab('proyectos')}>
-                  Ver Proyectos Académicos
-                </button>
-              </div>
+
             </div>
           </section>
         )}
@@ -194,18 +187,6 @@ const LabDiseno: React.FC = () => {
                       <span className={styles.statLabel}>Proyectos académicos</span>
                     </div>
                   </div>
-                  <div className={styles.academicInfo}>
-                    <h4 className={styles.academicTitle}>Recursos para estudiantes</h4>
-                    <ul className={styles.resourcesList}>
-                      <li>Asesoría técnica personalizada</li>
-                      <li>Talleres formativos mensuales</li>
-                      <li>Vinculación con industria local</li>
-                      <li>Apoyo a proyectos de titulación</li>
-                    </ul>
-                  </div>
-                  <button className={styles.ctaButton}>
-                    Reservar hora de trabajo
-                  </button>
                 </div>
               </div>
             </div>

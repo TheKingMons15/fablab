@@ -1,6 +1,36 @@
-import { FaCalendarAlt, FaVideo, FaPhotoVideo } from 'react-icons/fa';
+import { FaCalendarAlt, FaVideo, FaPhotoVideo, FaExternalLinkAlt } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
 import styles from './eventosContent.module.css';
+
+// Componente para renderizar videos de YouTube
+const YouTubeEmbed = ({ videoId, title }: { videoId: string, title: string }) => {
+  // Construir URL de inserción correcta para YouTube
+  const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+  
+  return (
+    <div className={styles.videoContainer}>
+      <h3 className={styles.videoTitle}>{title}</h3>
+      <iframe
+        src={embedUrl}
+        title={title}
+        className={styles.videoFrame}
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
+      <div className={styles.videoCaption}>
+        <a 
+          href={`https://www.youtube.com/watch?v=${videoId}`} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className={styles.videoLink}
+        >
+          <FaExternalLinkAlt /> Ver en YouTube
+        </a>
+      </div>
+    </div>
+  );
+};
 
 const Eventos = () => {
   const eventImages = [
@@ -19,6 +49,18 @@ const Eventos = () => {
     }, 5000);
     return () => clearInterval(interval);
   }, [eventImages.length]);
+
+  // Solo videos de YouTube con ID extraído
+  const eventVideos = [
+    {
+      id: "o4WaCiZ0RnQ", // Ejemplo de ID de video de YouTube
+      title: "Workshop de Innovación"
+    },
+    {
+      id: "aO5Gb2b3NX0", // Otro ejemplo
+      title: "Charla sobre Fabricación Digital"
+    }
+  ];
 
   const upcomingEvents = [
     {
@@ -51,11 +93,6 @@ const Eventos = () => {
       description: "Taller práctico de construcción y programación de robots",
       image: "/img/Workshop de robotica.webp"
     }
-  ];
-
-  const eventVideos = [
-    "https://www.youtube.com/embed/ejemplo1",
-    "https://www.youtube.com/embed/ejemplo2"
   ];
 
   return (
@@ -135,14 +172,7 @@ const Eventos = () => {
           </h2>
           <div className={styles.videoGrid}>
             {eventVideos.map((video, index) => (
-              <div key={index} className={styles.videoContainer}>
-                <iframe
-                  src={video}
-                  title={`Evento video ${index + 1}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
+              <YouTubeEmbed key={index} videoId={video.id} title={video.title} />
             ))}
           </div>
         </div>

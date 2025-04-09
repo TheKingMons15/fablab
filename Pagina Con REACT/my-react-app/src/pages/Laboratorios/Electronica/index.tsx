@@ -3,7 +3,7 @@ import styles from './electronica.module.css';
 import { SiCncf } from 'react-icons/si';
 import { VscServerEnvironment } from 'react-icons/vsc';
 import { GiMicroscope, GiSolderingIron } from 'react-icons/gi';
-import { FaHome, FaRobot, FaShip, FaTools } from 'react-icons/fa';
+import { FaHome, FaShip, FaTools } from 'react-icons/fa';
 
 const LabElectronica = () => {
   const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'proyectos'>('inicio');
@@ -98,8 +98,6 @@ const LabElectronica = () => {
             <div className={styles.homeHeader}>
               <div className={styles.logoContainer}>
                 <img src="/img/Electronica.png" alt="Logo de Electrónica Lab" className={styles.homeLogo} />
-                <h1 className={styles.homeTitle}>FABLAB Electrónica</h1>
-                <p className={styles.homeSubtitle}>Laboratorio de Fabricación Digital y Electrónica</p>
               </div>
               <div className={styles.heroImageContainer}>
                 <img src="/img/IMG_9538.JPG" alt="Laboratorio de Electrónica" className={styles.heroImage} />
@@ -118,24 +116,6 @@ const LabElectronica = () => {
                   Ofrecemos acceso a equipamiento especializado, asesoría técnica y un entorno colaborativo donde estudiantes, 
                   profesores e investigadores pueden dar vida a sus ideas y proyectos tecnológicos.
                 </p>
-              </div>
-              
-              <div className={styles.featuresGrid}>
-                <div className={styles.featureCard}>
-                  <FaTools className={styles.featureIcon} />
-                  <h3>Fabricación Digital</h3>
-                  <p>Equipamiento de precisión para materializar diseños electrónicos</p>
-                </div>
-                <div className={styles.featureCard}>
-                  <FaShip className={styles.featureIcon} />
-                  <h3>Electrónica Avanzada</h3>
-                  <p>Componentes y herramientas para desarrollo de circuitos</p>
-                </div>
-                <div className={styles.featureCard}>
-                  <FaRobot className={styles.featureIcon} />
-                  <h3>Robótica</h3>
-                  <p>Plataformas para experimentación y creación de sistemas robóticos</p>
-                </div>
               </div>
             </div>
           </section>
@@ -230,12 +210,6 @@ const LabElectronica = () => {
                     </div>
                   </div>
                   <div className={styles.actionButtons}>
-                    <button className={styles.ctaButton}>
-                      Solicitar acceso
-                    </button>
-                    <button className={styles.secondaryButton}>
-                      Proponer proyecto
-                    </button>
                   </div>
                 </div>
               </div>
