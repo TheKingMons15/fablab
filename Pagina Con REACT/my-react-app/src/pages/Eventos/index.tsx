@@ -53,11 +53,11 @@ const Eventos = () => {
   // Solo videos de YouTube con ID extraído
   const eventVideos = [
     {
-      id: "o4WaCiZ0RnQ", // Ejemplo de ID de video de YouTube
+      id: "", // Ejemplo de ID de video de YouTube
       title: "Workshop de Innovación"
     },
     {
-      id: "aO5Gb2b3NX0", // Otro ejemplo
+      id: "", // Otro ejemplo
       title: "Charla sobre Fabricación Digital"
     }
   ];

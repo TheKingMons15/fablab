@@ -40,7 +40,71 @@
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+/* Estilos para los botones de inscripción */
+.registroWrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
 
+.registroBtn {
+  display: inline-block;
+  background-color: #FFCE00;
+  color: #006633;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.8rem 1.8rem;
+  border-radius: 2rem;
+  text-decoration: none;
+  box-shadow: 0 5px 15px rgba(255, 206, 0, 0.3);
+  transition: all 0.3s ease;
+  border: 2px solid #FFCE00;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.registroBtn:hover {
+  background-color: #006633;
+  color: #FFCE00;
+  box-shadow: 0 8px 20px rgba(0, 102, 51, 0.4);
+  transform: translateY(-3px);
+  border-color: #006633;
+}
+
+.registroBtn:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 10px rgba(0, 102, 51, 0.3);
+}
+
+/* Estilos específicos para botones en secciones con fondo verde */
+.proyectosSection .registroBtn {
+  background-color: white;
+  color: #006633;
+  border: 2px solid white;
+}
+
+.proyectosSection .registroBtn:hover {
+  background-color: transparent;
+  color: white;
+  border-color: white;
+}
+
+/* Estilos responsive para los botones */
+@media (max-width: 768px) {
+  .registroBtn {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .registroBtn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+    width: 100%;
+    text-align: center;
+  }
+}
 .subtitulo {
   font-size: 1.2rem;
   margin-bottom: 2.5rem;

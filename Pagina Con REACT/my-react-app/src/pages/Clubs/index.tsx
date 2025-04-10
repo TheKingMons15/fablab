@@ -25,14 +25,14 @@ const Clubs = () => {
       ]
     },
     {
-      titulo: "Diseño Web",
-      descripcion: "Desarrollo de sitios web modernos y funcionales",
+      titulo: "Periodismo",
+      descripcion: "Desarrollo de contenidos informativos y reportajes de actualidad",
       imagenes: ["/img/web1.jpg", "/img/web2.jpg"],
       detalles: [
-        "Diseño responsive",
-        "UX/UI avanzado",
-        "Desarrollo front-end",
-        "Optimización SEO"
+        "Redacción periodística",
+        "Investigación de temas",
+        "Creación de reportajes",
+        "Periodismo digital"
       ]
     }
   ];
@@ -44,10 +44,15 @@ const Clubs = () => {
         <div className={styles.contentWrapper}>
           <div className={styles.heroContent}>
             <h1>MediaLab Club</h1>
-            <p className={styles.subtitulo}>Innovación digital en redes, fotografía y desarrollo web</p>
+            <p className={styles.subtitulo}>Innovación digital en redes, fotografía y periodismo</p>
             <div className={styles.heroImages}>
               <img src="/img/equipo.jpg" alt="Equipo MediaLab" loading="lazy" />
               <img src="/img/Trbajao en Equipo.jpg" alt="Trabajo en equipo" loading="lazy" />
+            </div>
+            <div className={styles.registroWrapper}>
+              <a href="https://forms.office.com/r/8RHjyS29j0?origin=lprLink" className={styles.registroBtn} target="_blank" rel="noopener noreferrer">
+                Inscríbete Ahora
+              </a>
             </div>
           </div>
         </div>
@@ -76,6 +81,11 @@ const Clubs = () => {
                     <li key={i}>{detalle}</li>
                   ))}
                 </ul>
+                <div className={styles.registroWrapper}>
+                  <a href="https://forms.office.com/r/8RHjyS29j0?origin=lprLink" className={styles.registroBtn} target="_blank" rel="noopener noreferrer">
+                    Inscríbete en {area.titulo}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
@@ -103,6 +113,11 @@ const Clubs = () => {
               <p>Imágenes profesionales para marca</p>
             </div>
           </div>
+          <div className={styles.registroWrapper}>
+            <a href="https://forms.office.com/r/8RHjyS29j0?origin=lprLink" className={styles.registroBtn} target="_blank" rel="noopener noreferrer">
+              Inscríbete en un Proyecto
+            </a>
+          </div>
         </div>
       </section>
 
@@ -126,6 +141,11 @@ const Clubs = () => {
               <h3>Kevin Mejia</h3>
               <p>Desarrollador Front-end</p>
             </div>
+          </div>
+          <div className={styles.registroWrapper}>
+            <a href="https://forms.office.com/r/8RHjyS29j0?origin=lprLink" className={styles.registroBtn} target="_blank" rel="noopener noreferrer">
+              Únete a Nuestro Equipo
+            </a>
           </div>
         </div>
       </section>
