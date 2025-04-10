@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './electronica.module.css';
 import { SiCncf } from 'react-icons/si';
 import { VscServerEnvironment } from 'react-icons/vsc';
@@ -7,6 +7,27 @@ import { FaHome, FaShip, FaTools } from 'react-icons/fa';
 
 const LabElectronica = () => {
   const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'proyectos'>('inicio');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // Imágenes para el carrusel
+  const carouselImages = [
+    "/img/elec/IMG_9546.JPG",
+    "/img/elec/IMG_9542.JPG",
+    "/img/elec/IMG_9535.JPG",
+    "/img/elec/IMG_9507.JPG",
+    "/img/elec/robotica.jpeg"
+  ];
+  
+  // Efecto para el carrusel automático
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prevSlide) => 
+        prevSlide === carouselImages.length - 1 ? 0 : prevSlide + 1
+      );
+    }, 3000); // Cambio de imagen cada 3 segundos
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const equipmentItems = [
     {
@@ -99,8 +120,19 @@ const LabElectronica = () => {
               <div className={styles.logoContainer}>
                 <img src="/img/Electronica.png" alt="Logo de Electrónica Lab" className={styles.homeLogo} />
               </div>
-              <div className={styles.heroImageContainer}>
-                <img src="/img/IMG_9538.JPG" alt="Laboratorio de Electrónica" className={styles.heroImage} />
+              <div className={styles.carouselContainer}>
+                {carouselImages.map((image, index) => (
+                  <div 
+                    key={index}
+                    className={styles.carouselSlide}
+                    style={{
+                      opacity: currentSlide === index ? 1 : 0,
+                      transition: 'opacity 0.8s ease-in-out'
+                    }}
+                  >
+                    <img src={image} alt={`Imagen del laboratorio ${index + 1}`} className={styles.carouselImage} />
+                  </div>
+                ))}
               </div>
             </div>
             

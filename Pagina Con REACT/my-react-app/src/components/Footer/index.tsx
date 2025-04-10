@@ -32,9 +32,9 @@ const Footer: React.FC = () => {
         <div className={styles.footerSection}>
           <h3>Contacto</h3>
           <address className={styles.contactInfo}>
-          <p>Teléfono: <a href="https://wa.link/o9bz08" target="_blank">+593 99 909 0816</a></p>
+            <p>Teléfono: <a href="https://wa.link/o9bz08" target="_blank">+593 99 909 0816</a></p>
             <p>Email: <a href="mailto:contacto@fablab.com">contacto@fablab.com</a></p>
-            <p>Dirección: UPEC-Edificio 2, Av. universitaria, Tulcán </p>
+            <p>Dirección: UPEC-Edificio 2, Av. universitaria, Tulcán</p>
           </address>
         </div>
 
@@ -76,6 +76,21 @@ const Footer: React.FC = () => {
             </nav>
           </div>
         </div>
+      </div>
+
+      {/* Créditos al final */}
+      <div className={styles.credit}>
+        <p>
+          Creado por{' '}
+          <a 
+            href="https://www.instagram.com/wlady_photograph/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.creditLink}
+          >
+            Wladimir Almeida
+          </a>
+        </p>
       </div>
     </footer>
   );

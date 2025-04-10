@@ -142,11 +142,6 @@ const Clubs = () => {
               <p>Desarrollador Front-end</p>
             </div>
           </div>
-          <div className={styles.registroWrapper}>
-            <a href="https://forms.office.com/r/8RHjyS29j0?origin=lprLink" className={styles.registroBtn} target="_blank" rel="noopener noreferrer">
-              Únete a Nuestro Equipo
-            </a>
-          </div>
         </div>
       </section>
     </main>

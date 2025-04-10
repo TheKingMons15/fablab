@@ -1,10 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './fablab.module.css';
 import { Gi3dMeeple, GiVideoConference } from 'react-icons/gi';
 import { FaHome, FaTools, FaProjectDiagram } from 'react-icons/fa';
 
 const FabLab = () => {
   const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'proyectos'>('inicio');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // Array de imágenes para el carrusel
+  const carouselImages = [
+    {
+      src: "/img/fab/IMG_9552.JPG",
+      alt: "Espacio principal del FabLab"
+    },
+    {
+      src: "/img/fab/IMG_9566.JPG", // Asumiendo que existe esta imagen
+      alt: "Área de trabajo del FabLab"
+    },
+    {
+      src: "/img/fab/IMG_9610.JPG", // Asumiendo que existe esta imagen
+      alt: "Equipamiento del FabLab"
+    }
+  ];
+
+  // Cambia automáticamente las imágenes cada 4 segundos
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % carouselImages.length);
+    }, 4000);
+    
+    return () => clearInterval(timer);
+  }, []);
   
   const equipmentItems = [
     {
@@ -111,17 +137,26 @@ const FabLab = () => {
       <div className={styles.contentContainer}>
         {activeTab === 'inicio' && (
           <section className={styles.inicioSection}>
-            {/* Nueva estructura con logo a la izquierda y foto a la derecha */}
+            {/* Nueva estructura con logo a la izquierda y carrusel a la derecha */}
             <div className={styles.inicioHeader}>
               <div className={styles.logoContainer}>
                 <img src="/img/fablab.png" alt="Logo de Fab Lab" className={styles.logoLeft} />
               </div>
               <div className={styles.headerImageContainer}>
-                <img 
-                  src="/img/IMG_9610.JPG" 
-                  alt="Espacio principal del FabLab" 
-                  className={styles.headerImage}
-                />
+                {/* Carrusel simple sin botones ni indicadores */}
+                <div className={styles.simpleCarousel}>
+                  <div className={styles.carouselTrack} style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+                    {carouselImages.map((image, index) => (
+                      <div className={styles.carouselSlide} key={index}>
+                        <img 
+                          src={image.src} 
+                          alt={image.alt} 
+                          className={styles.carouselImage} 
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
             

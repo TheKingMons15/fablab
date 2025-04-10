@@ -1,9 +1,35 @@
-import React, { useState } from 'react';
-import { FaCamera, FaVideo, FaMicrophoneAlt, FaHome, FaTools, FaCode, FaCubes } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaCamera, FaVideo, FaMicrophoneAlt, FaHome, FaTools, FaCode, FaCubes} from 'react-icons/fa';
 import styles from './MediaLab.module.css';
 
 const MediaLab: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'laboratorios'>('inicio');
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Array of carousel images
+  const carouselImages = [
+    {
+      src: "/img/media/IMG_9499.JPG",
+      alt: "FabLab en acción"
+    },
+    {
+      src: "/img/media/IMG_9582.JPG",
+      alt: "Taller de fabricación digital"
+    },
+    {
+      src: "/img/media/IMG_9648.JPG",
+      alt: "Estudiantes trabajando en proyectos"
+    }
+  ];
+
+  // Auto-rotate carousel every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % carouselImages.length);
+    }, 5000);
+    
+    return () => clearInterval(timer);
+  }, []);
 
   const equipmentItems = [
     {
@@ -89,11 +115,19 @@ const MediaLab: React.FC = () => {
               <div className={styles.logoContainer}>
                 <img src="/img/Medialab.png" alt="Logo de Media Lab" className={styles.homeLogo} />
               </div>
-              <div className={styles.heroImageContainer}>
-                <img src="/img/IMG_9648.JPG" alt="FabLab en acción" className={styles.heroImage} />
+              <div className={styles.carouselContainer}>
+                <div className={styles.carousel}>
+                  <div className={styles.carouselTrack} style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+                    {carouselImages.map((image, index) => (
+                      <div className={styles.carouselSlide} key={index}>
+                        <img src={image.src} alt={image.alt} className={styles.carouselImage} />
+                      </div>
+                    ))}
+                  </div>
+                  
+                </div>
               </div>
             </div>
-            
             <div className={styles.homeContent}>
               <h1 className={styles.mainTitle}>MEDIALAB</h1>
               <h2 className={styles.subtitle}>Centro de Fabricación Digital Universitario</h2>

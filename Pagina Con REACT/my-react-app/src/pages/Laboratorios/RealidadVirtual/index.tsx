@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './realidad.module.css';
 import { MdScanner } from 'react-icons/md';
 import { PiVirtualRealityBold } from 'react-icons/pi';
@@ -7,6 +7,32 @@ import { AiFillHome } from 'react-icons/ai';
 
 const RealidadVirtual = () => {
   const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'proyectos'>('inicio');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // Array de imágenes para el carrusel
+  const carouselImages = [
+    {
+      src: "/img/realidad/IMG_96562.jpg",
+      alt: "Laboratorio de Realidad Virtual"
+    },
+    {
+      src: "/img/realidad/Meta Quest 3.jpg", // Asumiendo que existe esta imagen
+      alt: "Experiencia inmersiva de Realidad Virtual"
+    },
+    {
+      src: "/img/realidad/realidad aumentada en compañías.webp", // Asumiendo que existe esta imagen
+      alt: "Equipamiento de Realidad Virtual"
+    }
+  ];
+
+  // Cambia automáticamente las imágenes cada 4 segundos
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prevSlide) => (prevSlide + 1) % carouselImages.length);
+    }, 4000);
+    
+    return () => clearInterval(timer);
+  }, []);
 
   const equipmentItems = [
     {
@@ -79,11 +105,20 @@ const RealidadVirtual = () => {
                 <img src="/img/Laboratorio de Realidad Virtual.png" alt="Logo de Laboratorio de Realidad Virtual" className={styles.homeLogo} />
               </div>
               <div className={styles.homeImageContainer}>
-                <img 
-                  src="/img/IMG_96562.jpg" 
-                  alt="Laboratorio de Realidad Virtual" 
-                  className={styles.homeImage} 
-                />
+                {/* Carrusel simple sin botones ni indicadores */}
+                <div className={styles.simpleCarousel}>
+                  <div className={styles.carouselTrack} style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
+                    {carouselImages.map((image, index) => (
+                      <div className={styles.carouselSlide} key={index}>
+                        <img 
+                          src={image.src} 
+                          alt={image.alt} 
+                          className={styles.carouselImage} 
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
             

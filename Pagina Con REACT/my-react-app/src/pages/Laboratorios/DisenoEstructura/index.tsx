@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Diseno.module.css';
 import { GiLaserPrecision } from 'react-icons/gi';
 import { RiComputerFill } from 'react-icons/ri';
@@ -8,6 +8,26 @@ import { AiFillHome } from 'react-icons/ai';
 
 const LabDiseno: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'inicio' | 'equipos' | 'proyectos'>('inicio');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
+  // Imágenes para el carrusel
+  const carouselImages = [
+    "/img/diseño/IMG_9497.JPG",
+    "/img/diseño/IMG_9622.JPG",
+    "/img/diseño/IMG_9627.JPG",
+    "/img/diseño/IMG_9605.JPG"
+  ];
+  
+  // Efecto para el carrusel automático
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prevSlide) => 
+        prevSlide === carouselImages.length - 1 ? 0 : prevSlide + 1
+      );
+    }, 3000); // Cambio de imagen cada 3 segundos
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const equipmentItems = [
     {
@@ -89,8 +109,19 @@ const LabDiseno: React.FC = () => {
               <div className={styles.logoContainer}>
                 <img src="/img/Diseñoyestructura.png" alt="Logo de FabLab" className={styles.homeLogo} />
               </div>
-              <div className={styles.heroImageContainer}>
-                <img src="/img/labdiseño.jpg" alt="FabLab en acción" className={styles.heroImage} />
+              <div className={styles.carouselContainer}>
+                {carouselImages.map((image, index) => (
+                  <div 
+                    key={index}
+                    className={styles.carouselSlide}
+                    style={{
+                      opacity: currentSlide === index ? 1 : 0,
+                      transition: 'opacity 0.8s ease-in-out'
+                    }}
+                  >
+                    <img src={image} alt={`Imagen del FabLab ${index + 1}`} className={styles.carouselImage} />
+                  </div>
+                ))}
               </div>
             </div>
             <div className={styles.homeContent}>
@@ -105,7 +136,6 @@ const LabDiseno: React.FC = () => {
                 para estudiantes de todas las disciplinas, promoviendo la experimentación, el prototipado rápido 
                 y el desarrollo de soluciones creativas a problemas reales.
               </p>
-
             </div>
           </section>
         )}

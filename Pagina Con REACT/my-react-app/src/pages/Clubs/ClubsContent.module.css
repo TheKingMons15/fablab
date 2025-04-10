@@ -18,6 +18,7 @@
   position: relative;
 }
 
+
 .heroSection::after {
   content: '';
   position: absolute;
