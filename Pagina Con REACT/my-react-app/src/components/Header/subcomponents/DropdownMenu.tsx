@@ -2,17 +2,22 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from '../Header.module.css';
 
-const DropdownMenu: React.FC<{ items: any[], isOpen: boolean }> = ({ items, isOpen }) => {
+interface DropdownMenuProps {
+  items: { name: string; path: string }[];
+  isOpen: boolean;
+}
+
+const DropdownMenu: React.FC<DropdownMenuProps> = ({ items, isOpen }) => {
   return (
-    <ul className={`${styles.dropdown} ${isOpen ? styles.active : ''}`}>
-      {items.map((subItem) => (
-        <li key={subItem.name} className={styles.dropdownItem}>
-          <Link to={subItem.path} className={styles.dropdownItemLink}>
-            {subItem.name}
+    <div className={`${styles.dropdown} ${isOpen ? styles.open : ''}`}>
+      {items.map((item) => (
+        <div key={item.name} className={styles.dropdownItem}>
+          <Link to={item.path} className={styles.dropdownItemLink}>
+            {item.name}
           </Link>
-        </li>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 };
 

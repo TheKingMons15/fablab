@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './Header.module.css';
 import DropdownMenu from './subcomponents/DropdownMenu';
@@ -17,7 +17,15 @@ interface MenuItem {
 const Header: React.FC = () => {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
   const location = useLocation();
+
+  // Limpiar timeout al desmontar componente
+  useEffect(() => {
+    return () => {
+      if (closeTimeout) clearTimeout(closeTimeout);
+    };
+  }, [closeTimeout]);
 
   const menuItems: MenuItem[] = [
     { name: 'Inicio', path: '/' },
@@ -42,17 +50,36 @@ const Header: React.FC = () => {
     { name: 'Club', path: '/clubs' },
   ];
 
+  const handleMouseEnter = (itemName: string) => {
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
+    }
+    setActiveDropdown(itemName);
+  };
+
+  const handleMouseLeave = () => {
+    const timeout = setTimeout(() => {
+      setActiveDropdown(null);
+    }, 300); // 300ms delay antes de cerrar
+    setCloseTimeout(timeout);
+  };
+
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path);
+  
   return (
     <header className={styles.header}>
       <Link to="/">
         <img src="/img/Logo_Principal.png" alt="Logo" className={styles.logo} />
       </Link>
 
-      <button className={styles.hamburger} onClick={() => setMenuOpen(!menuOpen)}>
-        <span className={menuOpen ? styles.hamburgerLineOpen : styles.hamburgerLine}></span>
-        <span className={menuOpen ? styles.hamburgerLineOpen : styles.hamburgerLine}></span>
-        <span className={menuOpen ? styles.hamburgerLineOpen : styles.hamburgerLine}></span>
+      <button 
+        className={`${styles.hamburger} ${menuOpen ? styles.open : ''}`} 
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        <span></span>
+        <span></span>
+        <span></span>
       </button>
 
       <nav className={`${styles.navMenu} ${menuOpen ? styles.menuOpen : ''}`}>
@@ -60,18 +87,18 @@ const Header: React.FC = () => {
           {menuItems.map((item) => (
             <li
               key={item.name}
-              className={`${styles.navItem} ${item.submenu ? styles.hasSubmenu : ''} ${
+              className={`${styles.navItem} ${
                 item.path && isActive(item.path) ? styles.active : ''
               }`}
-              onMouseEnter={() => item.submenu && setActiveDropdown(item.name)}
-              onMouseLeave={() => setActiveDropdown(null)}
+              onMouseEnter={() => item.submenu && handleMouseEnter(item.name)}
+              onMouseLeave={handleMouseLeave}
             >
               {item.path ? (
                 <Link to={item.path} className={styles.navLink} onClick={() => setMenuOpen(false)}>
                   {item.name}
                 </Link>
               ) : (
-                <span className={styles.navLink}>{item.name}</span>
+                <span className={`${styles.navLink} ${styles.hasSubmenu}`}>{item.name}</span>
               )}
 
               {item.submenu && activeDropdown === item.name && (
