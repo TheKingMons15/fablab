@@ -5,24 +5,27 @@
   --color-accent-yellow: #FFCE00;
   --color-white: #ffffff;
   --color-text-dark: #333333;
-  --transition-smooth: all 0.3s ease-in-out;
+  --transition-smooth: all 0.3s ease-in-out; 
 }
 
 .pageContainer {
-  min-height: 100vh;
+  min-height: 50vh;
   background-color: var(--color-white);
   font-family: 'Poppins', sans-serif;
   display: flex;
   justify-content: center;
+  align-items: center; /* Añade esto para centrar verticalmente */
+  padding: 1px; /* Añade padding para evitar que toque los bordes */
+  box-sizing: border-box; /* Importante para que el padding no afecte el ancho */
 }
 
 .testContainer {
-  max-width: 1000px;
+  max-width: 5000px;
   width: 100%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 400px;
   position: relative;
-  overflow: hidden;
+  overflow: hidden; 
 }
 
 .cloudBackground {
