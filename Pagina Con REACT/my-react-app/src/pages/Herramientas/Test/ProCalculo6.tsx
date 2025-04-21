@@ -258,7 +258,7 @@ const ProCalculo6: React.FC = () => {
         <section className={styles.testHeader}>
           <div className={styles.titleWrapper}>
             <h1 className={styles.testTitle}>
-              <img src="/img/Medialab.png" alt="Logo de Media Lab" className={styles.logoSmall} />
+              <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
               Pro-Cálculo <span className={styles.ageBadge}>6 años</span>
             </h1>
           </div>
