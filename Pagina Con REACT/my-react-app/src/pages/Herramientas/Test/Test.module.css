@@ -6,31 +6,37 @@
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+body {
+  color: #2c3e50;
+  line-height: 1.6;
+  background-color: #f8f9fa;
+}
+
 /* Container principal */
 .mediaContainer {
   background-color: #ffffff;
   width: 100%;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 7rem 1rem;
+  padding: 9rem 1rem 7rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-
 /* Navegación con pestañas */
 .navTabs {
   display: flex;
   justify-content: center;
-  margin: 1rem 0 2rem;
+  margin: 0 0 2rem;
   gap: 1.5rem;
   width: 100%;
   position: sticky;
   top: 0;
   background: white;
-  padding: 2rem 0;
+  padding: 1.5rem 0;
   z-index: 100;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .tab {
@@ -47,11 +53,13 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  text-decoration: none;
 }
 
 .tab:hover {
   background: #e0e6e8;
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 .activeTab {
@@ -59,6 +67,10 @@
   color: white;
   border-color: #006633;
   box-shadow: 0 4px 10px rgba(0, 102, 51, 0.3);
+}
+
+.activeTab:hover {
+  background: #005528;
 }
 
 .tabIcon {
@@ -75,18 +87,19 @@
 .contentContainer {
   padding-top: 1rem;
   width: 100%;
+  max-width: 1200px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* Sección de título */
 .titleSection {
   width: 100%;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 0 auto 2rem;
   padding: 1rem;
   text-align: center;
-  margin-bottom: 2rem;
 }
 
 .logoContainer {
@@ -105,6 +118,8 @@
   color: #7f8c8d;
   font-size: 1.2rem;
   line-height: 1.6;
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 /* Sección de indicaciones */
@@ -112,7 +127,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 2rem 1rem;
 }
 
 .heroBanner {
@@ -127,10 +142,12 @@
   margin-bottom: 1.5rem;
   position: relative;
   display: inline-block;
+  font-weight: 700;
 }
 
 .titleHighlight {
   margin-right: 0.5rem;
+  color: #006633;
 }
 
 .sectionTitle::after {
@@ -157,31 +174,37 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  margin: 2rem 0;
+  margin: 3rem 0;
+  width: 100%;
 }
 
 .featureCard {
   background: white;
   border-radius: 12px;
-  padding: 1.5rem;
+  padding: 2rem;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
   border-top: 4px solid #006633;
 }
 
+.featureCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
 .featureIconContainer {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  color: #006633;
 }
 
 .featureIcon {
-  font-size: 2rem;
+  font-size: 2.2rem;
 }
 
 .featureTitle {
   color: #2c3e50;
   margin-bottom: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 600;
 }
 
@@ -196,6 +219,7 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin: 3rem 0;
+  width: 100%;
 }
 
 .instructionCard {
@@ -203,7 +227,15 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.instructionCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
 }
 
 .instructionHeader {
@@ -217,12 +249,20 @@
 
 .instructionIcon {
   font-size: 1.6rem;
+  color: #006633;
+}
+
+.instructionTitle {
+  font-weight: 600;
+  font-size: 1.2rem;
+  color: #2c3e50;
 }
 
 .instructionText {
   padding: 1.5rem;
   color: #7f8c8d;
   line-height: 1.6;
+  flex: 1;
 }
 
 .instructionImageContainer {
@@ -234,12 +274,18 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.instructionCard:hover .instructionImage {
+  transform: scale(1.05);
 }
 
 /* CTA */
 .ctaContainer {
   text-align: center;
-  margin: 3rem 0;
+  margin: 4rem 0;
+  width: 100%;
 }
 
 .startTestButton {
@@ -256,12 +302,17 @@
   align-items: center;
   gap: 0.8rem;
   box-shadow: 0 5px 15px rgba(0, 102, 51, 0.25);
+  text-decoration: none;
 }
 
 .startTestButton:hover {
   background: #004d26;
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(0, 102, 51, 0.3);
+}
+
+.startTestButton:active {
+  transform: translateY(-1px);
 }
 
 .buttonIcon {
@@ -271,6 +322,11 @@
 .buttonArrow {
   font-size: 1rem;
   margin-left: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.startTestButton:hover .buttonArrow {
+  transform: translateX(3px);
 }
 
 /* Sección de pruebas */
@@ -278,7 +334,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 2rem 1rem;
   position: relative;
 }
 
@@ -291,6 +347,9 @@
   color: #7f8c8d;
   margin-top: 1rem;
   font-size: 1.1rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .pruebasGrid {
@@ -298,6 +357,7 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
   margin-bottom: 3rem;
+  width: 100%;
 }
 
 .pruebaCard {
@@ -305,11 +365,12 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-  transition: transform 0.3s ease;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem;
+  padding: 2rem;
   position: relative;
+  height: 100%;
 }
 
 .pruebaCard:hover {
@@ -318,8 +379,9 @@
 }
 
 .pruebaIcon {
-  font-size: 2rem;
-  margin-bottom: 1.2rem;
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  color: #006633;
 }
 
 .pruebaContent {
@@ -342,7 +404,7 @@
 .pruebaMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.2rem;
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
 }
@@ -352,12 +414,22 @@
   align-items: center;
   gap: 0.5rem;
   color: #7f8c8d;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 .metaIcon {
   color: #006633;
-  font-size: 1rem;
+  font-size: 1.1rem;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.featureCard, .instructionCard, .pruebaCard {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 /* Media queries */
@@ -367,17 +439,24 @@
   .instructionsGrid {
     grid-template-columns: repeat(2, 1fr);
   }
+  
+  .contentContainer {
+    padding: 0 1rem;
+  }
 }
 
 @media (max-width: 768px) {
   .navTabs {
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 0.8rem;
+    padding: 1rem 0;
   }
   
   .tab {
-    flex: 1;
+    flex: 1 1 calc(50% - 0.8rem);
     justify-content: center;
+    min-width: 150px;
+    padding: 0.8rem 1.2rem;
   }
   
   .introText {
@@ -386,6 +465,10 @@
   
   .sectionTitle {
     font-size: 1.8rem;
+  }
+  
+  .mediaContainer {
+    padding: 4rem 1rem 5rem;
   }
 }
 
@@ -397,8 +480,9 @@
   }
   
   .tab {
-    padding: 0.8rem 1.5rem;
+    padding: 0.8rem 1.2rem;
     font-size: 0.9rem;
+    flex: 1 1 100%;
   }
   
   .sectionTitle {
@@ -407,5 +491,34 @@
   
   .startTestButton {
     width: 100%;
+    justify-content: center;
+  }
+  
+  .instructionImageContainer {
+    height: 150px;
+  }
+  
+  .pruebaMeta {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .featureCard, .instructionCard, .pruebaCard {
+    padding: 1.5rem;
+  }
+}
+
+/* Mejoras de accesibilidad */
+:focus {
+  outline: 2px solid #006633;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
