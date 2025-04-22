@@ -51,6 +51,7 @@
 }
 
 /* Borde superior con efecto neon mejorado */
+/* Borde superior con efecto de movimiento continuo y lineal */
 .testContainer::before {
   content: '';
   position: absolute;
@@ -58,14 +59,42 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: var(--color-primary-green);
-  background: linear-gradient(90deg, 
-    var(--color-primary-green) 0%, 
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-green) 0%,
+    var(--color-primary-green) 25%,
     var(--color-secondary-green) 50%,
-    var(--color-accent-yellow) 100%);
+    var(--color-accent-yellow) 75%,
+    var(--color-primary-green) 100%
+  );
+  background-size: 400% 400%;
   z-index: 2;
-  box-shadow: 0 0 10px rgba(0, 153, 85, 0.3);
-  animation: borderPulse 3s infinite alternate;
+  animation: gradientScroll 6s linear infinite;
+  border-radius: 0 0 4px 4px;
+}
+
+@keyframes gradientScroll {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 0%;
+  }
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 10px rgba(0, 153, 85, 0.3);
+  }
+  50% {
+    background-position: 100% 50%;
+    box-shadow: 0 0 15px rgba(255, 206, 0, 0.4);
+  }
+  100% {
+    background-position: 0% 50%;
+    box-shadow: 0 0 10px rgba(0, 102, 51, 0.3);
+  }
 }
 
 @keyframes borderPulse {
