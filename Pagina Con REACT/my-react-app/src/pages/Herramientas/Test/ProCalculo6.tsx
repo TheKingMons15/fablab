@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaCheck, FaTimes, FaStar, FaTrophy, FaRedo, FaMusic, FaVolumeMute } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
+import { RompeCabezasHuevos } from '../Minijuego/RompeCabezas';
 
 const ProCalculo6: React.FC = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -14,7 +15,8 @@ const ProCalculo6: React.FC = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [animation, setAnimation] = useState('');
-  
+  const [showGame, setShowGame] = useState(false);
+
   // Preguntas para niños de 6 años basadas en el test Pro-Cálculo
   const questions = [
     // 1. Enumeración
@@ -101,21 +103,21 @@ const ProCalculo6: React.FC = () => {
 
   // Efecto para manejar el temporizador
   useEffect(() => {
-    if (currentQuestion >= 0 && !showResult && !showFeedback && timeLeft === null) {
+    if (currentQuestion >= 0 && !showResult && !showFeedback && timeLeft === null && !showGame) {
       setTimeLeft(30);
     }
     
     let timer: NodeJS.Timeout;
-    if (timeLeft !== null && timeLeft > 0 && !showFeedback) {
+    if (timeLeft !== null && timeLeft > 0 && !showFeedback && !showGame) {
       timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (timeLeft === 0 && !showFeedback) {
+    } else if (timeLeft === 0 && !showFeedback && !showGame) {
       handleTimeUp();
     }
 
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, showFeedback, currentQuestion, showResult]);
+  }, [timeLeft, showFeedback, currentQuestion, showResult, showGame]);
 
   const handleTimeUp = () => {
     if (!showFeedback) {
@@ -169,6 +171,13 @@ const ProCalculo6: React.FC = () => {
     setAnimation('');
     
     const nextQuestion = currentQuestion + 1;
+    
+    // Mostrar minijuego cada 3 preguntas (excepto al final)
+    if ((nextQuestion % 3 === 0) && nextQuestion < questions.length) {
+      setShowGame(true);
+      return;
+    }
+    
     if (nextQuestion < questions.length) {
       setCurrentQuestion(nextQuestion);
       setTimeLeft(30);
@@ -181,7 +190,27 @@ const ProCalculo6: React.FC = () => {
       }
     }
   };
-  
+
+  const handleGameComplete = (success: boolean) => {
+    setShowGame(false);
+    
+    // Bonus por completar el juego
+    if (success) {
+      setScore(prev => prev + 1);
+      playSound('correct');
+    }
+    
+    // Continuar con la siguiente pregunta
+    const nextQuestion = currentQuestion + 1;
+    if (nextQuestion < questions.length) {
+      setCurrentQuestion(nextQuestion);
+      setTimeLeft(30);
+    } else {
+      setShowResult(true);
+      playSound('complete');
+    }
+  };
+
   const launchConfetti = () => {
     confetti({
       particleCount: 100,
@@ -200,6 +229,7 @@ const ProCalculo6: React.FC = () => {
     setOptionSelected(null);
     setCorrectAnswer(null);
     setAnimation('');
+    setShowGame(false);
   };
 
   const toggleSound = () => {
@@ -255,181 +285,191 @@ const ProCalculo6: React.FC = () => {
       <main className={styles.testContainer}>
         <div className={styles.cloudBackground}></div>
         
-        <section className={styles.testHeader}>
-          <div className={styles.titleWrapper}>
-            <h1 className={styles.testTitle}>
-              <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
-              Pro-Cálculo <span className={styles.ageBadge}>6 años</span>
-            </h1>
+        {showGame ? (
+          <div className={styles.gameOverlay}>
+            <RompeCabezasHuevos 
+              onComplete={handleGameComplete}
+            />
           </div>
-          
-          <div className={styles.controlButtons}>
-            <button
-              className={styles.soundButton}
-              onClick={toggleSound}
-              aria-label={soundEnabled ? "Silenciar sonidos" : "Activar sonidos"}
-            >
-              {soundEnabled ? <FaMusic /> : <FaVolumeMute />}
-            </button>
-            <a href="/Herramientas/test" className={styles.backButton}>
-              <FaArrowLeft /> Volver
-            </a>
-          </div>
-        </section>
-
-        {!showResult ? (
-          <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
-            <div className={styles.progressBar}>
-              <div 
-                className={styles.progressFill} 
-                style={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
-              ></div>
-            </div>
-            
-            <div className={styles.questionInfo}>
-              <div className={styles.questionCounter}>
-                Pregunta {currentQuestion + 1} de {questions.length}
-              </div>
-              <div className={styles.timer}>
-                Tiempo: <span className={timeLeft && timeLeft < 10 ? styles.timerWarning : ''}>{timeLeft}</span>
-              </div>
-            </div>
-            
-            <div className={styles.questionCard}>
-              {renderQuestion()}
-              
-              <div className={styles.optionsGrid}>
-                {questions[currentQuestion].options.map((option, index) => (
-                  <button
-                    key={index}
-                    className={`${styles.optionButton} 
-                      ${optionSelected === option ? styles.selected : ''} 
-                      ${showFeedback && option === questions[currentQuestion].answer ? styles.correct : ''} 
-                      ${showFeedback && optionSelected === option && option !== questions[currentQuestion].answer ? styles.incorrect : ''}`}
-                    onClick={() => handleAnswer(option)}
-                    disabled={showFeedback}
-                  >
-                    <span className={styles.optionContent}>
-                      <span className={styles.optionText}>{option}</span>
-                      {showFeedback && option === questions[currentQuestion].answer && (
-                        <FaCheck className={styles.feedbackIcon} />
-                      )}
-                      {showFeedback && optionSelected === option && option !== questions[currentQuestion].answer && (
-                        <FaTimes className={styles.feedbackIcon} />
-                      )}
-                    </span>
-                  </button>
-                ))}
-              </div>
-              
-              {showFeedback && (
-                <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
-                  <p>
-                    {correctAnswer 
-                      ? "¡Correcto! 🎉" 
-                      : `La respuesta correcta es: ${questions[currentQuestion].answer}`}
-                  </p>
-                  <p className={styles.explanation}>
-                    {questions[currentQuestion].explanation}
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
         ) : (
-          <section className={styles.resultSection}>
-            <div className={styles.resultContainer}>
-              <h2 className={styles.resultTitle}>
-                {getResultMessage()}
-              </h2>
+          <>
+            <section className={styles.testHeader}>
+              <div className={styles.titleWrapper}>
+                <h1 className={styles.testTitle}>
+                  <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
+                  Pro-Cálculo <span className={styles.ageBadge}>6 años</span>
+                </h1>
+              </div>
               
-              <div className={styles.scoreCard}>
-                <div className={styles.scoreVisual}>
-                  <div className={styles.scoreCircle}>
-                    <span className={styles.scoreNumber}>{score}</span>
-                    <span className={styles.scoreTotal}>/{questions.length}</span>
+              <div className={styles.controlButtons}>
+                <button
+                  className={styles.soundButton}
+                  onClick={toggleSound}
+                  aria-label={soundEnabled ? "Silenciar sonidos" : "Activar sonidos"}
+                >
+                  {soundEnabled ? <FaMusic /> : <FaVolumeMute />}
+                </button>
+                <a href="/Herramientas/test" className={styles.backButton}>
+                  <FaArrowLeft /> Volver
+                </a>
+              </div>
+            </section>
+
+            {!showResult ? (
+              <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
+                <div className={styles.progressBar}>
+                  <div 
+                    className={styles.progressFill} 
+                    style={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
+                  ></div>
+                </div>
+                
+                <div className={styles.questionInfo}>
+                  <div className={styles.questionCounter}>
+                    Pregunta {currentQuestion + 1} de {questions.length}
                   </div>
-                  <div className={styles.starContainer}>
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <FaStar
+                  <div className={styles.timer}>
+                    Tiempo: <span className={timeLeft && timeLeft < 10 ? styles.timerWarning : ''}>{timeLeft}</span>
+                  </div>
+                </div>
+                
+                <div className={styles.questionCard}>
+                  {renderQuestion()}
+                  
+                  <div className={styles.optionsGrid}>
+                    {questions[currentQuestion].options.map((option, index) => (
+                      <button
                         key={index}
-                        className={`${styles.star} ${index < Math.ceil((score / questions.length) * 5) ? styles.activeStar : ''}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                <p className={styles.scoreText}>
-                  Has acertado <span className={styles.scoreHighlight}>{score}</span> de {questions.length} preguntas
-                </p>
-                
-                <div className={styles.medalContainer}>
-                  {score === questions.length && (
-                    <div className={styles.medal}>
-                      <FaTrophy className={styles.trophyIcon} />
-                      <span>¡Medalla de Oro!</span>
-                    </div>
-                  )}
-                  {score >= Math.floor(questions.length * 0.7) && score < questions.length && (
-                    <div className={styles.medal}>
-                      <FaStar className={styles.medalIcon} />
-                      <span>¡Muy Bien!</span>
-                    </div>
-                  )}
-                </div>
-                
-                <h3 className={styles.summaryTitle}>Repaso de preguntas</h3>
-                <div className={styles.resultSummary}>
-                  {questions.map((q, index) => (
-                    <div key={index} className={`${styles.resultItem} ${
-                      userAnswers[index] === q.answer 
-                        ? styles.correctItem 
-                        : styles.incorrectItem
-                    }`}>
-                      <div className={styles.resultQuestion}>
-                        <span className={styles.questionNumber}>#{index + 1}</span>
-                        <span className={styles.questionPreview}>{q.question}</span>
-                      </div>
-                      <div className={styles.resultAnswers}>
-                        <div>
-                          {userAnswers[index] === 'tiempo_agotado' ? (
-                            <span className={styles.timeUp}>¡Tiempo agotado!</span>
-                          ) : (
-                            <>
-                              <span className={styles.userAnswer}>
-                                Tu respuesta: {userAnswers[index]}
-                              </span>
-                              {userAnswers[index] !== q.answer && (
-                                <span className={styles.correctAnswerText}>
-                                  Respuesta: {q.answer}
-                                </span>
-                              )}
-                            </>
+                        className={`${styles.optionButton} 
+                          ${optionSelected === option ? styles.selected : ''} 
+                          ${showFeedback && option === questions[currentQuestion].answer ? styles.correct : ''} 
+                          ${showFeedback && optionSelected === option && option !== questions[currentQuestion].answer ? styles.incorrect : ''}`}
+                        onClick={() => handleAnswer(option)}
+                        disabled={showFeedback}
+                      >
+                        <span className={styles.optionContent}>
+                          <span className={styles.optionText}>{option}</span>
+                          {showFeedback && option === questions[currentQuestion].answer && (
+                            <FaCheck className={styles.feedbackIcon} />
                           )}
-                        </div>
-                        <span className={styles.resultIcon}>
-                          {userAnswers[index] === q.answer ? (
-                            <FaCheck className={styles.correctIcon} />
-                          ) : (
-                            <FaTimes className={styles.incorrectIcon} />
+                          {showFeedback && optionSelected === option && option !== questions[currentQuestion].answer && (
+                            <FaTimes className={styles.feedbackIcon} />
                           )}
                         </span>
+                      </button>
+                    ))}
+                  </div>
+                  
+                  {showFeedback && (
+                    <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
+                      <p>
+                        {correctAnswer 
+                          ? "¡Correcto! 🎉" 
+                          : `La respuesta correcta es: ${questions[currentQuestion].answer}`}
+                      </p>
+                      <p className={styles.explanation}>
+                        {questions[currentQuestion].explanation}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            ) : (
+              <section className={styles.resultSection}>
+                <div className={styles.resultContainer}>
+                  <h2 className={styles.resultTitle}>
+                    {getResultMessage()}
+                  </h2>
+                  
+                  <div className={styles.scoreCard}>
+                    <div className={styles.scoreVisual}>
+                      <div className={styles.scoreCircle}>
+                        <span className={styles.scoreNumber}>{score}</span>
+                        <span className={styles.scoreTotal}>/{questions.length}</span>
+                      </div>
+                      <div className={styles.starContainer}>
+                        {Array.from({ length: 5 }).map((_, index) => (
+                          <FaStar
+                            key={index}
+                            className={`${styles.star} ${index < Math.ceil((score / questions.length) * 5) ? styles.activeStar : ''}`}
+                          />
+                        ))}
                       </div>
                     </div>
-                  ))}
+                    
+                    <p className={styles.scoreText}>
+                      Has acertado <span className={styles.scoreHighlight}>{score}</span> de {questions.length} preguntas
+                    </p>
+                    
+                    <div className={styles.medalContainer}>
+                      {score === questions.length && (
+                        <div className={styles.medal}>
+                          <FaTrophy className={styles.trophyIcon} />
+                          <span>¡Medalla de Oro!</span>
+                        </div>
+                      )}
+                      {score >= Math.floor(questions.length * 0.7) && score < questions.length && (
+                        <div className={styles.medal}>
+                          <FaStar className={styles.medalIcon} />
+                          <span>¡Muy Bien!</span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <h3 className={styles.summaryTitle}>Repaso de preguntas</h3>
+                    <div className={styles.resultSummary}>
+                      {questions.map((q, index) => (
+                        <div key={index} className={`${styles.resultItem} ${
+                          userAnswers[index] === q.answer 
+                            ? styles.correctItem 
+                            : styles.incorrectItem
+                        }`}>
+                          <div className={styles.resultQuestion}>
+                            <span className={styles.questionNumber}>#{index + 1}</span>
+                            <span className={styles.questionPreview}>{q.question}</span>
+                          </div>
+                          <div className={styles.resultAnswers}>
+                            <div>
+                              {userAnswers[index] === 'tiempo_agotado' ? (
+                                <span className={styles.timeUp}>¡Tiempo agotado!</span>
+                              ) : (
+                                <>
+                                  <span className={styles.userAnswer}>
+                                    Tu respuesta: {userAnswers[index]}
+                                  </span>
+                                  {userAnswers[index] !== q.answer && (
+                                    <span className={styles.correctAnswerText}>
+                                      Respuesta: {q.answer}
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                            <span className={styles.resultIcon}>
+                              {userAnswers[index] === q.answer ? (
+                                <FaCheck className={styles.correctIcon} />
+                              ) : (
+                                <FaTimes className={styles.incorrectIcon} />
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    
+                    <div className={styles.actionsContainer}>
+                      <button className={styles.restartButton} onClick={restartTest}>
+                        <FaRedo /> Intentar de nuevo
+                      </button>
+                      <a href="/test" className={styles.homeButton}>
+                        Elegir otra prueba
+                      </a>
+                    </div>
+                  </div>
                 </div>
-                
-                <div className={styles.actionsContainer}>
-                  <button className={styles.restartButton} onClick={restartTest}>
-                    <FaRedo /> Intentar de nuevo
-                  </button>
-                  <a href="/test" className={styles.homeButton}>
-                    Elegir otra prueba
-                  </a>
-                </div>
-              </div>
-            </div>
-          </section>
+              </section>
+            )}
+          </>
         )}
       </main>
     </div>
