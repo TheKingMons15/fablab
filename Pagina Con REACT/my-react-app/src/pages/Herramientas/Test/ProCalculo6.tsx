@@ -1,123 +1,302 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaCheck, FaTimes, FaStar, FaTrophy, FaRedo, FaMusic, FaVolumeMute } from 'react-icons/fa';
+import { FaArrowLeft, FaCheck, FaTimes, FaRedo, FaMusic, FaVolumeMute } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
-import { RompeCabezasHuevos } from '../Minijuego/RompeCabezas';
+
+// Definición de tipos para TypeScript
+type QuestionItem = {
+  question: string;
+  answer: string | number;
+  points: number;
+  type: 'oral' | 'escrito' | 'opciones';
+  options?: string[];
+  countingItems?: number; // Para enumeración
+};
+
+type Subtest = {
+  name: string;
+  maxScore: number;
+  items: QuestionItem[];
+};
 
 const ProCalculo6: React.FC = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
+  const [currentSubtest, setCurrentSubtest] = useState(0);
+  const [currentItem, setCurrentItem] = useState(0);
+  const [score, setScore] = useState<number[]>(Array(9).fill(0));
   const [showResult, setShowResult] = useState(false);
-  const [userAnswers, setUserAnswers] = useState<string[]>([]);
+  const [userAnswers, setUserAnswers] = useState<(string | number)[][]>(Array(9).fill([]));
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  const [optionSelected, setOptionSelected] = useState<string | null>(null);
+  const [optionSelected, setOptionSelected] = useState<string | number | null>(null);
   const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [animation, setAnimation] = useState('');
-  const [showGame, setShowGame] = useState(false);
+  const [writtenAnswer, setWrittenAnswer] = useState('');
+  const [oralAnswer, setOralAnswer] = useState('');
+  const [countingProgress, setCountingProgress] = useState(0);
 
-  // Preguntas para niños de 6 años basadas en el test Pro-Cálculo
-  const questions = [
-    // 1. Enumeración
+  // Estructura exacta del test según el documento PDF
+  const subtests: Subtest[] = [
+    // 1. Enumeración (3 ítems)
     {
-      type: "enumeration",
-      question: "Cuenta los puntos en voz alta:",
-      image: "/img/enumeracion.png",
-      answer: "8",
-      options: ["6", "7", "8", "9"],
-      explanation: "Hay 8 puntos en total."
+      name: "Enumeración",
+      maxScore: 12,
+      items: [
+        { 
+          question: "Cuenta los puntos en voz alta hasta donde puedas", 
+          answer: "20", // Se espera que cuente hasta 20
+          points: 4,
+          type: "oral",
+          countingItems: 20
+        },
+        { 
+          question: "Cuenta los números en orden ascendente nuevamente", 
+          answer: "20", 
+          points: 4,
+          type: "oral",
+          countingItems: 20
+        },
+        { 
+          question: "Cuenta los números en orden ascendente una vez más", 
+          answer: "20", 
+          points: 4,
+          type: "oral",
+          countingItems: 20
+        }
+      ]
     },
-    // 2. Contar hacia atrás
+    // 2. Contar oralmente para atrás (1 ítem)
     {
-      type: "count_backwards",
-      question: "Cuenta hacia atrás desde 10:",
-      answer: "10,9,8,7,6,5,4,3,2,1,0",
-      options: ["10,8,6,4,2,0", "10,9,7,5,3,1", "10,9,8,7,6,5,4,3,2,1,0", "9,7,5,3,1"],
-      explanation: "Debes contar: 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0"
+      name: "Contar para atrás",
+      maxScore: 2,
+      items: [
+        { 
+          question: "Cuenta hacia atrás desde 10", 
+          answer: "0", // Debe llegar a 0
+          points: 2,
+          type: "oral" 
+        }
+      ]
     },
-    // 3. Escritura de números
+    // 3. Escritura de números (3 ítems)
     {
-      type: "number_writing",
-      question: "Escribe el número que se dicta: 'veinte'",
-      answer: "20",
-      options: ["12", "20", "02", "22"],
-      explanation: "El número 'veinte' se escribe como 20."
+      name: "Escritura de números",
+      maxScore: 6,
+      items: [
+        { 
+          question: "Escribe el número 'siete'", 
+          answer: "7", 
+          points: 2,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe el número 'veinte'", 
+          answer: "20", 
+          points: 2,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe el número 'trescientos cinco'", 
+          answer: "305", 
+          points: 2,
+          type: "escrito" 
+        }
+      ]
     },
-    // 4. Cálculo mental oral
+    // 4. Cálculo mental oral (6 ítems)
     {
-      type: "mental_math",
-      question: "¿Cuánto es 10 + 10?",
-      answer: "20",
-      options: ["10", "20", "30", "100"],
-      explanation: "10 + 10 = 20"
+      name: "Cálculo mental",
+      maxScore: 12,
+      items: [
+        { 
+          question: "10 + 10", 
+          answer: "20", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "1 + 15", 
+          answer: "16", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "2 + 7", 
+          answer: "9", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "10 - 3", 
+          answer: "7", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "18 - 6", 
+          answer: "12", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "7 - 4", 
+          answer: "3", 
+          points: 2,
+          type: "oral" 
+        }
+      ]
     },
+    // 5. Lectura de números (4 ítems)
     {
-      type: "mental_math",
-      question: "¿Cuánto es 18 - 6?",
-      answer: "12",
-      options: ["10", "11", "12", "13"],
-      explanation: "18 - 6 = 12"
+      name: "Lectura de números",
+      maxScore: 8,
+      items: [
+        { 
+          question: "Lee este número: 57", 
+          answer: "cincuenta y siete", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "Lee este número: 15", 
+          answer: "quince", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "Lee este número: 138", 
+          answer: "ciento treinta y ocho", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "Lee este número: 9", 
+          answer: "nueve", 
+          points: 2,
+          type: "oral" 
+        }
+      ]
     },
-    // 5. Lectura de números
+    // 6. Estimación de cantidades (3 ítems)
     {
-      type: "number_reading",
-      question: "Lee este número en voz alta: 57",
-      answer: "cincuenta y siete",
-      options: ["cinco siete", "cincuenta y siete", "setenta y cinco", "cinco y siete"],
-      explanation: "57 se lee 'cincuenta y siete'."
+      name: "Estimación",
+      maxScore: 6,
+      items: [
+        { 
+          question: "¿2 nubes en el cielo es poco o mucho?", 
+          answer: "poco", 
+          points: 2,
+          type: "opciones",
+          options: ["poco", "mucho"] 
+        },
+        { 
+          question: "¿2 niños jugando en el recreo es poco o mucho?", 
+          answer: "poco", 
+          points: 2,
+          type: "opciones",
+          options: ["poco", "mucho"] 
+        },
+        { 
+          question: "¿60 chicos en un cumpleaños es poco o mucho?", 
+          answer: "mucho", 
+          points: 2,
+          type: "opciones",
+          options: ["poco", "mucho"] 
+        }
+      ]
     },
-    // 6. Estimación de cantidades
+    // 7. Resolución de problemas (2 ítems)
     {
-      type: "quantity_estimation",
-      question: "¿60 niños en un cumpleaños es poco, más o menos, o mucho?",
-      answer: "mucho",
-      options: ["poco", "más o menos", "mucho"],
-      explanation: "60 niños en un cumpleaños es una cantidad grande."
+      name: "Resolución de problemas",
+      maxScore: 4,
+      items: [
+        { 
+          question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?", 
+          answer: "10", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
+          answer: "5", 
+          points: 2,
+          type: "oral" 
+        }
+      ]
     },
-    // 7. Resolución de problemas
+    // 8. Adaptación (4 ítems)
     {
-      type: "problem_solving",
-      question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?",
-      answer: "10",
-      options: ["6", "8", "10", "12"],
-      explanation: "8 bolitas rojas + 2 amarillas = 10 bolitas"
+      name: "Adaptación",
+      maxScore: 8,
+      items: [
+        { 
+          question: "¿Cuánto crees que cuesta una bicicleta?", 
+          answer: "150", 
+          points: 2,
+          type: "opciones",
+          options: ["50", "150", "300"] 
+        },
+        { 
+          question: "¿Cuánto crees que cuesta una radio?", 
+          answer: "90", 
+          points: 2,
+          type: "opciones",
+          options: ["30", "90", "200"] 
+        },
+        { 
+          question: "¿Cuánto crees que cuesta una pelota de cuero?", 
+          answer: "50", 
+          points: 2,
+          type: "opciones",
+          options: ["20", "50", "100"] 
+        },
+        { 
+          question: "¿Cuánto crees que cuesta una gaseosa?", 
+          answer: "1.50", 
+          points: 2,
+          type: "opciones",
+          options: ["1.50", "5", "10"] 
+        }
+      ]
     },
-    // 8. Adaptación (asociación de precios)
+    // 9. Escribir en cifra (2 ítems)
     {
-      type: "price_adaptation",
-      question: "¿Cuánto crees que cuesta una pelota de cuero?",
-      answer: "$50",
-      options: ["$10", "$50", "$100", "$200"],
-      explanation: "Una pelota de cuero básica cuesta alrededor de $50."
-    },
-    // 9. Escribir en cifra
-    {
-      type: "number_sequence",
-      question: "Escribe los números que vienen después del 15:",
-      answer: "16,17,18,19,20",
-      options: ["14,13,12,11,10", "16,17,18,19,20", "15,16,17,18,19", "20,19,18,17,16"],
-      explanation: "Después del 15 vienen: 16, 17, 18, 19, 20"
+      name: "Escribir en cifra",
+      maxScore: 2,
+      items: [
+        { 
+          question: "Escribe el número 'quince'", 
+          answer: "15", 
+          points: 1,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe el número 'quince'", 
+          answer: "15", 
+          points: 1,
+          type: "escrito" 
+        }
+      ]
     }
   ];
 
   // Efecto para manejar el temporizador
   useEffect(() => {
-    if (currentQuestion >= 0 && !showResult && !showFeedback && timeLeft === null && !showGame) {
+    if (!showResult && !showFeedback && timeLeft === null) {
       setTimeLeft(30);
     }
     
     let timer: NodeJS.Timeout;
-    if (timeLeft !== null && timeLeft > 0 && !showFeedback && !showGame) {
+    if (timeLeft !== null && timeLeft > 0 && !showFeedback) {
       timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (timeLeft === 0 && !showFeedback && !showGame) {
+    } else if (timeLeft === 0 && !showFeedback) {
       handleTimeUp();
     }
 
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, showFeedback, currentQuestion, showResult, showGame]);
+  }, [timeLeft, showFeedback, currentSubtest, currentItem, showResult]);
 
   const handleTimeUp = () => {
     if (!showFeedback) {
@@ -125,8 +304,12 @@ const ProCalculo6: React.FC = () => {
       setCorrectAnswer(false);
       playSound('wrong');
       
+      const newAnswers = [...userAnswers];
+      newAnswers[currentSubtest] = [...newAnswers[currentSubtest], "tiempo_agotado"];
+      setUserAnswers(newAnswers);
+      
       setTimeout(() => {
-        moveToNextQuestion(null);
+        moveToNextItem();
       }, 2000);
     }
   };
@@ -136,16 +319,35 @@ const ProCalculo6: React.FC = () => {
     console.log(`Playing ${type} sound`);
   };
 
-  const handleAnswer = (selectedAnswer: string) => {
+  const handleAnswer = (selectedAnswer: string | number) => {
     if (showFeedback) return;
     
-    const isCorrect = selectedAnswer === questions[currentQuestion].answer;
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    let isCorrect = false;
+    
+    // Para respuestas escritas, comparamos sin distinguir mayúsculas/espacios
+    if (currentQuestion.type === "escrito") {
+      isCorrect = selectedAnswer.toString().trim().toLowerCase() === 
+                  currentQuestion.answer.toString().trim().toLowerCase();
+    } 
+    // Para enumeración y contar para atrás, verificamos si llegó al número esperado
+    else if (currentSubtest === 0 || currentSubtest === 1) {
+      isCorrect = selectedAnswer.toString() === currentQuestion.answer.toString();
+    }
+    // Para otras respuestas orales, comparamos directamente
+    else {
+      isCorrect = selectedAnswer === currentQuestion.answer;
+    }
+    
     setOptionSelected(selectedAnswer);
     setCorrectAnswer(isCorrect);
     setShowFeedback(true);
     
+    // Actualizar puntuación
     if (isCorrect) {
-      setScore(score + 1);
+      const newScore = [...score];
+      newScore[currentSubtest] += currentQuestion.points;
+      setScore(newScore);
       playSound('correct');
       setAnimation('correct');
     } else {
@@ -153,61 +355,42 @@ const ProCalculo6: React.FC = () => {
       setAnimation('wrong');
     }
     
+    // Actualizar respuestas
+    const newAnswers = [...userAnswers];
+    newAnswers[currentSubtest] = [...newAnswers[currentSubtest], selectedAnswer];
+    setUserAnswers(newAnswers);
+    
     setTimeout(() => {
-      moveToNextQuestion(selectedAnswer);
+      moveToNextItem();
     }, 2000);
   };
 
-  const moveToNextQuestion = (selectedAnswer: string | null) => {
-    if (selectedAnswer !== null) {
-      setUserAnswers([...userAnswers, selectedAnswer]);
-    } else {
-      setUserAnswers([...userAnswers, 'tiempo_agotado']);
-    }
-    
+  const moveToNextItem = () => {
     setShowFeedback(false);
     setOptionSelected(null);
     setCorrectAnswer(null);
     setAnimation('');
+    setWrittenAnswer('');
+    setOralAnswer('');
+    setCountingProgress(0);
     
-    const nextQuestion = currentQuestion + 1;
-    
-    // Mostrar minijuego cada 3 preguntas (excepto al final)
-    if ((nextQuestion % 3 === 0) && nextQuestion < questions.length) {
-      setShowGame(true);
-      return;
-    }
-    
-    if (nextQuestion < questions.length) {
-      setCurrentQuestion(nextQuestion);
+    if (currentItem + 1 < subtests[currentSubtest].items.length) {
+      setCurrentItem(currentItem + 1);
       setTimeLeft(30);
     } else {
-      setShowResult(true);
-      playSound('complete');
-      
-      if (score + (selectedAnswer === questions[currentQuestion].answer ? 1 : 0) > questions.length / 2) {
-        launchConfetti();
+      if (currentSubtest + 1 < subtests.length) {
+        setCurrentSubtest(currentSubtest + 1);
+        setCurrentItem(0);
+        setTimeLeft(30);
+      } else {
+        setShowResult(true);
+        playSound('complete');
+        
+        const totalScore = score.reduce((a, b) => a + b, 0);
+        if (totalScore > 30) {
+          launchConfetti();
+        }
       }
-    }
-  };
-
-  const handleGameComplete = (success: boolean) => {
-    setShowGame(false);
-    
-    // Bonus por completar el juego
-    if (success) {
-      setScore(prev => prev + 1);
-      playSound('correct');
-    }
-    
-    // Continuar con la siguiente pregunta
-    const nextQuestion = currentQuestion + 1;
-    if (nextQuestion < questions.length) {
-      setCurrentQuestion(nextQuestion);
-      setTimeLeft(30);
-    } else {
-      setShowResult(true);
-      playSound('complete');
     }
   };
 
@@ -220,16 +403,19 @@ const ProCalculo6: React.FC = () => {
   };
 
   const restartTest = () => {
-    setCurrentQuestion(0);
-    setScore(0);
+    setCurrentSubtest(0);
+    setCurrentItem(0);
+    setScore(Array(9).fill(0));
     setShowResult(false);
-    setUserAnswers([]);
+    setUserAnswers(Array(9).fill([]));
     setTimeLeft(30);
     setShowFeedback(false);
     setOptionSelected(null);
     setCorrectAnswer(null);
     setAnimation('');
-    setShowGame(false);
+    setWrittenAnswer('');
+    setOralAnswer('');
+    setCountingProgress(0);
   };
 
   const toggleSound = () => {
@@ -237,47 +423,184 @@ const ProCalculo6: React.FC = () => {
   };
 
   const getResultMessage = () => {
-    const percentage = (score / questions.length) * 100;
+    const totalScore = score.reduce((a, b) => a + b, 0);
+    const percentage = (totalScore / 60) * 100;
+    
     if (percentage >= 80) return "¡Excelente trabajo! 🎉";
     if (percentage >= 60) return "¡Muy bien hecho! 🌟";
     if (percentage >= 40) return "¡Buen intento! 👍";
     return "¡Sigue practicando! 💪";
   };
 
-  const renderQuestion = () => {
-    const currentQ = questions[currentQuestion];
-    
-    switch(currentQ.type) {
-      case 'enumeration':
-        return (
-          <div className={styles.questionContent}>
-            <img src={currentQ.image} alt="Puntos para contar" className={styles.enumerationImage} />
-            <p className={styles.questionPrompt}>Cuenta los puntos en voz alta:</p>
-          </div>
-        );
-      
-      case 'count_backwards':
-        return (
-          <div className={styles.questionContent}>
-            <p className={styles.questionPrompt}>Cuenta hacia atrás desde 10:</p>
-          </div>
-        );
-      
-      case 'number_writing':
-        return (
-          <div className={styles.questionContent}>
-            <p className={styles.questionPrompt}>Escribe el número: <strong>'veinte'</strong></p>
-          </div>
-        );
-      
-      default:
-        return (
-          <div className={styles.questionContent}>
-            {currentQ.image && <img src={currentQ.image} alt="Ilustración" className={styles.questionImage} />}
-            <p className={styles.questionPrompt}>{currentQ.question}</p>
-          </div>
-        );
+  const handleWrittenAnswerSubmit = () => {
+    if (writtenAnswer.trim()) {
+      handleAnswer(writtenAnswer);
     }
+  };
+
+  const handleOralAnswerSubmit = () => {
+    if (oralAnswer.trim()) {
+      handleAnswer(oralAnswer);
+    }
+  };
+
+  const simulateCounting = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    const target = currentQuestion.countingItems || 10;
+    
+    if (countingProgress < target) {
+      setCountingProgress(countingProgress + 1);
+    } else {
+      handleAnswer(target.toString());
+    }
+  };
+
+  const renderInputField = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    
+    if (currentQuestion.type === "escrito") {
+      return (
+        <div className={styles.inputContainer}>
+          <input
+            type="text"
+            className={styles.textInput}
+            placeholder="Escribe tu respuesta..."
+            value={writtenAnswer}
+            onChange={(e) => setWrittenAnswer(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleWrittenAnswerSubmit();
+              }
+            }}
+          />
+          <button 
+            className={styles.submitButton}
+            onClick={handleWrittenAnswerSubmit}
+            disabled={!writtenAnswer.trim()}
+          >
+            Enviar
+          </button>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderOralInput = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    
+    if (currentQuestion.type === "oral" && currentSubtest !== 0 && currentSubtest !== 1) {
+      return (
+        <div className={styles.inputContainer}>
+          <input
+            type="text"
+            className={styles.textInput}
+            placeholder="Di tu respuesta..."
+            value={oralAnswer}
+            onChange={(e) => setOralAnswer(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleOralAnswerSubmit();
+              }
+            }}
+          />
+          <button 
+            className={styles.submitButton}
+            onClick={handleOralAnswerSubmit}
+            disabled={!oralAnswer.trim()}
+          >
+            Enviar
+          </button>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderCountingExercise = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    
+    if ((currentSubtest === 0 || currentSubtest === 1) && currentQuestion.type === "oral") {
+      return (
+        <div className={styles.countingContainer}>
+          <div className={styles.countingProgress}>
+            {currentSubtest === 0 ? (
+              <p>Contando: {countingProgress > 0 ? Array.from({length: countingProgress}, (_, i) => i + 1).join(", ") : "..."}</p>
+            ) : (
+              <p>Contando hacia atrás: {countingProgress > 0 ? 
+                Array.from({length: countingProgress}, (_, i) => 10 - i).join(", ") : "..."}</p>
+            )}
+          </div>
+          <button 
+            className={styles.countingButton}
+            onClick={simulateCounting}
+          >
+            {countingProgress === 0 ? "Comenzar a contar" : "Siguiente número"}
+          </button>
+          <button 
+            className={styles.submitButton}
+            onClick={() => handleAnswer(countingProgress > 0 ? 
+              (currentSubtest === 0 ? countingProgress.toString() : (10 - countingProgress + 1).toString()) : "0")}
+            disabled={countingProgress === 0}
+          >
+            Terminar
+          </button>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderQuestion = () => {
+    const currentSubtestData = subtests[currentSubtest];
+    const currentQuestion = currentSubtestData.items[currentItem];
+    
+    return (
+      <div className={styles.questionContent}>
+        <h3 className={styles.subtestTitle}>{currentSubtestData.name}</h3>
+        <p className={styles.questionPrompt}>{currentQuestion.question}</p>
+        
+        {currentQuestion.type === "opciones" && currentQuestion.options && (
+          <div className={styles.optionsGrid}>
+            {currentQuestion.options.map((option, index) => (
+              <button
+                key={index}
+                className={`${styles.optionButton} 
+                  ${optionSelected === option ? styles.selected : ''} 
+                  ${showFeedback && option === currentQuestion.answer ? styles.correct : ''} 
+                  ${showFeedback && optionSelected === option && option !== currentQuestion.answer ? styles.incorrect : ''}`}
+                onClick={() => handleAnswer(option)}
+                disabled={showFeedback}
+              >
+                <span className={styles.optionContent}>
+                  <span className={styles.optionText}>{option}</span>
+                  {showFeedback && option === currentQuestion.answer && (
+                    <FaCheck className={styles.feedbackIcon} />
+                  )}
+                  {showFeedback && optionSelected === option && option !== currentQuestion.answer && (
+                    <FaTimes className={styles.feedbackIcon} />
+                  )}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+        
+        {renderCountingExercise()}
+        {renderInputField()}
+        {renderOralInput()}
+        
+        {showFeedback && (
+          <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
+            <p>
+              {correctAnswer 
+                ? "¡Correcto! 🎉" 
+                : `La respuesta correcta es: ${subtests[currentSubtest].items[currentItem].answer}`}
+            </p>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -285,191 +608,93 @@ const ProCalculo6: React.FC = () => {
       <main className={styles.testContainer}>
         <div className={styles.cloudBackground}></div>
         
-        {showGame ? (
-          <div className={styles.gameOverlay}>
-            <RompeCabezasHuevos 
-              onComplete={handleGameComplete}
-            />
+        <section className={styles.testHeader}>
+          <div className={styles.titleWrapper}>
+            <h1 className={styles.testTitle}>
+              <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
+              Pro-Cálculo <span className={styles.ageBadge}>6 años</span>
+            </h1>
           </div>
-        ) : (
-          <>
-            <section className={styles.testHeader}>
-              <div className={styles.titleWrapper}>
-                <h1 className={styles.testTitle}>
-                  <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
-                  Pro-Cálculo <span className={styles.ageBadge}>6 años</span>
-                </h1>
-              </div>
-              
-              <div className={styles.controlButtons}>
-                <button
-                  className={styles.soundButton}
-                  onClick={toggleSound}
-                  aria-label={soundEnabled ? "Silenciar sonidos" : "Activar sonidos"}
-                >
-                  {soundEnabled ? <FaMusic /> : <FaVolumeMute />}
-                </button>
-                <a href="/Herramientas/test" className={styles.backButton}>
-                  <FaArrowLeft /> Volver
-                </a>
-              </div>
-            </section>
+          
+          <div className={styles.controlButtons}>
+            <button
+              className={styles.soundButton}
+              onClick={toggleSound}
+              aria-label={soundEnabled ? "Silenciar sonidos" : "Activar sonidos"}
+            >
+              {soundEnabled ? <FaMusic /> : <FaVolumeMute />}
+            </button>
+            <a href="/Herramientas/test" className={styles.backButton}>
+              <FaArrowLeft /> Volver
+            </a>
+          </div>
+        </section>
 
-            {!showResult ? (
-              <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
-                <div className={styles.progressBar}>
-                  <div 
-                    className={styles.progressFill} 
-                    style={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
-                  ></div>
+        {!showResult ? (
+          <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
+            <div className={styles.progressBar}>
+              <div 
+                className={styles.progressFill} 
+                style={{ 
+                  width: `${((currentSubtest + (currentItem / subtests[currentSubtest].items.length)) / subtests.length) * 100}%` 
+                }}
+              ></div>
+            </div>
+            
+            <div className={styles.questionInfo}>
+              <div className={styles.questionCounter}>
+                Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
+              </div>
+              <div className={styles.timer}>
+                Tiempo: <span className={timeLeft && timeLeft < 10 ? styles.timerWarning : ''}>{timeLeft}</span>
+              </div>
+            </div>
+            
+            <div className={styles.questionCard}>
+              {renderQuestion()}
+            </div>
+          </section>
+        ) : (
+          <section className={styles.resultSection}>
+            <div className={styles.resultContainer}>
+              <h2 className={styles.resultTitle}>
+                {getResultMessage()}
+              </h2>
+              
+              <div className={styles.scoreCard}>
+                <div className={styles.scoreVisual}>
+                  <div className={styles.scoreCircle}>
+                    <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
+                    <span className={styles.scoreTotal}>/60</span>
+                  </div>
                 </div>
                 
-                <div className={styles.questionInfo}>
-                  <div className={styles.questionCounter}>
-                    Pregunta {currentQuestion + 1} de {questions.length}
-                  </div>
-                  <div className={styles.timer}>
-                    Tiempo: <span className={timeLeft && timeLeft < 10 ? styles.timerWarning : ''}>{timeLeft}</span>
-                  </div>
-                </div>
+                <p className={styles.scoreText}>
+                  Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 60 puntos
+                </p>
                 
-                <div className={styles.questionCard}>
-                  {renderQuestion()}
-                  
-                  <div className={styles.optionsGrid}>
-                    {questions[currentQuestion].options.map((option, index) => (
-                      <button
-                        key={index}
-                        className={`${styles.optionButton} 
-                          ${optionSelected === option ? styles.selected : ''} 
-                          ${showFeedback && option === questions[currentQuestion].answer ? styles.correct : ''} 
-                          ${showFeedback && optionSelected === option && option !== questions[currentQuestion].answer ? styles.incorrect : ''}`}
-                        onClick={() => handleAnswer(option)}
-                        disabled={showFeedback}
-                      >
-                        <span className={styles.optionContent}>
-                          <span className={styles.optionText}>{option}</span>
-                          {showFeedback && option === questions[currentQuestion].answer && (
-                            <FaCheck className={styles.feedbackIcon} />
-                          )}
-                          {showFeedback && optionSelected === option && option !== questions[currentQuestion].answer && (
-                            <FaTimes className={styles.feedbackIcon} />
-                          )}
-                        </span>
-                      </button>
+                <div className={styles.subtestScores}>
+                  <h3>Puntuación por subtest:</h3>
+                  <ul>
+                    {subtests.map((subtest, index) => (
+                      <li key={index}>
+                        {subtest.name}: {score[index]} / {subtest.maxScore}
+                      </li>
                     ))}
-                  </div>
-                  
-                  {showFeedback && (
-                    <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
-                      <p>
-                        {correctAnswer 
-                          ? "¡Correcto! 🎉" 
-                          : `La respuesta correcta es: ${questions[currentQuestion].answer}`}
-                      </p>
-                      <p className={styles.explanation}>
-                        {questions[currentQuestion].explanation}
-                      </p>
-                    </div>
-                  )}
+                  </ul>
                 </div>
-              </section>
-            ) : (
-              <section className={styles.resultSection}>
-                <div className={styles.resultContainer}>
-                  <h2 className={styles.resultTitle}>
-                    {getResultMessage()}
-                  </h2>
-                  
-                  <div className={styles.scoreCard}>
-                    <div className={styles.scoreVisual}>
-                      <div className={styles.scoreCircle}>
-                        <span className={styles.scoreNumber}>{score}</span>
-                        <span className={styles.scoreTotal}>/{questions.length}</span>
-                      </div>
-                      <div className={styles.starContainer}>
-                        {Array.from({ length: 5 }).map((_, index) => (
-                          <FaStar
-                            key={index}
-                            className={`${styles.star} ${index < Math.ceil((score / questions.length) * 5) ? styles.activeStar : ''}`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    
-                    <p className={styles.scoreText}>
-                      Has acertado <span className={styles.scoreHighlight}>{score}</span> de {questions.length} preguntas
-                    </p>
-                    
-                    <div className={styles.medalContainer}>
-                      {score === questions.length && (
-                        <div className={styles.medal}>
-                          <FaTrophy className={styles.trophyIcon} />
-                          <span>¡Medalla de Oro!</span>
-                        </div>
-                      )}
-                      {score >= Math.floor(questions.length * 0.7) && score < questions.length && (
-                        <div className={styles.medal}>
-                          <FaStar className={styles.medalIcon} />
-                          <span>¡Muy Bien!</span>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <h3 className={styles.summaryTitle}>Repaso de preguntas</h3>
-                    <div className={styles.resultSummary}>
-                      {questions.map((q, index) => (
-                        <div key={index} className={`${styles.resultItem} ${
-                          userAnswers[index] === q.answer 
-                            ? styles.correctItem 
-                            : styles.incorrectItem
-                        }`}>
-                          <div className={styles.resultQuestion}>
-                            <span className={styles.questionNumber}>#{index + 1}</span>
-                            <span className={styles.questionPreview}>{q.question}</span>
-                          </div>
-                          <div className={styles.resultAnswers}>
-                            <div>
-                              {userAnswers[index] === 'tiempo_agotado' ? (
-                                <span className={styles.timeUp}>¡Tiempo agotado!</span>
-                              ) : (
-                                <>
-                                  <span className={styles.userAnswer}>
-                                    Tu respuesta: {userAnswers[index]}
-                                  </span>
-                                  {userAnswers[index] !== q.answer && (
-                                    <span className={styles.correctAnswerText}>
-                                      Respuesta: {q.answer}
-                                    </span>
-                                  )}
-                                </>
-                              )}
-                            </div>
-                            <span className={styles.resultIcon}>
-                              {userAnswers[index] === q.answer ? (
-                                <FaCheck className={styles.correctIcon} />
-                              ) : (
-                                <FaTimes className={styles.incorrectIcon} />
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    
-                    <div className={styles.actionsContainer}>
-                      <button className={styles.restartButton} onClick={restartTest}>
-                        <FaRedo /> Intentar de nuevo
-                      </button>
-                      <a href="/test" className={styles.homeButton}>
-                        Elegir otra prueba
-                      </a>
-                    </div>
-                  </div>
+                
+                <div className={styles.actionsContainer}>
+                  <button className={styles.restartButton} onClick={restartTest}>
+                    <FaRedo /> Intentar de nuevo
+                  </button>
+                  <a href="/test" className={styles.homeButton}>
+                    Elegir otra prueba
+                  </a>
                 </div>
-              </section>
-            )}
-          </>
+              </div>
+            </div>
+          </section>
         )}
       </main>
     </div>
