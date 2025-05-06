@@ -813,3 +813,342 @@
 .gameModal > div {
   max-width: 100%;
 }
+
+
+
+
+/*ESTILO DE LOS BOTONES "Si, continuar" "No, seguir contando"*/
+
+/* Estilos para los botones de confirmación del conteo */
+.confirmationButtons {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: rgba(0, 102, 51, 0.05);
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid rgba(0, 102, 51, 0.1);
+  box-shadow: var(--shadow-sm);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.confirmationButtons p {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--color-primary-green);
+  font-size: 1.1rem;
+}
+
+.confirmButton {
+  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
+  color: var(--color-white);
+  padding: 0.8rem 1.8rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.confirmButton:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  background: linear-gradient(135deg, var(--color-secondary-green), var(--color-primary-green));
+}
+
+.cancelButton {
+  background: var(--color-white);
+  color: var(--color-primary-green);
+  padding: 0.8rem 1.8rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid var(--color-primary-green);
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cancelButton:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  background-color: rgba(0, 102, 51, 0.05);
+}
+
+/* Ajustes para los botones del conteo */
+.countingControls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.countingButton {
+  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
+  color: var(--color-white);
+  padding: 1rem 1.8rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.countingButton:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.countingButton:disabled {
+  background: var(--color-light-gray);
+  color: var(--color-text-medium);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.submitButton {
+  background: var(--color-white);
+  color: var(--color-primary-green);
+  padding: 1rem 1.8rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid var(--color-primary-green);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+  width: 100%;
+}
+
+.submitButton:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  background-color: rgba(0, 102, 51, 0.05);
+}
+
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Animación para aparecer */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+/* Estilos específicos para la sección de escritura */
+.writtenAnswerContainer {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.inputContainer {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  width: 100%;
+}
+
+.textInput {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: 2px solid rgba(0, 102, 51, 0.2);
+  border-radius: 12px;
+  font-size: 1.1rem;
+  transition: var(--transition);
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.textInput:focus {
+  outline: none;
+  border-color: var(--color-secondary-green);
+  box-shadow: 0 0 0 3px rgba(0, 153, 85, 0.2);
+}
+
+.textInput::placeholder {
+  color: rgba(0, 102, 51, 0.4);
+}
+
+/* Botón de enviar mejorado */
+.submitButton {
+  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
+  color: var(--color-white);
+  padding: 1rem 1.8rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.submitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.submitButton:disabled {
+  background: var(--color-light-gray);
+  color: var(--color-text-medium);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Botones de confirmación mejorados */
+.confirmationButtons {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background-color: rgba(0, 102, 51, 0.05);
+  border-radius: 12px;
+  text-align: center;
+  border: 1px solid rgba(0, 102, 51, 0.1);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.confirmationButtons p {
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: var(--color-primary-green);
+  font-size: 1.1rem;
+}
+
+.confirmationButtonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.confirmButton {
+  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
+  color: var(--color-white);
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  min-width: 120px;
+}
+
+.confirmButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.cancelButton {
+  background: var(--color-white);
+  color: var(--color-primary-green);
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  border: 2px solid var(--color-primary-green);
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  min-width: 120px;
+}
+
+.cancelButton:hover {
+  background-color: rgba(0, 102, 51, 0.05);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Efecto de enfoque para los botones */
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 153, 85, 0.4);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .inputContainer {
+    flex-direction: column;
+  }
+  
+  .textInput {
+    width: 100%;
+  }
+  
+  .submitButton {
+    width: 100%;
+  }
+  
+  .confirmationButtonGroup {
+    flex-direction: column;
+  }
+  
+  .confirmButton,
+  .cancelButton {
+    width: 100%;
+  }
+}
+
+
+
+/* Estilos para el minijuego encima del interfaz*/
+.miniGameContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.miniGameContainer h1 {
+  color: #2c3e50;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.miniGameContainer button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.miniGameContainer button:hover {
+  background-color: #2980b9;
+}
