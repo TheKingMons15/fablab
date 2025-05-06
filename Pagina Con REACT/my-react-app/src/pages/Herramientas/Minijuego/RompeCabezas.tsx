@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './RompeCabezasHuevos.module.css';
 
-// 1. Definimos las props que el componente debe recibir
 interface RompeCabezasHuevosProps {
   onComplete: (success: boolean) => void;
 }
@@ -13,10 +12,11 @@ interface EggPiece {
   matched: boolean;
 }
 
+// Añadimos 2 huevos más para llegar a 6 huevos (12 piezas)
 const eggImages = [
   {
     id: 'egg1',
-    top: '/img/eggs/egg1-top.png',
+    top: '/img/Huevo_1_Sup.png',
     bottom: '/img/eggs/egg1-bottom.png'
   },
   {
@@ -33,17 +33,25 @@ const eggImages = [
     id: 'egg4',
     top: '/img/eggs/egg4-top.png',
     bottom: '/img/eggs/egg4-bottom.png'
+  },
+  {
+    id: 'egg5',
+    top: '/img/eggs/egg5-top.png',
+    bottom: '/img/eggs/egg5-bottom.png'
+  },
+  {
+    id: 'egg6',
+    top: '/img/eggs/egg6-top.png',
+    bottom: '/img/eggs/egg6-bottom.png'
   }
 ];
 
-// 2. Añadimos las props al componente
 export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComplete }) => {
   const [pieces, setPieces] = useState<EggPiece[]>([]);
   const [selectedPieces, setSelectedPieces] = useState<EggPiece[]>([]);
   const [matches, setMatches] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
 
-  // Inicializar el juego
   useEffect(() => {
     initializeGame();
   }, []);
@@ -98,7 +106,7 @@ export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComple
         
         if (newMatches === eggImages.length) {
           setGameCompleted(true);
-          onComplete(true); // Notificar al padre que se completó con éxito
+          onComplete(true);
         }
       } else {
         setTimeout(() => {
@@ -142,7 +150,7 @@ export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComple
       
       {gameCompleted && (
         <div className={styles.completionScreen}>
-          <h2>¡Felicidades! 🎉</h2>
+          <h2>¡Felicidades! �</h2>
           <p>Completaste todos los huevos</p>
           <button 
             className={styles.playAgainButton}
