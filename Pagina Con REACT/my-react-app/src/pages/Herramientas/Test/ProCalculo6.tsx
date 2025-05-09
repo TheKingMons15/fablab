@@ -65,7 +65,6 @@ const ProCalculo6: React.FC = () => {
   const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
   const [oralAnswerConfirmed, setOralAnswerConfirmed] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
-  const [questionsSinceLastGame, setQuestionsSinceLastGame] = useState(0);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -581,15 +580,13 @@ const ProCalculo6: React.FC = () => {
     setWrittenAnswerConfirmed(false);
     setOralAnswerConfirmed(false);
     
-    // Incrementa el contador de preguntas
-    const nextQuestionsCount = questionsSinceLastGame + 1;
-    setQuestionsSinceLastGame(nextQuestionsCount);
-    
-    // Verifica si es momento de mostrar el minijuego (cada 3 preguntas)
-    if (nextQuestionsCount >= 3) {
-      setShowMiniGame(true);
-      setQuestionsSinceLastGame(0);
-      return; // Salimos de la función para mostrar el minijuego
+    // Verificar si es momento de mostrar el minijuego (cada 3 subtest completados)
+    if (currentItem + 1 >= subtests[currentSubtest].items.length) {
+      const nextSubtest = currentSubtest + 1;
+      if (nextSubtest > 0 && nextSubtest % 3 === 0 && nextSubtest < subtests.length) {
+        setShowMiniGame(true);
+        return;
+      }
     }
     
     // Lógica normal de navegación entre preguntas
@@ -619,21 +616,17 @@ const ProCalculo6: React.FC = () => {
     } else {
       setAnimation('wrong');
     }
-    // Continúa con la siguiente pregunta normalmente
-    if (currentItem + 1 < subtests[currentSubtest].items.length) {
-      setCurrentItem(currentItem + 1);
+    
+    // Continúa con el siguiente subtest
+    if (currentSubtest + 1 < subtests.length) {
+      setCurrentSubtest(currentSubtest + 1);
+      setCurrentItem(0);
       setTimeLeft(30);
     } else {
-      if (currentSubtest + 1 < subtests.length) {
-        setCurrentSubtest(currentSubtest + 1);
-        setCurrentItem(0);
-        setTimeLeft(30);
-      } else {
-        setShowResult(true);
-        const totalScore = score.reduce((a, b) => a + b, 0);
-        if (totalScore > 30) {
-          launchConfetti();
-        }
+      setShowResult(true);
+      const totalScore = score.reduce((a, b) => a + b, 0);
+      if (totalScore > 30) {
+        launchConfetti();
       }
     }
   };
@@ -670,7 +663,6 @@ const ProCalculo6: React.FC = () => {
     setWrittenAnswerConfirmed(false);
     setOralAnswerConfirmed(false);
     setShowMiniGame(false);
-    setQuestionsSinceLastGame(0);
   };
 
   const getResultMessage = () => {
@@ -879,7 +871,6 @@ const ProCalculo6: React.FC = () => {
               onClick={() => {
                 setCountingFinished(true);
               }}
-              disabled={isCountingUp ? countingProgress === 0 : countingProgress === 0}
             >
               Terminar conteo
             </button>

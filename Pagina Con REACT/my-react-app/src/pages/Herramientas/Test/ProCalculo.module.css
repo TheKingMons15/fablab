@@ -1,4 +1,4 @@
-/* ProCalculo.module.css */
+/* ProCalculo.module.css - Versión Mejorada para Niños */
 
 /* Variables con la paleta de colores */
 :root {
@@ -15,6 +15,7 @@
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
 /* Reset y estilos base */
@@ -24,7 +25,7 @@
   padding: 0;
 }
 
-/* Estructura principal */
+/* Estructura principal con fondo animado */
 .pageContainer {
   display: flex;
   justify-content: center;
@@ -37,7 +38,67 @@
   overflow: hidden;
 }
 
-/* Contenedor del test con borde superior mejorado */
+/* Elementos flotantes animados */
+.floating-elements {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.floating-element {
+  position: absolute;
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.15;
+  animation: float 15s infinite linear;
+}
+
+.floating-element:nth-child(1) {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23006633"><path d="M12 2L4 12l8 10 8-10z"/></svg>');
+  width: 60px;
+  height: 60px;
+  top: 10%;
+  left: 5%;
+  animation-duration: 20s;
+}
+
+.floating-element:nth-child(2) {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFCE00"><circle cx="12" cy="12" r="10"/></svg>');
+  width: 80px;
+  height: 80px;
+  top: 70%;
+  left: 80%;
+  animation-duration: 25s;
+  animation-delay: 2s;
+}
+
+.floating-element:nth-child(3) {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23009955"><path d="M12 2L2 22h20z"/></svg>');
+  width: 50px;
+  height: 50px;
+  top: 30%;
+  left: 70%;
+  animation-duration: 18s;
+  animation-delay: 1s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-50px) rotate(180deg);
+  }
+  100% {
+    transform: translateY(0) rotate(360deg);
+  }
+}
+
+/* Contenedor del test con animación de levitación */
 .testContainer {
   width: 100%;
   max-width: 900px;
@@ -48,9 +109,19 @@
   padding: 3rem;
   position: relative;
   overflow: hidden;
+  z-index: 1;
+  animation: levitate 4s ease-in-out infinite;
 }
 
-/* Borde superior con efecto neon mejorado */
+@keyframes levitate {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
 /* Borde superior con efecto de movimiento continuo y lineal */
 .testContainer::before {
   content: '';
@@ -58,51 +129,24 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 6px;
   background: linear-gradient(
     90deg,
     var(--color-primary-green) 0%,
-    var(--color-primary-green) 25%,
-    var(--color-secondary-green) 50%,
-    var(--color-accent-yellow) 75%,
+    var(--color-accent-yellow) 50%,
     var(--color-primary-green) 100%
   );
-  background-size: 400% 400%;
+  background-size: 200% 100%;
   z-index: 2;
-  animation: gradientScroll 6s linear infinite;
-  border-radius: 0 0 4px 4px;
+  animation: rainbowBorder 3s linear infinite;
 }
 
-@keyframes gradientScroll {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 100% 0%;
-  }
-}
-
-@keyframes gradientMove {
+@keyframes rainbowBorder {
   0% {
     background-position: 0% 50%;
-    box-shadow: 0 0 10px rgba(0, 153, 85, 0.3);
-  }
-  50% {
-    background-position: 100% 50%;
-    box-shadow: 0 0 15px rgba(255, 206, 0, 0.4);
   }
   100% {
-    background-position: 0% 50%;
-    box-shadow: 0 0 10px rgba(0, 102, 51, 0.3);
-  }
-}
-
-@keyframes borderPulse {
-  0% {
-    box-shadow: 0 0 5px rgba(0, 102, 51, 0.3);
-  }
-  100% {
-    box-shadow: 0 0 15px rgba(0, 153, 85, 0.5);
+    background-position: 200% 50%;
   }
 }
 
@@ -145,10 +189,24 @@
   max-width: 140px;
   height: auto;
   transition: transform 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .logoSmall:hover {
   transform: scale(1.05) rotate(-2deg);
+  animation: none;
 }
 
 .ageBadge {
@@ -181,11 +239,30 @@
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
   text-decoration: none;
+  position: relative;
+  overflow: hidden;
 }
 
 .backButton:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
+}
+
+.backButton::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  transform: rotate(30deg);
+  animation: buttonShine 3s infinite;
 }
 
 .soundButton {
@@ -207,7 +284,16 @@
   transform: scale(1.1);
 }
 
-/* Barra de progreso corregida */
+@keyframes buttonShine {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+/* Barra de progreso mejorada */
 .progressContainer {
   width: 100%;
   margin-bottom: 2rem;
@@ -230,13 +316,12 @@
     var(--color-primary-green), 
     var(--color-secondary-green));
   border-radius: 4px;
-  transition: width 0.4s ease;
+  transition: width 0.6s var(--bounce);
   position: relative;
   width: 0;
   box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.3);
 }
 
-/* Efecto neon sutil para la barra de progreso */
 .progressFill::after {
   content: '';
   position: absolute;
@@ -281,22 +366,27 @@
   50% { opacity: 0.6; }
 }
 
-/* Pregunta */
+/* Pregunta con efecto 3D */
 .questionCard {
   background-color: var(--color-white);
   border-radius: 20px;
   padding: 2.5rem;
   margin-bottom: 2rem;
-  box-shadow: var(--shadow-md);
+  box-shadow: 
+    0 6px 10px rgba(0, 102, 51, 0.1),
+    0 15px 30px rgba(0, 153, 85, 0.15);
   border: 1px solid rgba(0, 102, 51, 0.1);
   position: relative;
   overflow: hidden;
   transition: var(--transition);
+  transform-style: preserve-3d;
 }
 
 .questionCard:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-5px) rotateX(2deg) rotateY(2deg);
+  box-shadow: 
+    0 10px 20px rgba(0, 102, 51, 0.2),
+    0 20px 40px rgba(0, 153, 85, 0.25);
 }
 
 .questionContent {
@@ -328,7 +418,7 @@
   transform: scale(1.02);
 }
 
-/* Opciones */
+/* Opciones con animaciones mejoradas */
 .optionsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -343,7 +433,7 @@
   border-radius: 14px;
   padding: 1.5rem 1.2rem;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.3s var(--bounce);
   font-size: 1.1rem;
   color: var(--color-text-dark);
   font-weight: 500;
@@ -354,29 +444,63 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .optionButton:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-sm);
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
   border-color: var(--color-primary-green);
 }
 
 .optionButton.selected {
   border-color: var(--color-secondary-green);
   background-color: rgba(0, 153, 85, 0.05);
+  animation: selectedPulse 1s infinite alternate;
+}
+
+@keyframes selectedPulse {
+  from {
+    box-shadow: 0 0 0 0 rgba(0, 153, 85, 0.2);
+  }
+  to {
+    box-shadow: 0 0 0 10px rgba(0, 153, 85, 0);
+  }
 }
 
 .optionButton.correct {
   background-color: rgba(40, 167, 69, 0.1);
   border-color: var(--color-success);
   color: var(--color-success);
+  animation: correctJump 0.5s var(--bounce);
+}
+
+@keyframes correctJump {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
 }
 
 .optionButton.incorrect {
   background-color: rgba(220, 53, 69, 0.1);
   border-color: var(--color-error);
   color: var(--color-error);
+  animation: shake 0.5s;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  20%, 60% {
+    transform: translateX(-5px);
+  }
+  40%, 80% {
+    transform: translateX(5px);
+  }
 }
 
 .feedbackIcon {
@@ -384,7 +508,7 @@
   font-size: 1.2rem;
 }
 
-/* Feedback */
+/* Feedback con confeti */
 .feedback {
   margin-top: 1.5rem;
   padding: 1.5rem;
@@ -395,11 +519,28 @@
   opacity: 0;
   transform: translateY(20px);
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
 }
 
 .feedback.show {
   opacity: 1;
   transform: translateY(0);
+}
+
+.feedback.show::after {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: linear-gradient(90deg, 
+    var(--color-primary-green),
+    var(--color-accent-yellow),
+    var(--color-secondary-green));
+  animation: confettiRain 2s linear forwards;
+  z-index: 1;
 }
 
 .correctFeedback {
@@ -421,7 +562,18 @@
   opacity: 0.8;
 }
 
-/* Resultados */
+@keyframes confettiRain {
+  0% {
+    transform: translateY(-50px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Resultados con animaciones */
 .resultSection {
   width: 100%;
   position: relative;
@@ -487,12 +639,29 @@
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
-  animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+  animation: 
+    scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards,
+    celebrate 2s 0.6s infinite alternate;
 }
 
 @keyframes scaleIn {
   0% { transform: scale(0); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes celebrate {
+  0% {
+    transform: scale(1) rotate(0deg);
+    box-shadow: 
+      0 0 0 0 rgba(0, 102, 51, 0.2),
+      0 0 0 0 rgba(255, 206, 0, 0.2);
+  }
+  100% {
+    transform: scale(1.05) rotate(5deg);
+    box-shadow: 
+      0 0 20px 10px rgba(0, 102, 51, 0.1),
+      0 0 30px 15px rgba(255, 206, 0, 0.1);
+  }
 }
 
 .scoreNumber {
@@ -516,11 +685,35 @@
   color: #ddd;
   font-size: 1.5rem;
   transition: all 0.3s ease;
+  animation: twinkle 2s infinite alternate;
 }
 
 .star.activeStar {
   color: var(--color-accent-yellow);
-  transform: scale(1.2);
+  animation: 
+    twinkle 1s infinite alternate,
+    bounce 0.5s var(--bounce);
+}
+
+@keyframes twinkle {
+  0% {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+    text-shadow: 0 0 10px var(--color-accent-yellow);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 .scoreText {
@@ -678,11 +871,30 @@
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
 }
 
 .restartButton:hover {
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
+}
+
+.restartButton::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  transform: rotate(30deg);
+  animation: buttonShine 3s infinite;
 }
 
 .homeButton {
@@ -705,119 +917,117 @@
   transform: translateY(-3px);
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .testContainer {
-    padding: 1.5rem;
-  }
-  
-  .testHeader {
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-  
-  .titleWrapper {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 0.5rem;
-  }
-  
-  .optionsGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .resultContainer {
-    padding: 1.5rem;
-  }
-  
-  .scoreCircle {
-    width: 120px;
-    height: 120px;
-  }
-  
-  .scoreNumber {
-    font-size: 2.8rem;
-  }
-  
-  .actionsContainer {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .restartButton,
-  .homeButton {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .testTitle {
-    font-size: 1.8rem;
-  }
-  
-  .questionCard {
-    padding: 1.5rem;
-  }
-  
-  .questionPrompt {
-    font-size: 1.3rem;
-  }
-  
-  .resultTitle {
-    font-size: 2rem;
-  }
-  
-  .resultItem {
-    padding: 1rem;
-  }
-}
-
-
-/*MINIJUEGO*/
-
-
-/* Estilos para el modal del juego */
+/* MINIJUEGO mejorado */
 .gameOverlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background: rgba(255, 255, 255, 0.95) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="%2300663320"><circle cx="25" cy="25" r="5"/><circle cx="75" cy="25" r="5"/><circle cx="25" cy="75" r="5"/><circle cx="75" cy="75" r="5"/></svg>');
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  animation: fadeIn 0.3s ease-out;
+  animation: 
+    fadeIn 0.3s ease-out,
+    gameBackground 20s linear infinite;
 }
 
 .gameModal {
   background-color: white;
   border-radius: 15px;
-  padding: 20px;
+  padding: 30px;
   max-width: 90%;
   max-height: 90%;
   overflow: auto;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.2),
+    0 0 0 10px var(--color-primary-green),
+    0 0 0 15px var(--color-accent-yellow);
   position: relative;
+  animation: levitate 3s ease-in-out infinite;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.gameModal h1 {
+  color: var(--color-primary-green);
+  text-shadow: 2px 2px 0 var(--color-accent-yellow);
+  animation: colorChange 5s infinite alternate;
+  margin-bottom: 20px;
+  font-size: 2rem;
 }
 
-/* Asegúrate que el juego no sea demasiado grande */
-.gameModal > div {
-  max-width: 100%;
+@keyframes colorChange {
+  0% {
+    color: var(--color-primary-green);
+  }
+  50% {
+    color: var(--color-secondary-green);
+  }
+  100% {
+    color: var(--color-accent-yellow);
+  }
 }
 
+.gameModal button {
+  margin-top: 20px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, 
+    var(--color-primary-green), 
+    var(--color-secondary-green));
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 
+    0 4px 0 var(--color-primary-green),
+    0 6px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  font-size: 1rem;
+}
 
+.gameModal button:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 0 var(--color-primary-green),
+    0 8px 12px rgba(0, 0, 0, 0.2);
+}
 
+.gameModal button:active {
+  transform: translateY(2px);
+  box-shadow: 
+    0 2px 0 var(--color-primary-green),
+    0 3px 4px rgba(0, 0, 0, 0.2);
+}
 
-/*ESTILO DE LOS BOTONES "Si, continuar" "No, seguir contando"*/
+.gameModal button::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 45%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0) 55%
+  );
+  transform: rotate(30deg);
+  animation: buttonShine 3s infinite;
+}
+
+@keyframes gameBackground {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 100px 100px;
+  }
+}
 
 /* Estilos para los botones de confirmación del conteo */
 .confirmationButtons {
@@ -945,14 +1155,6 @@
   cursor: not-allowed;
 }
 
-/* Animación para aparecer */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-
-
 /* Estilos específicos para la sección de escritura */
 .writtenAnswerContainer {
   margin-top: 2rem;
@@ -990,165 +1192,81 @@
   color: rgba(0, 102, 51, 0.4);
 }
 
-/* Botón de enviar mejorado */
-.submitButton {
-  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
-  color: var(--color-white);
-  padding: 1rem 1.8rem;
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-  white-space: nowrap;
-}
-
-.submitButton:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.submitButton:disabled {
-  background: var(--color-light-gray);
-  color: var(--color-text-medium);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Botones de confirmación mejorados */
-.confirmationButtons {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  background-color: rgba(0, 102, 51, 0.05);
-  border-radius: 12px;
-  text-align: center;
-  border: 1px solid rgba(0, 102, 51, 0.1);
-  animation: fadeIn 0.3s ease-out;
-}
-
-.confirmationButtons p {
-  margin-bottom: 1rem;
-  font-weight: 600;
-  color: var(--color-primary-green);
-  font-size: 1.1rem;
-}
-
-.confirmationButtonGroup {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-}
-
-.confirmButton {
-  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
-  color: var(--color-white);
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-  min-width: 120px;
-}
-
-.confirmButton:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-.cancelButton {
-  background: var(--color-white);
-  color: var(--color-primary-green);
-  padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: 2px solid var(--color-primary-green);
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-  min-width: 120px;
-}
-
-.cancelButton:hover {
-  background-color: rgba(0, 102, 51, 0.05);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-}
-
-/* Efecto de enfoque para los botones */
-button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(0, 153, 85, 0.4);
-}
-
-/* Responsive para móviles */
+/* Responsive */
 @media (max-width: 768px) {
-  .inputContainer {
+  .testContainer {
+    padding: 1.5rem;
+    animation: levitateMobile 4s ease-in-out infinite;
+  }
+  
+  @keyframes levitateMobile {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-5px);
+    }
+  }
+  
+  .testHeader {
     flex-direction: column;
+    gap: 1.5rem;
   }
   
-  .textInput {
-    width: 100%;
-  }
-  
-  .submitButton {
-    width: 100%;
-  }
-  
-  .confirmationButtonGroup {
+  .titleWrapper {
     flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
   }
   
-  .confirmButton,
-  .cancelButton {
+  .optionsGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .resultContainer {
+    padding: 1.5rem;
+  }
+  
+  .scoreCircle {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .scoreNumber {
+    font-size: 2.8rem;
+  }
+  
+  .actionsContainer {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .restartButton,
+  .homeButton {
     width: 100%;
+    justify-content: center;
   }
 }
 
-
-
-/* Estilos para el minijuego encima del interfaz*/
-.miniGameContainer {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.9);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.miniGameContainer h1 {
-  color: #2c3e50;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.miniGameContainer button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background-color 0.3s;
-}
-
-.miniGameContainer button:hover {
-  background-color: #2980b9;
+@media (max-width: 480px) {
+  .testTitle {
+    font-size: 1.8rem;
+  }
+  
+  .questionCard {
+    padding: 1.5rem;
+  }
+  
+  .questionPrompt {
+    font-size: 1.3rem;
+  }
+  
+  .resultTitle {
+    font-size: 2rem;
+  }
+  
+  .resultItem {
+    padding: 1rem;
+  }
 }
