@@ -10,47 +10,61 @@ interface EggPiece {
   image: string;
   type: 'top' | 'bottom';
   matched: boolean;
+  fullImage?: string;
 }
 
-// Añadimos 2 huevos más para llegar a 6 huevos (12 piezas)
-const eggImages = [
+interface EggImage {
+  id: string;
+  top: string;
+  bottom: string;
+  full: string;
+}
+
+const eggImages: EggImage[] = [
   {
     id: 'egg1',
-    top: '/img/Huevo_1_Sup.png',
-    bottom: '/img/eggs/egg1-bottom.png'
+    top: '/img/Huevo1_Sup.jpg',
+    bottom: '/img/Huevo1_Inf.jpg',
+    full: '/img/Huevo1_Completo.jpg'
   },
   {
     id: 'egg2',
-    top: '/img/eggs/egg2-top.png',
-    bottom: '/img/eggs/egg2-bottom.png'
+    top: '/img/Huevo2_Sup.jpg',
+    bottom: '/img/Huevo2_Inf.jpg',
+    full: '/img/Huevo1_Completo.jpg'
   },
   {
     id: 'egg3',
-    top: '/img/eggs/egg3-top.png',
-    bottom: '/img/eggs/egg3-bottom.png'
+    top: '/img/Huevo3_Sup.jpg',
+    bottom: '/img/Huevo3_Inf.jpg',
+    full: '/img/Huevo1_Completo.jpg'
   },
   {
     id: 'egg4',
-    top: '/img/eggs/egg4-top.png',
-    bottom: '/img/eggs/egg4-bottom.png'
+    top: '/img/Huevo4_Sup.jpg',
+    bottom: '/img/Huevo4_Inf.jpg',
+    full: '/img/Huevo1_Completo.jpg'
   },
   {
     id: 'egg5',
-    top: '/img/eggs/egg5-top.png',
-    bottom: '/img/eggs/egg5-bottom.png'
+    top: '/img/Huevo5_Sup.jpg',
+    bottom: '/img/Huevo5_Inf.jpg',
+    full: '/img/Huevo1_Completo.jpg'
   },
   {
     id: 'egg6',
-    top: '/img/eggs/egg6-top.png',
-    bottom: '/img/eggs/egg6-bottom.png'
+    top: '/img/Huevo6_Sup.jpg',
+    bottom: '/img/Huevo6_Inf.jpg',
+    full: '/img/Huevo1_Completo.jpg'
   }
 ];
 
 export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComplete }) => {
   const [pieces, setPieces] = useState<EggPiece[]>([]);
   const [selectedPieces, setSelectedPieces] = useState<EggPiece[]>([]);
-  const [matches, setMatches] = useState(0);
+  const [matches, setMatches] = useState<{id: string, fullImage: string}[]>([]);
   const [gameCompleted, setGameCompleted] = useState(false);
+  const [showMatch, setShowMatch] = useState<{show: boolean, image: string}>({show: false, image: ''});
 
   useEffect(() => {
     initializeGame();
@@ -64,21 +78,24 @@ export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComple
         id: `${egg.id}-top`,
         image: egg.top,
         type: 'top',
-        matched: false
+        matched: false,
+        fullImage: egg.full
       });
       newPieces.push({
         id: `${egg.id}-bottom`,
         image: egg.bottom,
         type: 'bottom',
-        matched: false
+        matched: false,
+        fullImage: egg.full
       });
     });
 
     const shuffledPieces = [...newPieces].sort(() => Math.random() - 0.5);
     setPieces(shuffledPieces);
     setSelectedPieces([]);
-    setMatches(0);
+    setMatches([]);
     setGameCompleted(false);
+    setShowMatch({show: false, image: ''});
   };
 
   const handlePieceClick = (piece: EggPiece) => {
@@ -94,20 +111,26 @@ export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComple
       const secondEggId = second.id.split('-')[0];
       
       if (firstEggId === secondEggId && first.type !== second.type) {
-        setPieces(prevPieces => 
-          prevPieces.map(p => 
-            p.id === first.id || p.id === second.id ? { ...p, matched: true } : p
-          )
-        );
+        // Mostrar la imagen completa temporalmente
+        setShowMatch({show: true, image: first.fullImage || ''});
         
-        const newMatches = matches + 1;
-        setMatches(newMatches);
-        setSelectedPieces([]);
-        
-        if (newMatches === eggImages.length) {
-          setGameCompleted(true);
-          onComplete(true);
-        }
+        setTimeout(() => {
+          setPieces(prevPieces => 
+            prevPieces.map(p => 
+              p.id === first.id || p.id === second.id ? { ...p, matched: true } : p
+            )
+          );
+          
+          const newMatches = [...matches, {id: firstEggId, fullImage: first.fullImage || ''}];
+          setMatches(newMatches);
+          setSelectedPieces([]);
+          setShowMatch({show: false, image: ''});
+          
+          if (newMatches.length === eggImages.length) {
+            setGameCompleted(true);
+            onComplete(true);
+          }
+        }, 1500);
       } else {
         setTimeout(() => {
           setSelectedPieces([]);
@@ -145,13 +168,44 @@ export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComple
       </div>
       
       <div className={styles.stats}>
-        <p>Huevos completados: {matches} / {eggImages.length}</p>
+        <p>Huevos completados: {matches.length} / {eggImages.length}</p>
       </div>
       
+      {/* Efecto de mostrar imagen completa al hacer match */}
+      {showMatch.show && (
+        <div className={styles.fullEggOverlay}>
+          <div className={styles.fullEggContainer}>
+            <img 
+              src={showMatch.image} 
+              alt="Huevo completo" 
+              className={styles.fullEggImage}
+            />
+            <div className={styles.confetti}></div>
+          </div>
+        </div>
+      )}
+      
+      {/* Pantalla de finalización */}
       {gameCompleted && (
         <div className={styles.completionScreen}>
-          <h2>¡Felicidades! �</h2>
-          <p>Completaste todos los huevos</p>
+          <h2>¡Felicidades! 🎉</h2>
+          <p>Completaste todos los huevos correctamente</p>
+          
+          <div className={styles.completedEggsGallery}>
+            <h3>Tus huevos completos:</h3>
+            <div className={styles.completedEggsGrid}>
+              {matches.map((match, index) => (
+                <div key={index} className={styles.completedEggContainer}>
+                  <img 
+                    src={match.fullImage} 
+                    alt={`Huevo completo ${index + 1}`}
+                    className={styles.completedEggImage}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          
           <button 
             className={styles.playAgainButton}
             onClick={initializeGame}

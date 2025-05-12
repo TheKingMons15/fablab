@@ -1,197 +1,736 @@
-import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaCheck, FaTimes, FaStar, FaTrophy, FaRedo, FaMusic, FaVolumeMute } from 'react-icons/fa';
+import React, { useState, useEffect, useRef } from 'react';
+import { FaArrowLeft, FaCheck, FaTimes, FaRedo, FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
+import { RompeCabezasHuevos } from '../Minijuego/RompeCabezas';
+
+interface SpeechRecognitionResult {
+  [key: number]: SpeechRecognitionAlternative;
+  item(index: number): SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
+interface SpeechRecognitionEvent {
+  results: SpeechRecognitionResult[];
+}
+
+interface SpeechRecognition extends EventTarget {
+  start: () => void;
+  stop: () => void;
+  onresult: (event: SpeechRecognitionEvent) => void;
+  onerror: (event: any) => void;
+  onend: () => void;
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+}
+
+interface QuestionItem {
+  question: string;
+  answer: string | number;
+  points: number;
+  type: 'oral' | 'escrito' | 'opciones' | 'conteo' | 'escala' | 'determinacion';
+  options?: string[];
+  countingItems?: number;
+  min?: number;
+  max?: number;
+}
+
+interface Subtest {
+  name: string;
+  maxScore: number;
+  items: QuestionItem[];
+}
 
 const ProCalculo7: React.FC = () => {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [score, setScore] = useState(0);
+  const [currentSubtest, setCurrentSubtest] = useState(0);
+  const [currentItem, setCurrentItem] = useState(0);
+  const [score, setScore] = useState<number[]>(Array(12).fill(0));
   const [showResult, setShowResult] = useState(false);
-  const [userAnswers, setUserAnswers] = useState<string[]>([]);
+  const [userAnswers, setUserAnswers] = useState<(string | number)[][]>(Array(12).fill([]));
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
-  const [optionSelected, setOptionSelected] = useState<string | null>(null);
+  const [optionSelected, setOptionSelected] = useState<string | number | null>(null);
   const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
-  const [soundEnabled, setSoundEnabled] = useState(true);
   const [animation, setAnimation] = useState('');
-  
-  // Preguntas para niños de 7 años basadas en el test Pro-Cálculo
-  const questions = [
-    // 1. Cálculo mental suma
+  const [writtenAnswer, setWrittenAnswer] = useState('');
+  const [oralAnswer, setOralAnswer] = useState('');
+  const [countingProgress, setCountingProgress] = useState(0);
+  const [isListening, setIsListening] = useState(false);
+  const [recognizedText, setRecognizedText] = useState('');
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const [countingFinished, setCountingFinished] = useState(false);
+  const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
+  const [oralAnswerConfirmed, setOralAnswerConfirmed] = useState(false);
+  const [showMiniGame, setShowMiniGame] = useState(false);
+  const [scaleValue, setScaleValue] = useState(50);
+  const [determinationSelections, setDeterminationSelections] = useState<{[key: number]: boolean}>({});
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      
+      if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'es-ES';
+
+        recognition.onresult = (event: SpeechRecognitionEvent) => {
+          const result = event.results[0];
+          const transcript = result[0].transcript;
+          setRecognizedText(transcript);
+          setOralAnswer(transcript);
+          
+          const currentQuestion = subtests[currentSubtest].items[currentItem];
+          
+          if (currentQuestion.type === 'oral') {
+            // Only update answer, don't submit automatically
+          }
+          
+          if (currentQuestion.type === 'conteo') {
+            const numbersFound = transcript.match(/\b(\d+)\b/g) || [];
+            if (numbersFound.length > 0) {
+              const lastNumber = parseInt(numbersFound[numbersFound.length - 1]);
+              if (!isNaN(lastNumber)) {
+                handleCountNumber(lastNumber);
+              }
+            }
+          }
+        };
+
+        recognition.onerror = (event: any) => {
+          console.error('Error en reconocimiento de voz:', event.error);
+          setIsListening(false);
+        };
+        
+        recognition.onend = () => {
+          setIsListening(false);
+        };
+
+        recognitionRef.current = recognition;
+      }
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
+  }, [currentSubtest, currentItem]);
+
+  const normalizeText = (text: string): string => {
+    return text.toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  };
+
+  const subtests: Subtest[] = [
     {
-      type: "sum",
-      question: "¿Cuánto es 8 + 7?",
-      image: "/img/sum-7-years.png",
-      answer: "15",
-      options: ["13", "14", "15", "16"],
-      explanation: "Sumamos 8 + 7 = 15"
+      name: "Enumeración",
+      maxScore: 12,
+      items: [
+        { 
+          question: "Cuenta los puntos en la imagen (13 puntos)", 
+          answer: "13", 
+          points: 4,
+          type: "conteo",
+          countingItems: 13
+        },
+        { 
+          question: "Cuenta los puntos en la imagen (8 puntos)", 
+          answer: "8", 
+          points: 4,
+          type: "conteo",
+          countingItems: 8
+        },
+        { 
+          question: "Cuenta los puntos en la imagen (10 puntos)", 
+          answer: "10", 
+          points: 4,
+          type: "conteo",
+          countingItems: 10
+        }
+      ]
     },
-    // 2. Cálculo mental resta
     {
-      type: "subtraction",
-      question: "¿Cuánto es 20 - 8?",
-      image: "/img/substract-7-years.png",
-      answer: "12",
-      options: ["10", "11", "12", "13"],
-      explanation: "Restamos 20 - 8 = 12"
+      name: "Contar para atrás",
+      maxScore: 2,
+      items: [
+        { 
+          question: "Cuenta hacia atrás desde 15", 
+          answer: "0", 
+          points: 2,
+          type: "conteo",
+          countingItems: 15
+        }
+      ]
     },
-    // 3. Multiplicación básica
     {
-      type: "multiplication",
-      question: "Si tienes 3 cajas con 4 juguetes cada una, ¿cuántos juguetes tienes en total?",
-      image: "/img/multiplication-7-years.png",
-      answer: "12",
-      options: ["7", "9", "11", "12"],
-      explanation: "Multiplicamos 3 cajas × 4 juguetes = 12 juguetes en total"
+      name: "Escritura de números",
+      maxScore: 8,
+      items: [
+        { 
+          question: "Escribe el número 'treinta y ocho'", 
+          answer: "38", 
+          points: 2,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe el número 'ciento sesenta y nueve'", 
+          answer: "169", 
+          points: 2,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe el número 'noventa y siete'", 
+          answer: "97", 
+          points: 2,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe el número 'mil doscientos'", 
+          answer: "1200", 
+          points: 2,
+          type: "escrito" 
+        }
+      ]
     },
-    // 4. Secuencias numéricas
     {
-      type: "number_sequence",
-      question: "¿Qué número falta: 5, 10, 15, __?",
-      image: "/img/sequence-7-years.png",
-      answer: "20",
-      options: ["18", "19", "20", "25"],
-      explanation: "Esta secuencia suma 5 cada vez: 5 + 5 = 10, 10 + 5 = 15, 15 + 5 = 20"
+      name: "Cálculo mental oral",
+      maxScore: 12,
+      items: [
+        { 
+          question: "10 + 10", 
+          answer: "20", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "1 + 15", 
+          answer: "16", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "12 + 7", 
+          answer: "19", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "10 - 3", 
+          answer: "7", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "18 - 6", 
+          answer: "12", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "25 - 12", 
+          answer: "13", 
+          points: 2,
+          type: "oral" 
+        }
+      ]
     },
-    // 5. División básica
     {
-      type: "division",
-      question: "María tiene 24 caramelos y le da la mitad a su hermano. ¿Cuántos caramelos le quedan?",
-      image: "/img/division-7-years.png",
-      answer: "12",
-      options: ["10", "12", "14", "16"],
-      explanation: "La mitad de 24 es 24 ÷ 2 = 12 caramelos"
+      name: "Lectura de números",
+      maxScore: 8,
+      items: [
+        { 
+          question: "Lee este número: 57", 
+          answer: "cincuenta y siete", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "Lee este número: 15", 
+          answer: "quince", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "Lee este número: 138", 
+          answer: "ciento treinta y ocho", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "Lee este número: 9", 
+          answer: "nueve", 
+          points: 2,
+          type: "oral" 
+        }
+      ]
     },
-    // 6. Problema verbal combinado
     {
-      type: "word_problem",
-      question: "Luis compró 2 lápices a $5 cada uno y 1 cuaderno a $8. ¿Cuánto gastó en total?",
-      image: "/img/word-problem-7-years.png",
-      answer: "18",
-      options: ["15", "16", "17", "18"],
-      explanation: "2 lápices × $5 = $10 + $8 del cuaderno = $18 en total"
+      name: "Posicionar en escala",
+      maxScore: 6,
+      items: [
+        { 
+          question: "Posiciona el número 80 en la escala del 0 al 100", 
+          answer: "80", 
+          points: 2,
+          type: "escala",
+          min: 0,
+          max: 100
+        },
+        { 
+          question: "Posiciona el número 62 en la escala del 0 al 100", 
+          answer: "62", 
+          points: 2,
+          type: "escala",
+          min: 0,
+          max: 100
+        },
+        { 
+          question: "Posiciona el número 10 en la escala del 0 al 100", 
+          answer: "10", 
+          points: 2,
+          type: "escala",
+          min: 0,
+          max: 100
+        }
+      ]
     },
-    // 7. Reconocimiento de formas geométricas
     {
-      type: "geometry",
-      question: "¿Cuántos lados tiene un hexágono?",
-      image: "/img/hexagon-7-years.png",
-      answer: "6",
-      options: ["4", "5", "6", "8"],
-      explanation: "Un hexágono tiene 6 lados (hexa = 6)"
+      name: "Estimación perceptiva",
+      maxScore: 4,
+      items: [
+        { 
+          question: "¿Cuántas pelotas y vasos hay? (57 pelotas, 83 vasos)", 
+          answer: "57/83", 
+          points: 4,
+          type: "oral" 
+        }
+      ]
     },
-    // 8. Comparación de cantidades
     {
-      type: "quantity_comparison",
-      question: "¿Qué número es mayor: 35 o 53?",
-      image: "/img/number-comparison-7-years.png",
-      answer: "53",
-      options: ["35", "53", "Son iguales", "No se puede saber"],
-      explanation: "53 es mayor que 35 porque tiene más decenas"
+      name: "Estimación en contexto",
+      maxScore: 6,
+      items: [
+        { 
+          question: "¿2 nubes en el cielo es poco o mucho?", 
+          answer: "poco", 
+          points: 2,
+          type: "opciones",
+          options: ["poco", "mucho"] 
+        },
+        { 
+          question: "¿2 niños jugando en el recreo es poco o mucho?", 
+          answer: "poco", 
+          points: 2,
+          type: "opciones",
+          options: ["poco", "mucho"] 
+        },
+        { 
+          question: "¿60 niños en un cumpleaños es poco o mucho?", 
+          answer: "mucho", 
+          points: 2,
+          type: "opciones",
+          options: ["poco", "mucho"] 
+        }
+      ]
     },
-    // 9. Valor posicional
     {
-      type: "place_value",
-      question: "En el número 47, ¿qué valor tiene el dígito 4?",
-      image: "/img/place-value-7-years.png",
-      answer: "40",
-      options: ["4", "40", "400", "7"],
-      explanation: "En 47, el 4 está en la posición de las decenas, por lo que vale 40"
+      name: "Resolución de problemas",
+      maxScore: 8,
+      items: [
+        { 
+          question: "12 - 5", 
+          answer: "7", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "16 - 4", 
+          answer: "12", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "6 + 7", 
+          answer: "13", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "4 + (4+3) + (7-2)", 
+          answer: "16", 
+          points: 2,
+          type: "oral" 
+        }
+      ]
     },
-    // 10. Fracciones básicas
     {
-      type: "fractions",
-      question: "Si una pizza se divide en 8 partes iguales y comes 3, ¿qué fracción de la pizza comiste?",
-      image: "/img/fractions-7-years.png",
-      answer: "3/8",
-      options: ["1/8", "3/8", "5/8", "8/3"],
-      explanation: "Comiste 3 de las 8 partes, es decir, 3/8 de la pizza"
+      name: "Comparación de números",
+      maxScore: 6,
+      items: [
+        { 
+          question: "¿Cuál es mayor: 654 o 546?", 
+          answer: "654", 
+          points: 2,
+          type: "opciones",
+          options: ["654", "546"] 
+        },
+        { 
+          question: "¿Cuál es mayor: 97 o 352?", 
+          answer: "352", 
+          points: 2,
+          type: "opciones",
+          options: ["97", "352"] 
+        },
+        { 
+          question: "¿Cuál es mayor: 96 o 69?", 
+          answer: "96", 
+          points: 2,
+          type: "opciones",
+          options: ["96", "69"] 
+        }
+      ]
+    },
+    {
+      name: "Determinación de cantidad",
+      maxScore: 12,
+      items: [
+        { 
+          question: "Marca el número menor en: 5, 8520, 000, 12, 49, 50, 97", 
+          answer: "0", 
+          points: 1,
+          type: "determinacion" 
+        },
+        { 
+          question: "Marca el número mayor en: 1234, 1993, 3000, 8520", 
+          answer: "8520", 
+          points: 1,
+          type: "determinacion" 
+        }
+      ]
+    },
+    {
+      name: "Escribir en cifra",
+      maxScore: 3,
+      items: [
+        { 
+          question: "Escribe los números que siguen después de 137", 
+          answer: "138,139,140,141,142", 
+          points: 1,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe los números antes de 362", 
+          answer: "361,360,359,358,357", 
+          points: 1,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe los números después de 362", 
+          answer: "363,364,365,366,367", 
+          points: 1,
+          type: "escrito" 
+        }
+      ]
     }
   ];
 
-  // Efecto para manejar el temporizador
   useEffect(() => {
-    if (currentQuestion >= 0 && !showResult && !showFeedback && timeLeft === null) {
-      setTimeLeft(25); // 25 segundos por pregunta para 7 años
+    if (!showResult && !showFeedback && timeLeft === null && !showMiniGame) {
+      setTimeLeft(30);
     }
     
     let timer: NodeJS.Timeout;
-    if (timeLeft !== null && timeLeft > 0 && !showFeedback) {
+    if (timeLeft !== null && timeLeft > 0 && !showFeedback && !showMiniGame) {
       timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (timeLeft === 0 && !showFeedback) {
+    } else if (timeLeft === 0 && !showFeedback && !showMiniGame) {
       handleTimeUp();
     }
 
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, showFeedback, currentQuestion, showResult]);
+  }, [timeLeft, showFeedback, currentSubtest, currentItem, showResult, showMiniGame]);
+
+  const toggleVoiceRecognition = () => {
+    if (!recognitionRef.current) {
+      alert("El reconocimiento de voz no está disponible en tu navegador. Usa el modo manual.");
+      return;
+    }
+
+    if (isListening) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    } else {
+      try {
+        setRecognizedText('');
+        setOralAnswer('');
+        recognitionRef.current.start();
+        setIsListening(true);
+      } catch (e) {
+        console.error("Error al iniciar reconocimiento de voz:", e);
+        alert("No se pudo iniciar el reconocimiento de voz. Asegúrate de permitir el acceso al micrófono.");
+      }
+    }
+  };
+
+  const handleCountNumber = (number: number) => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    const isCountingUp = currentSubtest === 0;
+    const countingTarget = currentQuestion.countingItems ?? (isCountingUp ? 20 : 10);
+    
+    if (
+      (isCountingUp && number === countingProgress + 1) ||
+      (!isCountingUp && number === countingTarget - countingProgress)
+    ) {
+      setCountingProgress(prev => prev + 1);
+    }
+
+    if (
+      (isCountingUp && number === countingTarget) ||
+      (!isCountingUp && number === 0)
+    ) {
+      handleAnswer(number.toString());
+    }
+  };
+
+  const handleManualCount = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    const isCountingUp = currentSubtest === 0;
+    const countingTarget = currentQuestion.countingItems ?? (isCountingUp ? 20 : 10);
+    
+    const nextNumber = isCountingUp ? countingProgress + 1 : countingTarget - countingProgress;
+    setCountingProgress(prev => prev + 1);
+
+    if (
+      (isCountingUp && nextNumber === countingTarget) ||
+      (!isCountingUp && nextNumber === 0)
+    ) {
+      handleAnswer(nextNumber.toString());
+    }
+  };
 
   const handleTimeUp = () => {
     if (!showFeedback) {
       setShowFeedback(true);
       setCorrectAnswer(false);
-      playSound('wrong');
+      
+      const newAnswers = [...userAnswers];
+      newAnswers[currentSubtest] = [...newAnswers[currentSubtest], "tiempo_agotado"];
+      setUserAnswers(newAnswers);
       
       setTimeout(() => {
-        moveToNextQuestion(null);
+        moveToNextItem();
       }, 2000);
     }
   };
 
-  const playSound = (type: 'correct' | 'wrong' | 'complete') => {
-    if (!soundEnabled) return;
-    console.log(`Playing ${type} sound`);
-  };
-
-  const handleAnswer = (selectedAnswer: string) => {
+  const handleAnswer = (selectedAnswer: string | number) => {
     if (showFeedback) return;
     
-    const isCorrect = selectedAnswer === questions[currentQuestion].answer;
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    let isCorrect = false;
+    
+    if (currentQuestion.type === "escrito") {
+      isCorrect = normalizeText(selectedAnswer.toString()) === 
+                  normalizeText(currentQuestion.answer.toString());
+    } 
+    else if (currentQuestion.type === "conteo") {
+      const isCountingUp = currentSubtest === 0;
+      const countingTarget = currentQuestion.countingItems ?? (isCountingUp ? 20 : 10);
+      
+      isCorrect = (isCountingUp && selectedAnswer.toString() === countingTarget.toString()) ||
+                  (!isCountingUp && selectedAnswer.toString() === "0");
+    }
+    else if (currentQuestion.type === "oral") {
+      const answerVariations = getAnswerVariations(currentQuestion.answer.toString());
+      isCorrect = answerVariations.some(variation => 
+        normalizeText(selectedAnswer.toString()) === variation
+      );
+    }
+    else if (currentQuestion.type === "escala") {
+      isCorrect = Math.abs(Number(selectedAnswer) - Number(currentQuestion.answer)) <= 5;
+    }
+    else if (currentQuestion.type === "determinacion") {
+      isCorrect = selectedAnswer.toString() === currentQuestion.answer.toString();
+    }
+    else {
+      isCorrect = selectedAnswer === currentQuestion.answer;
+    }
+    
     setOptionSelected(selectedAnswer);
     setCorrectAnswer(isCorrect);
     setShowFeedback(true);
     
     if (isCorrect) {
-      setScore(score + 1);
-      playSound('correct');
+      const newScore = [...score];
+      newScore[currentSubtest] += currentQuestion.points;
+      setScore(newScore);
       setAnimation('correct');
     } else {
-      playSound('wrong');
       setAnimation('wrong');
     }
     
+    const newAnswers = [...userAnswers];
+    newAnswers[currentSubtest] = [...newAnswers[currentSubtest], selectedAnswer];
+    setUserAnswers(newAnswers);
+    
     setTimeout(() => {
-      moveToNextQuestion(selectedAnswer);
+      moveToNextItem();
     }, 2000);
   };
 
-  const moveToNextQuestion = (selectedAnswer: string | null) => {
-    if (selectedAnswer !== null) {
-      setUserAnswers([...userAnswers, selectedAnswer]);
-    } else {
-      setUserAnswers([...userAnswers, 'tiempo_agotado']);
+  const getAnswerVariations = (answer: string): string[] => {
+    const variations = [normalizeText(answer)];
+    
+    if (/^\d+$/.test(answer)) {
+      const number = parseInt(answer);
+      variations.push(normalizeText(numberToWords(number)));
+    }
+    
+    if (answer === "20") {
+      variations.push("veinte");
+    } else if (answer === "16") {
+      variations.push("dieciséis", "dieciseis");
+    } else if (answer === "19") {
+      variations.push("diecinueve");
+    } else if (answer === "7") {
+      variations.push("siete");
+    } else if (answer === "12") {
+      variations.push("doce");
+    } else if (answer === "13") {
+      variations.push("trece");
+    } else if (answer === "10") {
+      variations.push("diez");
+    } else if (answer === "5") {
+      variations.push("cinco");
+    }
+    
+    if (answer === "cincuenta y siete") {
+      variations.push("57");
+    } else if (answer === "quince") {
+      variations.push("15");
+    } else if (answer === "ciento treinta y ocho") {
+      variations.push("138");
+    } else if (answer === "nueve") {
+      variations.push("9");
+    }
+    
+    if (answer === "57/83") {
+      variations.push("57 83", "57 y 83", "57,83");
+    }
+    
+    return variations;
+  };
+
+  const numberToWords = (num: number): string => {
+    const units = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
+    const teens = ['diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve'];
+    const tens = ['', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
+    
+    if (num < 10) return units[num];
+    if (num < 20) return teens[num - 10];
+    if (num < 100) {
+      const ten = Math.floor(num / 10);
+      const unit = num % 10;
+      return tens[ten] + (unit !== 0 ? ' y ' + units[unit] : '');
+    }
+    if (num === 100) return 'cien';
+    if (num < 200) return 'ciento ' + numberToWords(num - 100);
+    if (num === 200) return 'doscientos';
+    if (num < 1000) {
+      const hundred = Math.floor(num / 100);
+      const rest = num % 100;
+      return units[hundred] + 'cientos' + (rest !== 0 ? ' ' + numberToWords(rest) : '');
+    }
+    if (num === 1000) return 'mil';
+    if (num < 2000) return 'mil ' + numberToWords(num - 1000);
+    if (num < 1000000) {
+      const thousand = Math.floor(num / 1000);
+      const rest = num % 1000;
+      return numberToWords(thousand) + ' mil' + (rest !== 0 ? ' ' + numberToWords(rest) : '');
+    }
+    return num.toString();
+  };
+
+  const moveToNextItem = () => {
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
     }
     
     setShowFeedback(false);
     setOptionSelected(null);
     setCorrectAnswer(null);
     setAnimation('');
+    setWrittenAnswer('');
+    setOralAnswer('');
+    setCountingProgress(0);
+    setRecognizedText('');
+    setCountingFinished(false);
+    setWrittenAnswerConfirmed(false);
+    setOralAnswerConfirmed(false);
+    setScaleValue(50);
+    setDeterminationSelections({});
     
-    const nextQuestion = currentQuestion + 1;
-    if (nextQuestion < questions.length) {
-      setCurrentQuestion(nextQuestion);
-      setTimeLeft(25);
+    // Verificar si es momento de mostrar el minijuego (cada 3 subtest completados)
+    if (currentItem + 1 >= subtests[currentSubtest].items.length) {
+      const nextSubtest = currentSubtest + 1;
+      if (nextSubtest > 0 && nextSubtest % 3 === 0 && nextSubtest < subtests.length) {
+        setShowMiniGame(true);
+        return;
+      }
+    }
+    
+    // Lógica normal de navegación entre preguntas
+    if (currentItem + 1 < subtests[currentSubtest].items.length) {
+      setCurrentItem(currentItem + 1);
+      setTimeLeft(30);
+    } else {
+      if (currentSubtest + 1 < subtests.length) {
+        setCurrentSubtest(currentSubtest + 1);
+        setCurrentItem(0);
+        setTimeLeft(30);
+      } else {
+        setShowResult(true);
+        const totalScore = score.reduce((a, b) => a + b, 0);
+        if (totalScore > 50) {
+          launchConfetti();
+        }
+      }
+    }
+  };
+
+  const handleMiniGameComplete = (success: boolean) => {
+    setShowMiniGame(false);
+
+    if (success) {
+      setAnimation('correct');
+    } else {
+      setAnimation('wrong');
+    }
+    
+    // Continúa con el siguiente subtest
+    if (currentSubtest + 1 < subtests.length) {
+      setCurrentSubtest(currentSubtest + 1);
+      setCurrentItem(0);
+      setTimeLeft(30);
     } else {
       setShowResult(true);
-      playSound('complete');
-      
-      if (score + (selectedAnswer === questions[currentQuestion].answer ? 1 : 0) > questions.length / 2) {
+      const totalScore = score.reduce((a, b) => a + b, 0);
+      if (totalScore > 50) {
         launchConfetti();
       }
     }
   };
-  
+
   const launchConfetti = () => {
     confetti({
       particleCount: 100,
@@ -201,250 +740,505 @@ const ProCalculo7: React.FC = () => {
   };
 
   const restartTest = () => {
-    setCurrentQuestion(0);
-    setScore(0);
+    if (isListening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
+    
+    setCurrentSubtest(0);
+    setCurrentItem(0);
+    setScore(Array(12).fill(0));
     setShowResult(false);
-    setUserAnswers([]);
-    setTimeLeft(25);
+    setUserAnswers(Array(12).fill([]));
+    setTimeLeft(30);
     setShowFeedback(false);
     setOptionSelected(null);
     setCorrectAnswer(null);
     setAnimation('');
-  };
-
-  const toggleSound = () => {
-    setSoundEnabled(!soundEnabled);
+    setWrittenAnswer('');
+    setOralAnswer('');
+    setCountingProgress(0);
+    setRecognizedText('');
+    setCountingFinished(false);
+    setWrittenAnswerConfirmed(false);
+    setOralAnswerConfirmed(false);
+    setShowMiniGame(false);
+    setScaleValue(50);
+    setDeterminationSelections({});
   };
 
   const getResultMessage = () => {
-    const percentage = (score / questions.length) * 100;
+    const totalScore = score.reduce((a, b) => a + b, 0);
+    const percentage = (totalScore / 87) * 100;
+    
     if (percentage >= 80) return "¡Excelente trabajo! 🎉";
     if (percentage >= 60) return "¡Muy bien hecho! 🌟";
     if (percentage >= 40) return "¡Buen intento! 👍";
     return "¡Sigue practicando! 💪";
   };
 
-  const renderQuestion = () => {
-    const currentQ = questions[currentQuestion];
+  const renderInputField = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
     
-    switch(currentQ.type) {
-      case 'sum':
-      case 'subtraction':
-      case 'multiplication':
-      case 'division':
-        return (
-          <div className={styles.questionContent}>
-            {currentQ.image && <img src={currentQ.image} alt="Ilustración matemática" className={styles.mathImage} />}
-            <p className={styles.questionPrompt}>{currentQ.question}</p>
+    if (currentQuestion.type === "escrito") {
+      return (
+        <div className={styles.writtenAnswerContainer}>
+          <div className={styles.inputContainer}>
+            <input
+              type="text"
+              className={styles.textInput}
+              placeholder="Escribe tu respuesta aquí..."
+              value={writtenAnswer}
+              onChange={(e) => {
+                setWrittenAnswer(e.target.value);
+                setWrittenAnswerConfirmed(false);
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && writtenAnswer.trim()) {
+                  setWrittenAnswerConfirmed(true);
+                }
+              }}
+            />
+            <button 
+              className={styles.submitButton}
+              onClick={() => writtenAnswer.trim() && setWrittenAnswerConfirmed(true)}
+              disabled={!writtenAnswer.trim()}
+            >
+              Terminar
+            </button>
           </div>
-        );
-      
-      case 'number_sequence':
-        return (
-          <div className={styles.questionContent}>
-            <img src={currentQ.image} alt="Secuencia numérica" className={styles.sequenceImage} />
-            <p className={styles.questionPrompt}>{currentQ.question}</p>
-          </div>
-        );
-      
-      case 'word_problem':
-        return (
-          <div className={styles.questionContent}>
-            <img src={currentQ.image} alt="Problema verbal" className={styles.wordProblemImage} />
-            <p className={styles.questionPrompt}>{currentQ.question}</p>
-          </div>
-        );
-      
-      default:
-        return (
-          <div className={styles.questionContent}>
-            {currentQ.image && <img src={currentQ.image} alt="Ilustración" className={styles.questionImage} />}
-            <p className={styles.questionPrompt}>{currentQ.question}</p>
-          </div>
-        );
+
+          {writtenAnswerConfirmed && (
+            <div className={styles.confirmationButtons}>
+              <p>¿Estás seguro de tu respuesta?</p>
+              <div className={styles.confirmationButtonGroup}>
+                <button 
+                  className={styles.confirmButton}
+                  onClick={() => {
+                    handleAnswer(writtenAnswer);
+                    setWrittenAnswerConfirmed(false);
+                  }}
+                >
+                  Sí, enviar
+                </button>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => setWrittenAnswerConfirmed(false)}
+                >
+                  No, corregir
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
     }
+    return null;
+  };
+
+  const renderOralInput = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    
+    if (currentQuestion.type === "oral") {
+      return (
+        <div className={styles.oralContainer}>
+          <div className={styles.voiceControl}>
+            <button
+              className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
+              onClick={toggleVoiceRecognition}
+              disabled={oralAnswerConfirmed}
+            >
+              {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
+              {isListening ? ' Escuchando...' : ' Usar micrófono'}
+            </button>
+            
+            {recognizedText && (
+              <div className={styles.recognizedText}>
+                <p>Reconocido: <strong>{recognizedText}</strong></p>
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.inputContainer}>
+            <input
+              type="text"
+              className={styles.textInput}
+              placeholder="O escribe tu respuesta aquí..."
+              value={oralAnswer}
+              onChange={(e) => {
+                setOralAnswer(e.target.value);
+                setOralAnswerConfirmed(false);
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && oralAnswer.trim()) {
+                  setOralAnswerConfirmed(true);
+                }
+              }}
+              disabled={oralAnswerConfirmed}
+            />
+            <button 
+              className={styles.submitButton}
+              onClick={() => oralAnswer.trim() && setOralAnswerConfirmed(true)}
+              disabled={!oralAnswer.trim() || oralAnswerConfirmed}
+            >
+              Terminar
+            </button>
+          </div>
+
+          {oralAnswerConfirmed && (
+            <div className={styles.confirmationButtons}>
+              <p>¿Estás seguro de tu respuesta?</p>
+              <div className={styles.confirmationButtonGroup}>
+                <button 
+                  className={styles.confirmButton}
+                  onClick={() => {
+                    handleAnswer(oralAnswer);
+                    setOralAnswerConfirmed(false);
+                  }}
+                >
+                  Sí, enviar
+                </button>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => {
+                    setOralAnswerConfirmed(false);
+                    setRecognizedText('');
+                    setOralAnswer('');
+                  }}
+                >
+                  No, corregir
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderCountingExercise = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+
+    if (currentQuestion.type === "conteo") {
+      const isCountingUp = currentSubtest === 0;
+      const targetNumber = currentQuestion.countingItems ?? (isCountingUp ? 20 : 10);
+      
+      return (
+        <div className={styles.countingContainer}>
+          <div className={styles.countingHeader}>
+            <button
+              className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
+              onClick={toggleVoiceRecognition}
+            >
+              {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
+              {isListening ? ' Escuchando...' : ' Usar micrófono'}
+            </button>
+            
+            {recognizedText && (
+              <div className={styles.recognizedText}>
+                <p>Reconocido: <strong>{recognizedText}</strong></p>
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.countingProgress}>
+            <p>
+              {isCountingUp ? "Conteo ascendente: " : "Conteo descendente: "}
+              {countingProgress > 0 ? (
+                Array.from(
+                  {length: isCountingUp ? countingProgress : targetNumber - countingProgress + 1}, 
+                  (_, i) => isCountingUp ? i + 1 : targetNumber - i
+                ).join(", ")
+              ) : "..."}
+            </p>
+          </div>
+          
+          <div className={styles.countingControls}>
+            <button 
+              className={styles.countingButton}
+              onClick={() => {
+                handleManualCount();
+                setCountingFinished(false);
+              }}
+              disabled={isCountingUp ? countingProgress >= targetNumber : countingProgress > targetNumber}
+            >
+              {countingProgress === 0 ? 
+                `Comenzar a contar ${isCountingUp ? 'desde 1' : `desde ${targetNumber}`}` : 
+                `Continuar conteo`}
+            </button>
+            
+            <button 
+              className={styles.submitButton}
+              onClick={() => {
+                setCountingFinished(true);
+              }}
+            >
+              Terminar conteo
+            </button>
+          </div>
+
+          {countingFinished && (
+            <div className={styles.confirmationButtons}>
+              <p>¿Terminaste de contar?</p>
+              <div className={styles.confirmationButtonGroup}>
+                <button 
+                  className={styles.confirmButton}
+                  onClick={() => {
+                    const answer = isCountingUp ? countingProgress : targetNumber - countingProgress;
+                    handleAnswer(answer.toString());
+                    setCountingFinished(false);
+                  }}
+                >
+                  Sí, continuar
+                </button>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => setCountingFinished(false)}
+                >
+                  No, seguir contando
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderScaleInput = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    
+    if (currentQuestion.type === "escala") {
+      return (
+        <div className={styles.scaleContainer}>
+          <div className={styles.scaleLabels}>
+            <span>{currentQuestion.min}</span>
+            <span>{currentQuestion.max}</span>
+          </div>
+          <input
+            type="range"
+            min={currentQuestion.min}
+            max={currentQuestion.max}
+            value={scaleValue}
+            onChange={(e) => setScaleValue(parseInt(e.target.value))}
+            className={styles.scaleSlider}
+          />
+          <div className={styles.scaleValue}>
+            Valor seleccionado: {scaleValue}
+          </div>
+          <button
+            className={styles.submitButton}
+            onClick={() => handleAnswer(scaleValue)}
+          >
+            Confirmar posición
+          </button>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderDeterminationExercise = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    
+    if (currentQuestion.type === "determinacion") {
+      let numbers: number[] = [];
+      if (currentItem === 0) {
+        numbers = [5, 8520, 0, 12, 49, 50, 97];
+      } else {
+        numbers = [1234, 1993, 3000, 8520];
+      }
+      
+      return (
+        <div className={styles.determinationContainer}>
+          <div className={styles.numbersGrid}>
+            {numbers.map((num, index) => (
+              <button
+                key={index}
+                className={`${styles.numberButton} ${
+                  determinationSelections[index] ? styles.selected : ''
+                }`}
+                onClick={() => {
+                  const newSelections: {[key: number]: boolean} = {};
+                  newSelections[index] = true;
+                  setDeterminationSelections(newSelections);
+                }}
+              >
+                {num}
+              </button>
+            ))}
+          </div>
+          <button
+            className={styles.submitButton}
+            onClick={() => {
+              const selectedIndex = Object.keys(determinationSelections).find(
+                key => determinationSelections[parseInt(key)]
+              );
+              
+              if (selectedIndex !== undefined) {
+                handleAnswer(numbers[parseInt(selectedIndex)].toString());
+              } else {
+                alert("Por favor selecciona un número");
+              }
+            }}
+          >
+            Confirmar selección
+          </button>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderQuestion = () => {
+    const currentSubtestData = subtests[currentSubtest];
+    const currentQuestion = currentSubtestData.items[currentItem];
+    
+    return (
+      <div className={styles.questionContent}>
+        <h3 className={styles.subtestTitle}>{currentSubtestData.name}</h3>
+        <p className={styles.questionPrompt}>{currentQuestion.question}</p>
+        
+        {currentQuestion.type === "opciones" && currentQuestion.options && (
+          <div className={styles.optionsGrid}>
+            {currentQuestion.options.map((option, index) => (
+              <button
+                key={index}
+                className={`${styles.optionButton} 
+                  ${optionSelected === option ? styles.selected : ''} 
+                  ${showFeedback && option === currentQuestion.answer ? styles.correct : ''} 
+                  ${showFeedback && optionSelected === option && option !== currentQuestion.answer ? styles.incorrect : ''}`}
+                onClick={() => handleAnswer(option)}
+                disabled={showFeedback}
+              >
+                <span className={styles.optionContent}>
+                  <span className={styles.optionText}>{option}</span>
+                  {showFeedback && option === currentQuestion.answer && (
+                    <FaCheck className={styles.feedbackIcon} />
+                  )}
+                  {showFeedback && optionSelected === option && option !== currentQuestion.answer && (
+                    <FaTimes className={styles.feedbackIcon} />
+                  )}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+        
+        {renderCountingExercise()}
+        {renderInputField()}
+        {renderOralInput()}
+        {renderScaleInput()}
+        {renderDeterminationExercise()}
+        
+        {showFeedback && (
+          <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
+            <p>
+              {correctAnswer 
+                ? "¡Correcto! 🎉" 
+                : `La respuesta correcta es: ${subtests[currentSubtest].items[currentItem].answer}`}
+            </p>
+          </div>
+        )}
+      </div>
+    );
   };
 
   return (
     <div className={styles.pageContainer}>
       <main className={styles.testContainer}>
-        <div className={styles.planetBackground}></div>
+        <div className={styles.cloudBackground}></div>
         
-        <section className={styles.testHeader}>
-          <div className={styles.titleWrapper}>
-            <h1 className={styles.testTitle}>
-              <img src="/img/Medialab.png" alt="Logo de Media Lab" className={styles.logoSmall} />
-              Pro-Cálculo <span className={styles.ageBadge}>7 años</span>
-            </h1>
+        {showMiniGame ? (
+          <div className={styles.miniGameContainer}>
+            <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
           </div>
-          
-          <div className={styles.controlButtons}>
-            <button
-              className={styles.soundButton}
-              onClick={toggleSound}
-              aria-label={soundEnabled ? "Silenciar sonidos" : "Activar sonidos"}
-            >
-              {soundEnabled ? <FaMusic /> : <FaVolumeMute />}
-            </button>
-            <a href="/Herramientas/test" className={styles.backButton}>
-              <FaArrowLeft /> Volver
-            </a>
-          </div>
-        </section>
-
-        {!showResult ? (
-          <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
-            <div className={styles.progressBar}>
-              <div 
-                className={styles.progressFill} 
-                style={{ width: `${((currentQuestion) / questions.length) * 100}%` }}
-              ></div>
-            </div>
-            
-            <div className={styles.questionInfo}>
-              <div className={styles.questionCounter}>
-                Pregunta {currentQuestion + 1} de {questions.length}
-              </div>
-              <div className={styles.timer}>
-                Tiempo: <span className={timeLeft && timeLeft < 10 ? styles.timerWarning : ''}>{timeLeft}</span>
-              </div>
-            </div>
-            
-            <div className={styles.questionCard}>
-              {renderQuestion()}
-              
-              <div className={styles.optionsGrid}>
-                {questions[currentQuestion].options.map((option, index) => (
-                  <button
-                    key={index}
-                    className={`${styles.optionButton} 
-                      ${optionSelected === option ? styles.selected : ''} 
-                      ${showFeedback && option === questions[currentQuestion].answer ? styles.correct : ''} 
-                      ${showFeedback && optionSelected === option && option !== questions[currentQuestion].answer ? styles.incorrect : ''}`}
-                    onClick={() => handleAnswer(option)}
-                    disabled={showFeedback}
-                  >
-                    <span className={styles.optionContent}>
-                      <span className={styles.optionText}>{option}</span>
-                      {showFeedback && option === questions[currentQuestion].answer && (
-                        <FaCheck className={styles.feedbackIcon} />
-                      )}
-                      {showFeedback && optionSelected === option && option !== questions[currentQuestion].answer && (
-                        <FaTimes className={styles.feedbackIcon} />
-                      )}
-                    </span>
-                  </button>
-                ))}
-              </div>
-              
-              {showFeedback && (
-                <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
-                  <p>
-                    {correctAnswer 
-                      ? "¡Correcto! 🎉" 
-                      : `La respuesta correcta es: ${questions[currentQuestion].answer}`}
-                  </p>
-                  <p className={styles.explanation}>
-                    {questions[currentQuestion].explanation}
-                  </p>
-                </div>
-              )}
-            </div>
-          </section>
         ) : (
-          <section className={styles.resultSection}>
-            <div className={styles.resultContainer}>
-              <h2 className={styles.resultTitle}>
-                {getResultMessage()}
-              </h2>
-              
-              <div className={styles.scoreCard}>
-                <div className={styles.scoreVisual}>
-                  <div className={styles.scoreCircle}>
-                    <span className={styles.scoreNumber}>{score}</span>
-                    <span className={styles.scoreTotal}>/{questions.length}</span>
-                  </div>
-                  <div className={styles.starContainer}>
-                    {Array.from({ length: 5 }).map((_, index) => (
-                      <FaStar
-                        key={index}
-                        className={`${styles.star} ${index < Math.ceil((score / questions.length) * 5) ? styles.activeStar : ''}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-                
-                <p className={styles.scoreText}>
-                  Has acertado <span className={styles.scoreHighlight}>{score}</span> de {questions.length} preguntas
-                </p>
-                
-                <div className={styles.medalContainer}>
-                  {score === questions.length && (
-                    <div className={styles.medal}>
-                      <FaTrophy className={styles.trophyIcon} />
-                      <span>¡Medalla de Oro!</span>
-                    </div>
-                  )}
-                  {score >= Math.floor(questions.length * 0.7) && score < questions.length && (
-                    <div className={styles.medal}>
-                      <FaStar className={styles.medalIcon} />
-                      <span>¡Muy Bien!</span>
-                    </div>
-                  )}
-                </div>
-                
-                <h3 className={styles.summaryTitle}>Repaso de preguntas</h3>
-                <div className={styles.resultSummary}>
-                  {questions.map((q, index) => (
-                    <div key={index} className={`${styles.resultItem} ${
-                      userAnswers[index] === q.answer 
-                        ? styles.correctItem 
-                        : styles.incorrectItem
-                    }`}>
-                      <div className={styles.resultQuestion}>
-                        <span className={styles.questionNumber}>#{index + 1}</span>
-                        <span className={styles.questionPreview}>{q.question}</span>
-                      </div>
-                      <div className={styles.resultAnswers}>
-                        <div>
-                          {userAnswers[index] === 'tiempo_agotado' ? (
-                            <span className={styles.timeUp}>¡Tiempo agotado!</span>
-                          ) : (
-                            <>
-                              <span className={styles.userAnswer}>
-                                Tu respuesta: {userAnswers[index]}
-                              </span>
-                              {userAnswers[index] !== q.answer && (
-                                <span className={styles.correctAnswerText}>
-                                  Respuesta: {q.answer}
-                                </span>
-                              )}
-                            </>
-                          )}
-                        </div>
-                        <span className={styles.resultIcon}>
-                          {userAnswers[index] === q.answer ? (
-                            <FaCheck className={styles.correctIcon} />
-                          ) : (
-                            <FaTimes className={styles.incorrectIcon} />
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className={styles.actionsContainer}>
-                  <button className={styles.restartButton} onClick={restartTest}>
-                    <FaRedo /> Intentar de nuevo
-                  </button>
-                  <a href="/test" className={styles.homeButton}>
-                    Elegir otra prueba
-                  </a>
-                </div>
+          <>
+            <section className={styles.testHeader}>
+              <div className={styles.titleWrapper}>
+                <h1 className={styles.testTitle}>
+                  <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
+                  Pro-Cálculo <span className={styles.ageBadge}>7 años</span>
+                </h1>
               </div>
-            </div>
-          </section>
+              
+              <div className={styles.controlButtons}>
+                <a href="/Herramientas/test" className={styles.backButton}>
+                  <FaArrowLeft /> Volver
+                </a>
+              </div>
+            </section>
+
+            {!showResult ? (
+              <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
+                <div className={styles.progressBar}>
+                  <div 
+                    className={styles.progressFill} 
+                    style={{ 
+                      width: `${((currentSubtest + (currentItem / subtests[currentSubtest].items.length)) / subtests.length) * 100}%` 
+                    }}
+                  ></div>
+                </div>
+                
+                <div className={styles.questionInfo}>
+                  <div className={styles.questionCounter}>
+                    Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
+                  </div>
+                  <div className={styles.timer}>
+                    Tiempo: <span className={timeLeft && timeLeft < 10 ? styles.timerWarning : ''}>{timeLeft}</span>
+                  </div>
+                </div>
+                
+                <div className={styles.questionCard}>
+                  {renderQuestion()}
+                </div>
+              </section>
+            ) : (
+              <section className={styles.resultSection}>
+                <div className={styles.resultContainer}>
+                  <h2 className={styles.resultTitle}>
+                    {getResultMessage()}
+                  </h2>
+                  
+                  <div className={styles.scoreCard}>
+                    <div className={styles.scoreVisual}>
+                      <div className={styles.scoreCircle}>
+                        <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
+                        <span className={styles.scoreTotal}>/87</span>
+                      </div>
+                    </div>
+                    
+                    <p className={styles.scoreText}>
+                      Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 87 puntos
+                    </p>
+                    
+                    <div className={styles.subtestScores}>
+                      <h3>Puntuación por subtest:</h3>
+                      <ul>
+                        {subtests.map((subtest, index) => (
+                          <li key={index}>
+                            {subtest.name}: {score[index]} / {subtest.maxScore}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className={styles.actionsContainer}>
+                      <button className={styles.restartButton} onClick={restartTest}>
+                        <FaRedo /> Intentar de nuevo
+                      </button>
+                      <a href="/test" className={styles.homeButton}>
+                        Elegir otra prueba
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            )}
+          </>
         )}
       </main>
     </div>
