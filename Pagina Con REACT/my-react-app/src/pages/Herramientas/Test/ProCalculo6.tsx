@@ -36,6 +36,7 @@ interface QuestionItem {
   type: 'oral' | 'escrito' | 'opciones' | 'conteo';
   options?: string[];
   countingItems?: number;
+  image?: string;
 }
 
 interface Subtest {
@@ -131,25 +132,28 @@ const ProCalculo6: React.FC = () => {
       maxScore: 12,
       items: [
         { 
-          question: "Cuenta los números en voz alta hasta 20", 
-          answer: "20", 
+          question: "Cuenta los puntos en la imagen", 
+          answer: "5", 
           points: 4,
           type: "conteo",
-          countingItems: 20
+          countingItems: 5,
+          image: '/img/enumeracion/puntos5.jpg'
         },
         { 
-          question: "Cuenta los números en orden ascendente nuevamente", 
-          answer: "20", 
+          question: "Cuenta los puntos en la imagen", 
+          answer: "8", 
           points: 4,
           type: "conteo",
-          countingItems: 20
+          countingItems: 8,
+          image: '/img/enumeracion/puntos8.jpg'
         },
         { 
-          question: "Cuenta los números en orden ascendente una vez más", 
-          answer: "20", 
+          question: "Cuenta los puntos en la imagen", 
+          answer: "10", 
           points: 4,
           type: "conteo",
-          countingItems: 20
+          countingItems: 10,
+          image: '/img/enumeracion/puntos10.jpg'
         }
       ]
     },
@@ -580,7 +584,6 @@ const ProCalculo6: React.FC = () => {
     setWrittenAnswerConfirmed(false);
     setOralAnswerConfirmed(false);
     
-    // Verificar si es momento de mostrar el minijuego (cada 3 subtest completados)
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
       if (nextSubtest > 0 && nextSubtest % 3 === 0 && nextSubtest < subtests.length) {
@@ -589,7 +592,6 @@ const ProCalculo6: React.FC = () => {
       }
     }
     
-    // Lógica normal de navegación entre preguntas
     if (currentItem + 1 < subtests[currentSubtest].items.length) {
       setCurrentItem(currentItem + 1);
       setTimeLeft(30);
@@ -617,7 +619,6 @@ const ProCalculo6: React.FC = () => {
       setAnimation('wrong');
     }
     
-    // Continúa con el siguiente subtest
     if (currentSubtest + 1 < subtests.length) {
       setCurrentSubtest(currentSubtest + 1);
       setCurrentItem(0);
@@ -824,6 +825,21 @@ const ProCalculo6: React.FC = () => {
       
       return (
         <div className={styles.countingContainer}>
+          {/* Sección de imagen */}
+          {currentQuestion.image && (
+            <div className={styles.countingImageContainer}>
+              <img 
+                src={currentQuestion.image} 
+                alt={`Imagen con ${currentQuestion.answer} puntos para contar`}
+                className={styles.countingImage}
+              />
+              <div className={styles.imageCaption}>
+                {currentQuestion.question}
+              </div>
+            </div>
+          )}
+          
+          {/* Controles de conteo */}
           <div className={styles.countingHeader}>
             <button
               className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
