@@ -137,7 +137,7 @@ const ProCalculo6: React.FC = () => {
           points: 4,
           type: "conteo",
           countingItems: 5,
-          image: '/img/enumeracion/puntos5.jpg'
+          image: '/img/puntos5.jpg'
         },
         { 
           question: "Cuenta los puntos en la imagen", 
@@ -145,7 +145,7 @@ const ProCalculo6: React.FC = () => {
           points: 4,
           type: "conteo",
           countingItems: 8,
-          image: '/img/enumeracion/puntos8.jpg'
+          image: '/img/puntos8.jpg'
         },
         { 
           question: "Cuenta los puntos en la imagen", 
@@ -153,7 +153,7 @@ const ProCalculo6: React.FC = () => {
           points: 4,
           type: "conteo",
           countingItems: 10,
-          image: '/img/enumeracion/puntos10.jpg'
+          image: '/img/puntos10.jpg'
         }
       ]
     },
