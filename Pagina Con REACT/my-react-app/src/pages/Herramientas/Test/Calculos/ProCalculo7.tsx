@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaArrowLeft, FaCheck, FaTimes, FaRedo, FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
-import { RompeCabezasHuevos } from '../Minijuego/RompeCabezas';
+import { RompeCabezasHuevos } from '../../Minijuego/RompeCabezas';
 
 interface SpeechRecognitionResult {
   [key: number]: SpeechRecognitionAlternative;
@@ -33,10 +33,11 @@ interface QuestionItem {
   question: string;
   answer: string | number;
   points: number;
-  type: 'oral' | 'escrito' | 'opciones' | 'conteo';
+  type: 'oral' | 'escrito' | 'opciones' | 'conteo' | 'escala' | 'determinacion';
   options?: string[];
   countingItems?: number;
-  image?: string;
+  min?: number;
+  max?: number;
 }
 
 interface Subtest {
@@ -45,12 +46,12 @@ interface Subtest {
   items: QuestionItem[];
 }
 
-const ProCalculo6: React.FC = () => {
+const ProCalculo7: React.FC = () => {
   const [currentSubtest, setCurrentSubtest] = useState(0);
   const [currentItem, setCurrentItem] = useState(0);
-  const [score, setScore] = useState<number[]>(Array(9).fill(0));
+  const [score, setScore] = useState<number[]>(Array(12).fill(0));
   const [showResult, setShowResult] = useState(false);
-  const [userAnswers, setUserAnswers] = useState<(string | number)[][]>(Array(9).fill([]));
+  const [userAnswers, setUserAnswers] = useState<(string | number)[][]>(Array(12).fill([]));
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [optionSelected, setOptionSelected] = useState<string | number | null>(null);
   const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
@@ -66,6 +67,8 @@ const ProCalculo6: React.FC = () => {
   const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
   const [oralAnswerConfirmed, setOralAnswerConfirmed] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
+  const [scaleValue, setScaleValue] = useState(50);
+  const [determinationSelections, setDeterminationSelections] = useState<{[key: number]: boolean}>({});
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -132,28 +135,25 @@ const ProCalculo6: React.FC = () => {
       maxScore: 12,
       items: [
         { 
-          question: "Cuenta los puntos en la imagen", 
-          answer: "5", 
+          question: "Cuenta los puntos en la imagen (13 puntos)", 
+          answer: "13", 
           points: 4,
           type: "conteo",
-          countingItems: 5,
-          image: '/img/puntos5.jpg'
+          countingItems: 13
         },
         { 
-          question: "Cuenta los puntos en la imagen", 
+          question: "Cuenta los puntos en la imagen (8 puntos)", 
           answer: "8", 
           points: 4,
           type: "conteo",
-          countingItems: 8,
-          image: '/img/puntos8.jpg'
+          countingItems: 8
         },
         { 
-          question: "Cuenta los puntos en la imagen", 
+          question: "Cuenta los puntos en la imagen (10 puntos)", 
           answer: "10", 
           points: 4,
           type: "conteo",
-          countingItems: 10,
-          image: '/img/puntos10.jpg'
+          countingItems: 10
         }
       ]
     },
@@ -162,40 +162,46 @@ const ProCalculo6: React.FC = () => {
       maxScore: 2,
       items: [
         { 
-          question: "Cuenta hacia atrás desde 10", 
+          question: "Cuenta hacia atrás desde 15", 
           answer: "0", 
           points: 2,
           type: "conteo",
-          countingItems: 10
+          countingItems: 15
         }
       ]
     },
     {
       name: "Escritura de números",
-      maxScore: 6,
+      maxScore: 8,
       items: [
         { 
-          question: "Escribe el número 'siete'", 
-          answer: "7", 
+          question: "Escribe el número 'treinta y ocho'", 
+          answer: "38", 
           points: 2,
           type: "escrito" 
         },
         { 
-          question: "Escribe el número 'veinte'", 
-          answer: "20", 
+          question: "Escribe el número 'ciento sesenta y nueve'", 
+          answer: "169", 
           points: 2,
           type: "escrito" 
         },
         { 
-          question: "Escribe el número 'trescientos cinco'", 
-          answer: "305", 
+          question: "Escribe el número 'noventa y siete'", 
+          answer: "97", 
+          points: 2,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe el número 'mil doscientos'", 
+          answer: "1200", 
           points: 2,
           type: "escrito" 
         }
       ]
     },
     {
-      name: "Cálculo mental",
+      name: "Cálculo mental oral",
       maxScore: 12,
       items: [
         { 
@@ -211,8 +217,8 @@ const ProCalculo6: React.FC = () => {
           type: "oral" 
         },
         { 
-          question: "2 + 7", 
-          answer: "9", 
+          question: "12 + 7", 
+          answer: "19", 
           points: 2,
           type: "oral" 
         },
@@ -229,8 +235,8 @@ const ProCalculo6: React.FC = () => {
           type: "oral" 
         },
         { 
-          question: "7 - 4", 
-          answer: "3", 
+          question: "25 - 12", 
+          answer: "13", 
           points: 2,
           type: "oral" 
         }
@@ -267,7 +273,49 @@ const ProCalculo6: React.FC = () => {
       ]
     },
     {
-      name: "Estimación",
+      name: "Posicionar en escala",
+      maxScore: 6,
+      items: [
+        { 
+          question: "Posiciona el número 80 en la escala del 0 al 100", 
+          answer: "80", 
+          points: 2,
+          type: "escala",
+          min: 0,
+          max: 100
+        },
+        { 
+          question: "Posiciona el número 62 en la escala del 0 al 100", 
+          answer: "62", 
+          points: 2,
+          type: "escala",
+          min: 0,
+          max: 100
+        },
+        { 
+          question: "Posiciona el número 10 en la escala del 0 al 100", 
+          answer: "10", 
+          points: 2,
+          type: "escala",
+          min: 0,
+          max: 100
+        }
+      ]
+    },
+    {
+      name: "Estimación perceptiva",
+      maxScore: 4,
+      items: [
+        { 
+          question: "¿Cuántas pelotas y vasos hay? (57 pelotas, 83 vasos)", 
+          answer: "57/83", 
+          points: 4,
+          type: "oral" 
+        }
+      ]
+    },
+    {
+      name: "Estimación en contexto",
       maxScore: 6,
       items: [
         { 
@@ -285,7 +333,7 @@ const ProCalculo6: React.FC = () => {
           options: ["poco", "mucho"] 
         },
         { 
-          question: "¿60 chicos en un cumpleaños es poco o mucho?", 
+          question: "¿60 niños en un cumpleaños es poco o mucho?", 
           answer: "mucho", 
           points: 2,
           type: "opciones",
@@ -295,69 +343,98 @@ const ProCalculo6: React.FC = () => {
     },
     {
       name: "Resolución de problemas",
-      maxScore: 4,
+      maxScore: 8,
       items: [
         { 
-          question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?", 
-          answer: "10", 
+          question: "12 - 5", 
+          answer: "7", 
           points: 2,
           type: "oral" 
         },
         { 
-          question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
-          answer: "5", 
+          question: "16 - 4", 
+          answer: "12", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "6 + 7", 
+          answer: "13", 
+          points: 2,
+          type: "oral" 
+        },
+        { 
+          question: "4 + (4+3) + (7-2)", 
+          answer: "16", 
           points: 2,
           type: "oral" 
         }
       ]
     },
     {
-      name: "Adaptación",
-      maxScore: 8,
+      name: "Comparación de números",
+      maxScore: 6,
       items: [
         { 
-          question: "¿Cuánto crees que cuesta una bicicleta?", 
-          answer: "150", 
+          question: "¿Cuál es mayor: 654 o 546?", 
+          answer: "654", 
           points: 2,
           type: "opciones",
-          options: ["50", "150", "300"] 
+          options: ["654", "546"] 
         },
         { 
-          question: "¿Cuánto crees que cuesta una radio?", 
-          answer: "90", 
+          question: "¿Cuál es mayor: 97 o 352?", 
+          answer: "352", 
           points: 2,
           type: "opciones",
-          options: ["30", "90", "200"] 
+          options: ["97", "352"] 
         },
         { 
-          question: "¿Cuánto crees que cuesta una pelota de cuero?", 
-          answer: "50", 
+          question: "¿Cuál es mayor: 96 o 69?", 
+          answer: "96", 
           points: 2,
           type: "opciones",
-          options: ["20", "50", "100"] 
+          options: ["96", "69"] 
+        }
+      ]
+    },
+    {
+      name: "Determinación de cantidad",
+      maxScore: 12,
+      items: [
+        { 
+          question: "Marca el número menor en: 5, 8520, 000, 12, 49, 50, 97", 
+          answer: "0", 
+          points: 1,
+          type: "determinacion" 
         },
         { 
-          question: "¿Cuánto crees que cuesta una gaseosa?", 
-          answer: "1.50", 
-          points: 2,
-          type: "opciones",
-          options: ["1.50", "5", "10"] 
+          question: "Marca el número mayor en: 1234, 1993, 3000, 8520", 
+          answer: "8520", 
+          points: 1,
+          type: "determinacion" 
         }
       ]
     },
     {
       name: "Escribir en cifra",
-      maxScore: 2,
+      maxScore: 3,
       items: [
         { 
-          question: "Escribe el número 'quince'", 
-          answer: "15", 
+          question: "Escribe los números que siguen después de 137", 
+          answer: "138,139,140,141,142", 
           points: 1,
           type: "escrito" 
         },
         { 
-          question: "Escribe el número 'veinticinco'", 
-          answer: "25", 
+          question: "Escribe los números antes de 362", 
+          answer: "361,360,359,358,357", 
+          points: 1,
+          type: "escrito" 
+        },
+        { 
+          question: "Escribe los números después de 362", 
+          answer: "363,364,365,366,367", 
           points: 1,
           type: "escrito" 
         }
@@ -478,6 +555,12 @@ const ProCalculo6: React.FC = () => {
         normalizeText(selectedAnswer.toString()) === variation
       );
     }
+    else if (currentQuestion.type === "escala") {
+      isCorrect = Math.abs(Number(selectedAnswer) - Number(currentQuestion.answer)) <= 5;
+    }
+    else if (currentQuestion.type === "determinacion") {
+      isCorrect = selectedAnswer.toString() === currentQuestion.answer.toString();
+    }
     else {
       isCorrect = selectedAnswer === currentQuestion.answer;
     }
@@ -516,14 +599,14 @@ const ProCalculo6: React.FC = () => {
       variations.push("veinte");
     } else if (answer === "16") {
       variations.push("dieciséis", "dieciseis");
-    } else if (answer === "9") {
-      variations.push("nueve");
+    } else if (answer === "19") {
+      variations.push("diecinueve");
     } else if (answer === "7") {
       variations.push("siete");
     } else if (answer === "12") {
       variations.push("doce");
-    } else if (answer === "3") {
-      variations.push("tres");
+    } else if (answer === "13") {
+      variations.push("trece");
     } else if (answer === "10") {
       variations.push("diez");
     } else if (answer === "5") {
@@ -538,6 +621,10 @@ const ProCalculo6: React.FC = () => {
       variations.push("138");
     } else if (answer === "nueve") {
       variations.push("9");
+    }
+    
+    if (answer === "57/83") {
+      variations.push("57 83", "57 y 83", "57,83");
     }
     
     return variations;
@@ -563,6 +650,13 @@ const ProCalculo6: React.FC = () => {
       const rest = num % 100;
       return units[hundred] + 'cientos' + (rest !== 0 ? ' ' + numberToWords(rest) : '');
     }
+    if (num === 1000) return 'mil';
+    if (num < 2000) return 'mil ' + numberToWords(num - 1000);
+    if (num < 1000000) {
+      const thousand = Math.floor(num / 1000);
+      const rest = num % 1000;
+      return numberToWords(thousand) + ' mil' + (rest !== 0 ? ' ' + numberToWords(rest) : '');
+    }
     return num.toString();
   };
 
@@ -583,7 +677,10 @@ const ProCalculo6: React.FC = () => {
     setCountingFinished(false);
     setWrittenAnswerConfirmed(false);
     setOralAnswerConfirmed(false);
+    setScaleValue(50);
+    setDeterminationSelections({});
     
+    // Verificar si es momento de mostrar el minijuego (cada 3 subtest completados)
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
       if (nextSubtest > 0 && nextSubtest % 3 === 0 && nextSubtest < subtests.length) {
@@ -592,6 +689,7 @@ const ProCalculo6: React.FC = () => {
       }
     }
     
+    // Lógica normal de navegación entre preguntas
     if (currentItem + 1 < subtests[currentSubtest].items.length) {
       setCurrentItem(currentItem + 1);
       setTimeLeft(30);
@@ -603,7 +701,7 @@ const ProCalculo6: React.FC = () => {
       } else {
         setShowResult(true);
         const totalScore = score.reduce((a, b) => a + b, 0);
-        if (totalScore > 30) {
+        if (totalScore > 50) {
           launchConfetti();
         }
       }
@@ -619,6 +717,7 @@ const ProCalculo6: React.FC = () => {
       setAnimation('wrong');
     }
     
+    // Continúa con el siguiente subtest
     if (currentSubtest + 1 < subtests.length) {
       setCurrentSubtest(currentSubtest + 1);
       setCurrentItem(0);
@@ -626,7 +725,7 @@ const ProCalculo6: React.FC = () => {
     } else {
       setShowResult(true);
       const totalScore = score.reduce((a, b) => a + b, 0);
-      if (totalScore > 30) {
+      if (totalScore > 50) {
         launchConfetti();
       }
     }
@@ -648,9 +747,9 @@ const ProCalculo6: React.FC = () => {
     
     setCurrentSubtest(0);
     setCurrentItem(0);
-    setScore(Array(9).fill(0));
+    setScore(Array(12).fill(0));
     setShowResult(false);
-    setUserAnswers(Array(9).fill([]));
+    setUserAnswers(Array(12).fill([]));
     setTimeLeft(30);
     setShowFeedback(false);
     setOptionSelected(null);
@@ -664,11 +763,13 @@ const ProCalculo6: React.FC = () => {
     setWrittenAnswerConfirmed(false);
     setOralAnswerConfirmed(false);
     setShowMiniGame(false);
+    setScaleValue(50);
+    setDeterminationSelections({});
   };
 
   const getResultMessage = () => {
     const totalScore = score.reduce((a, b) => a + b, 0);
-    const percentage = (totalScore / 60) * 100;
+    const percentage = (totalScore / 87) * 100;
     
     if (percentage >= 80) return "¡Excelente trabajo! 🎉";
     if (percentage >= 60) return "¡Muy bien hecho! 🌟";
@@ -825,21 +926,6 @@ const ProCalculo6: React.FC = () => {
       
       return (
         <div className={styles.countingContainer}>
-          {/* Sección de imagen */}
-          {currentQuestion.image && (
-            <div className={styles.countingImageContainer}>
-              <img 
-                src={currentQuestion.image} 
-                alt={`Imagen con ${currentQuestion.answer} puntos para contar`}
-                className={styles.countingImage}
-              />
-              <div className={styles.imageCaption}>
-                {currentQuestion.question}
-              </div>
-            </div>
-          )}
-          
-          {/* Controles de conteo */}
           <div className={styles.countingHeader}>
             <button
               className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
@@ -921,6 +1007,91 @@ const ProCalculo6: React.FC = () => {
     return null;
   };
 
+  const renderScaleInput = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    
+    if (currentQuestion.type === "escala") {
+      return (
+        <div className={styles.scaleContainer}>
+          <div className={styles.scaleLabels}>
+            <span>{currentQuestion.min}</span>
+            <span>{currentQuestion.max}</span>
+          </div>
+          <input
+            type="range"
+            min={currentQuestion.min}
+            max={currentQuestion.max}
+            value={scaleValue}
+            onChange={(e) => setScaleValue(parseInt(e.target.value))}
+            className={styles.scaleSlider}
+          />
+          <div className={styles.scaleValue}>
+            Valor seleccionado: {scaleValue}
+          </div>
+          <button
+            className={styles.submitButton}
+            onClick={() => handleAnswer(scaleValue)}
+          >
+            Confirmar posición
+          </button>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderDeterminationExercise = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    
+    if (currentQuestion.type === "determinacion") {
+      let numbers: number[] = [];
+      if (currentItem === 0) {
+        numbers = [5, 8520, 0, 12, 49, 50, 97];
+      } else {
+        numbers = [1234, 1993, 3000, 8520];
+      }
+      
+      return (
+        <div className={styles.determinationContainer}>
+          <div className={styles.numbersGrid}>
+            {numbers.map((num, index) => (
+              <button
+                key={index}
+                className={`${styles.numberButton} ${
+                  determinationSelections[index] ? styles.selected : ''
+                }`}
+                onClick={() => {
+                  const newSelections: {[key: number]: boolean} = {};
+                  newSelections[index] = true;
+                  setDeterminationSelections(newSelections);
+                }}
+              >
+                {num}
+              </button>
+            ))}
+          </div>
+          <button
+            className={styles.submitButton}
+            onClick={() => {
+              const selectedIndex = Object.keys(determinationSelections).find(
+                key => determinationSelections[parseInt(key)]
+              );
+              
+              if (selectedIndex !== undefined) {
+                handleAnswer(numbers[parseInt(selectedIndex)].toString());
+              } else {
+                alert("Por favor selecciona un número");
+              }
+            }}
+          >
+            Confirmar selección
+          </button>
+        </div>
+      );
+    }
+    return null;
+  };
+
   const renderQuestion = () => {
     const currentSubtestData = subtests[currentSubtest];
     const currentQuestion = currentSubtestData.items[currentItem];
@@ -959,6 +1130,8 @@ const ProCalculo6: React.FC = () => {
         {renderCountingExercise()}
         {renderInputField()}
         {renderOralInput()}
+        {renderScaleInput()}
+        {renderDeterminationExercise()}
         
         {showFeedback && (
           <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
@@ -988,7 +1161,7 @@ const ProCalculo6: React.FC = () => {
               <div className={styles.titleWrapper}>
                 <h1 className={styles.testTitle}>
                   <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
-                  Pro-Cálculo <span className={styles.ageBadge}>6 años</span>
+                  Pro-Cálculo <span className={styles.ageBadge}>7 años</span>
                 </h1>
               </div>
               
@@ -1034,12 +1207,12 @@ const ProCalculo6: React.FC = () => {
                     <div className={styles.scoreVisual}>
                       <div className={styles.scoreCircle}>
                         <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
-                        <span className={styles.scoreTotal}>/60</span>
+                        <span className={styles.scoreTotal}>/87</span>
                       </div>
                     </div>
                     
                     <p className={styles.scoreText}>
-                      Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 60 puntos
+                      Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 87 puntos
                     </p>
                     
                     <div className={styles.subtestScores}>
@@ -1072,4 +1245,4 @@ const ProCalculo6: React.FC = () => {
   );
 };
 
-export default ProCalculo6;
+export default ProCalculo7;
