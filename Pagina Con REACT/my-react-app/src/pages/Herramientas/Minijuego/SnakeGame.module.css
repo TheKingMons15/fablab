@@ -1,54 +1,384 @@
-.gameContainer {
-  width: 100%;
-  height: 100%;
+/* Pantalla de menú */
+.menuScreen {
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 20px;
-  box-sizing: border-box;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-family: 'Arial', sans-serif;
 }
 
-.title {
-  font-size: 24px;
+.menuContainer {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  animation: slideIn 0.5s ease-out;
+}
+
+.gameTitle {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 30px;
+  background: linear-gradient(45deg, #00ff41, #00cc33);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.gameResult {
+  margin-bottom: 30px;
+}
+
+.winMessage {
+  color: #00cc33;
+  animation: celebration 1s ease-in-out;
+}
+
+.winMessage h2 {
+  font-size: 2.5rem;
   margin-bottom: 10px;
+}
+
+.loseMessage {
+  color: #ff4444;
+}
+
+.loseMessage h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.stats {
+  margin-bottom: 30px;
+}
+
+.statItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 15px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.statLabel {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.statValue {
   color: #333;
+  font-size: 1.1rem;
 }
 
-.score {
-  font-size: 18px;
-  margin-bottom: 10px;
+.playButton {
+  background: linear-gradient(45deg, #00ff41, #00cc33);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
+  margin-bottom: 30px;
 }
 
-.canvas {
-  border: 2px solid #333;
-  border-radius: 5px;
-  background-color: #000;
+.playButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 255, 65, 0.4);
+  scale: 1.05;
+}
+
+.playButton:active {
+  transform: translateY(0);
+}
+
+.exitButton {
+  background: linear-gradient(45deg, #ff4444, #cc3333);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
+  margin-top: 15px;
+}
+
+.exitButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 68, 68, 0.4);
+  scale: 1.05;
+}
+
+.exitButton:active {
+  transform: translateY(0);
 }
 
 .instructions {
-  font-size: 14px;
-  color: #666;
-  margin-top: 10px;
-}
-
-.gameOver {
-  text-align: center;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.05);
   padding: 20px;
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
 }
 
-.gameOver h2 {
-  color: #d32f2f;
-}
-
-.gameOver p {
-  margin: 5px 0;
-}
-
-.countdown {
-  font-size: 24px;
-  margin: 20px 0;
+.instructions h3 {
   color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.instructions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.instructions li {
+  padding: 8px 0;
+  color: #555;
+  font-weight: 500;
+}
+
+/* Pantalla de countdown */
+.countdownScreen {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+  gap: 20px;
+}
+
+.countdownContainer {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.countdownTitle {
+  color: white;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.countdownNumber {
+  font-size: 5rem;
+  font-weight: bold;
+  color: #00ff41;
+  text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+  animation: countdownPulse 1s ease-in-out;
+}
+
+/* Pantalla de juego */
+.gameContainer {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  gap: 20px;
+  position: relative;
+}
+
+.gameHeader {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.gameStats {
+  display: flex;
+  gap: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  padding: 10px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gameStats .statItem {
+  color: white;
+  font-weight: bold;
+}
+
+.gameStats .statLabel {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.gameStats .statValue {
+  color: #00ff41;
+}
+
+.canvas {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  background: #0a0a0a;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.pauseOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.pauseMessage {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.pauseMessage h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.pauseMessage p {
+  color: #666;
+  margin: 0;
+}
+
+.gameControls {
+  display: flex;
+  gap: 15px;
+}
+
+.controlButton {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.controlButton:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+}
+
+.controlButton:active {
+  transform: translateY(0);
+}
+
+.gameInfo {
+  position: absolute;
+  top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Animaciones */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes celebration {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1) rotate(-5deg);
+  }
+  75% {
+    transform: scale(1.1) rotate(5deg);
+  }
+}
+
+@keyframes countdownPulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .menuContainer {
+    padding: 30px 20px;
+    margin: 20px;
+  }
+  
+  .gameTitle {
+    font-size: 2.5rem;
+  }
+  
+  .gameStats {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .gameStats .statItem {
+    font-size: 0.9rem;
+  }
+  
+  .canvas {
+    width: 350px;
+    height: 350px;
+  }
+  
+  .gameControls {
+    flex-direction: column;
+    width: 200px;
+  }
 }
