@@ -31,31 +31,31 @@ const eggImages: EggImage[] = [
     id: 'egg2',
     top: '/img/Huevo2_Sup.jpg',
     bottom: '/img/Huevo2_Inf.jpg',
-    full: '/img/Huevo2_Completo.jpg'
+    full: '/img/Huevo1_Completo.jpg'
   },
   {
     id: 'egg3',
     top: '/img/Huevo3_Sup.jpg',
     bottom: '/img/Huevo3_Inf.jpg',
-    full: '/img/Huevo3_Completo.jpg'
+    full: '/img/Huevo1_Completo.jpg'
   },
   {
     id: 'egg4',
     top: '/img/Huevo4_Sup.jpg',
     bottom: '/img/Huevo4_Inf.jpg',
-    full: '/img/Huevo4_Completo.jpg'
+    full: '/img/Huevo1_Completo.jpg'
   },
   {
     id: 'egg5',
     top: '/img/Huevo5_Sup.jpg',
     bottom: '/img/Huevo5_Inf.jpg',
-    full: '/img/Huevo5_Completo.jpg'
+    full: '/img/Huevo1_Completo.jpg'
   },
   {
     id: 'egg6',
     top: '/img/Huevo6_Sup.jpg',
     bottom: '/img/Huevo6_Inf.jpg',
-    full: '/img/Huevo6_Completo.jpg'
+    full: '/img/Huevo1_Completo.jpg'
   }
 ];
 

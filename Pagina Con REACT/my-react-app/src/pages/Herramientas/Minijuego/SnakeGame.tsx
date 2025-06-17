@@ -337,7 +337,7 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
           <h2 className={styles.countdownTitle}>¡Prepárate!</h2>
           <div className={styles.countdownNumber}>{countdown}</div>
         </div>
-        <canvas ref={canvasRef} width="400" height="400" className={styles.canvas} />
+        <canvas ref={canvasRef} width="350" height="350" className={styles.canvas} />
       </div>
     );
   }
@@ -362,7 +362,7 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
         </div>
       </div>
 
-      <canvas ref={canvasRef} width="400" height="400" className={styles.canvas} />
+      <canvas ref={canvasRef} width="350" height="350" className={styles.canvas} />
 
       {gameState === 'paused' && (
         <div className={styles.pauseOverlay}>

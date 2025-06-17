@@ -1,30 +1,31 @@
 /* Pantalla de menú */
 .menuScreen {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   font-family: 'Arial', sans-serif;
+  min-height: 400px;
 }
 
 .menuContainer {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 40px;
+  border-radius: 15px;
+  padding: 25px;
   text-align: center;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-  max-width: 500px;
-  width: 90%;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 95%;
   animation: slideIn 0.5s ease-out;
 }
 
 .gameTitle {
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   background: linear-gradient(45deg, #00ff41, #00cc33);
   background-clip: text;
   -webkit-background-clip: text;
@@ -34,7 +35,7 @@
 }
 
 .gameResult {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .winMessage {
@@ -43,8 +44,8 @@
 }
 
 .winMessage h2 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
+  font-size: 1.8rem;
+  margin-bottom: 8px;
 }
 
 .loseMessage {
@@ -52,53 +53,54 @@
 }
 
 .loseMessage h2 {
-  font-size: 2rem;
-  margin-bottom: 10px;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
 }
 
 .stats {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .statItem {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin: 0 15px;
-  padding: 8px 16px;
+  gap: 6px;
+  margin: 0 10px;
+  padding: 6px 12px;
   background: rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
+  border-radius: 15px;
   font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .statLabel {
   color: #666;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .statValue {
   color: #333;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
 }
 
 .playButton {
   background: linear-gradient(45deg, #00ff41, #00cc33);
   color: white;
   border: none;
-  padding: 15px 30px;
-  font-size: 1.2rem;
+  padding: 12px 25px;
+  font-size: 1rem;
   font-weight: bold;
-  border-radius: 50px;
+  border-radius: 25px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3);
-  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0, 255, 65, 0.3);
+  margin-bottom: 20px;
 }
 
 .playButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 255, 65, 0.4);
-  scale: 1.05;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 255, 65, 0.4);
+  scale: 1.03;
 }
 
 .playButton:active {
@@ -109,20 +111,20 @@
   background: linear-gradient(45deg, #ff4444, #cc3333);
   color: white;
   border: none;
-  padding: 12px 25px;
-  font-size: 1rem;
+  padding: 10px 20px;
+  font-size: 0.9rem;
   font-weight: bold;
-  border-radius: 25px;
+  border-radius: 20px;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(255, 68, 68, 0.3);
-  margin-top: 15px;
+  box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
+  margin-top: 10px;
 }
 
 .exitButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(255, 68, 68, 0.4);
-  scale: 1.05;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(255, 68, 68, 0.4);
+  scale: 1.03;
 }
 
 .exitButton:active {
@@ -132,14 +134,15 @@
 .instructions {
   text-align: left;
   background: rgba(0, 0, 0, 0.05);
-  padding: 20px;
-  border-radius: 10px;
+  padding: 15px;
+  border-radius: 8px;
 }
 
 .instructions h3 {
   color: #333;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   text-align: center;
+  font-size: 1rem;
 }
 
 .instructions ul {
@@ -149,71 +152,77 @@
 }
 
 .instructions li {
-  padding: 8px 0;
+  padding: 4px 0;
   color: #555;
   font-weight: 500;
+  font-size: 0.85rem;
 }
 
 /* Pantalla de countdown */
 .countdownScreen {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-  gap: 20px;
+  gap: 15px;
+  min-height: 400px;
 }
 
 .countdownContainer {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .countdownTitle {
   color: white;
-  font-size: 2rem;
-  margin-bottom: 20px;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .countdownNumber {
-  font-size: 5rem;
+  font-size: 3rem;
   font-weight: bold;
   color: #00ff41;
-  text-shadow: 0 0 20px rgba(0, 255, 65, 0.5);
+  text-shadow: 0 0 15px rgba(0, 255, 65, 0.5);
   animation: countdownPulse 1s ease-in-out;
 }
 
 /* Pantalla de juego */
 .gameContainer {
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  gap: 20px;
+  gap: 15px;
   position: relative;
+  min-height: 400px;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .gameHeader {
   display: flex;
   justify-content: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 350px;
 }
 
 .gameStats {
   display: flex;
-  gap: 20px;
+  gap: 12px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  padding: 10px 20px;
-  border-radius: 20px;
+  padding: 8px 15px;
+  border-radius: 15px;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  font-size: 0.85rem;
 }
 
 .gameStats .statItem {
@@ -230,11 +239,13 @@
 }
 
 .canvas {
-  border: 3px solid rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
   background: #0a0a0a;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
   position: relative;
+  width: 350px;
+  height: 350px;
 }
 
 .pauseOverlay {
@@ -252,43 +263,48 @@
 
 .pauseMessage {
   background: rgba(255, 255, 255, 0.95);
-  padding: 30px;
-  border-radius: 15px;
+  padding: 20px;
+  border-radius: 12px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
 .pauseMessage h2 {
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
+  font-size: 1.5rem;
 }
 
 .pauseMessage p {
   color: #666;
   margin: 0;
+  font-size: 0.9rem;
 }
 
 .gameControls {
   display: flex;
-  gap: 15px;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .controlButton {
   background: rgba(255, 255, 255, 0.2);
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 10px 20px;
-  border-radius: 25px;
+  padding: 8px 16px;
+  border-radius: 20px;
   cursor: pointer;
   font-weight: bold;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  font-size: 0.85rem;
 }
 
 .controlButton:hover {
   background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
 }
 
 .controlButton:active {
@@ -297,7 +313,7 @@
 
 .gameInfo {
   position: absolute;
-  top: 20px;
+  top: 15px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -354,31 +370,37 @@
 /* Responsive */
 @media (max-width: 768px) {
   .menuContainer {
-    padding: 30px 20px;
-    margin: 20px;
+    padding: 20px 15px;
+    margin: 15px;
+    max-width: 350px;
   }
   
   .gameTitle {
-    font-size: 2.5rem;
+    font-size: 1.8rem;
   }
   
   .gameStats {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
   }
   
   .gameStats .statItem {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
   
   .canvas {
-    width: 350px;
-    height: 350px;
+    width: 300px;
+    height: 300px;
   }
   
   .gameControls {
     flex-direction: column;
-    width: 200px;
+    width: 180px;
+  }
+  
+  .controlButton {
+    padding: 10px;
+    font-size: 0.8rem;
   }
 }
