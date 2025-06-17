@@ -46,3 +46,9 @@
 .gameOver p {
   margin: 5px 0;
 }
+
+.countdown {
+  font-size: 24px;
+  margin: 20px 0;
+  color: #333;
+}
