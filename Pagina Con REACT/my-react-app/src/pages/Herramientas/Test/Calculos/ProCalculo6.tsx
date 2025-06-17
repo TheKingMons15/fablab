@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaRedo, FaClock } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
-import { RompeCabezasHuevos } from '../../Minijuego/RompeCabezas';
+import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
+import SnakeGame from '../../Minijuego/SnakeGame';
 
 interface QuestionItem {
   question: string;
@@ -27,11 +28,14 @@ const ProCalculo6: React.FC = () => {
   const [animation, setAnimation] = useState('');
   const [writtenAnswer, setWrittenAnswer] = useState('');
   const [showMiniGame, setShowMiniGame] = useState(false);
+<<<<<<< HEAD
+=======
+  const [miniGameType, setMiniGameType] = useState<'egg' | 'snake'>('egg');
+>>>>>>> 9a12e4b737eadba35ade477a8ade5f6b2065605c
   const [timeLeft, setTimeLeft] = useState(20 * 60);
   const [timerActive, setTimerActive] = useState(true);
   const [timeUp, setTimeUp] = useState(false);
 
-  // Configurar el temporizador
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
@@ -326,6 +330,7 @@ const ProCalculo6: React.FC = () => {
       const nextSubtest = currentSubtest + 1;
       if (nextSubtest > 0 && nextSubtest % 3 === 0 && nextSubtest < subtests.length) {
         setShowMiniGame(true);
+        setMiniGameType(nextSubtest === 3 ? 'egg' : 'snake');
         return;
       }
     }
@@ -386,6 +391,7 @@ const ProCalculo6: React.FC = () => {
     setAnimation('');
     setWrittenAnswer('');
     setShowMiniGame(false);
+    setMiniGameType('egg');
     setTimeLeft(20 * 60);
     setTimerActive(true);
     setTimeUp(false);
@@ -442,8 +448,204 @@ const ProCalculo6: React.FC = () => {
             Enviar respuesta
           </button>
         </div>
+<<<<<<< HEAD
       </div>
     );
+=======
+      );
+    }
+    return null;
+  };
+
+  const renderOralInput = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    
+    if (currentQuestion.type === "oral") {
+      return (
+        <div className={styles.oralContainer}>
+          <div className={styles.voiceControl}>
+            <button
+              className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
+              onClick={toggleVoiceRecognition}
+              disabled={oralAnswerConfirmed || timeUp}
+            >
+              {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
+              {isListening ? ' Escuchando...' : ' Usar micrófono'}
+            </button>
+            
+            {recognizedText && (
+              <div className={styles.recognizedText}>
+                <p>Reconocido: <strong>{recognizedText}</strong></p>
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.inputContainer}>
+            <input
+              type="text"
+              className={styles.textInput}
+              placeholder="O escribe tu respuesta aquí..."
+              value={oralAnswer}
+              onChange={(e) => {
+                setOralAnswer(e.target.value);
+                setOralAnswerConfirmed(false);
+              }}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && oralAnswer.trim()) {
+                  setOralAnswerConfirmed(true);
+                }
+              }}
+              disabled={oralAnswerConfirmed || timeUp}
+            />
+            <button 
+              className={styles.submitButton}
+              onClick={() => oralAnswer.trim() && setOralAnswerConfirmed(true)}
+              disabled={!oralAnswer.trim() || oralAnswerConfirmed || timeUp}
+            >
+              Terminar
+            </button>
+          </div>
+
+          {oralAnswerConfirmed && (
+            <div className={styles.confirmationButtons}>
+              <p>¿Estás seguro de tu respuesta?</p>
+              <div className={styles.confirmationButtonGroup}>
+                <button 
+                  className={styles.confirmButton}
+                  onClick={() => {
+                    handleAnswer(oralAnswer);
+                    setOralAnswerConfirmed(false);
+                  }}
+                  disabled={timeUp}
+                >
+                  Sí, enviar
+                </button>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => {
+                    setOralAnswerConfirmed(false);
+                    setRecognizedText('');
+                    setOralAnswer('');
+                  }}
+                  disabled={timeUp}
+                >
+                  No, corregir
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const renderCountingExercise = () => {
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+
+    if (currentQuestion.type === "conteo") {
+      const isCountingUp = currentSubtest === 0;
+      const targetNumber = currentQuestion.countingItems ?? (isCountingUp ? 20 : 10);
+      
+      return (
+        <div className={styles.countingContainer}>
+          {currentQuestion.image && (
+            <div className={styles.countingImageContainer}>
+              <img 
+                src={currentQuestion.image} 
+                alt={`Imagen con ${currentQuestion.answer} puntos para contar`}
+                className={styles.countingImage}
+              />
+              <div className={styles.imageCaption}>
+                {currentQuestion.question}
+              </div>
+            </div>
+          )}
+          
+          <div className={styles.countingHeader}>
+            <button
+              className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
+              onClick={toggleVoiceRecognition}
+              disabled={timeUp}
+            >
+              {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
+              {isListening ? ' Escuchando...' : ' Usar micrófono'}
+            </button>
+            
+            {recognizedText && (
+              <div className={styles.recognizedText}>
+                <p>Reconocido: <strong>{recognizedText}</strong></p>
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.countingProgress}>
+            <p>
+              {isCountingUp ? "Conteo ascendente: " : "Conteo descendente: "}
+              {countingProgress > 0 ? (
+                Array.from(
+                  {length: isCountingUp ? countingProgress : targetNumber - countingProgress + 1}, 
+                  (_, i) => isCountingUp ? i + 1 : targetNumber - i
+                ).join(", ")
+              ) : "..."}
+            </p>
+          </div>
+          
+          <div className={styles.countingControls}>
+            <button 
+              className={styles.countingButton}
+              onClick={() => {
+                handleManualCount();
+                setCountingFinished(false);
+              }}
+              disabled={isCountingUp ? countingProgress >= targetNumber : countingProgress > targetNumber || timeUp}
+            >
+              {countingProgress === 0 ? 
+                `Comenzar a contar ${isCountingUp ? 'desde 1' : `desde ${targetNumber}`}` : 
+                `Continuar conteo`}
+            </button>
+            
+            <button 
+              className={styles.submitButton}
+              onClick={() => {
+                setCountingFinished(true);
+              }}
+              disabled={timeUp}
+            >
+              Terminar conteo
+            </button>
+          </div>
+
+          {countingFinished && (
+            <div className={styles.confirmationButtons}>
+              <p>¿Terminaste de contar?</p>
+              <div className={styles.confirmationButtonGroup}>
+                <button 
+                  className={styles.confirmButton}
+                  onClick={() => {
+                    const answer = isCountingUp ? countingProgress : targetNumber - countingProgress;
+                    handleAnswer(answer.toString());
+                    setCountingFinished(false);
+                  }}
+                  disabled={timeUp}
+                >
+                  Sí, continuar
+                </button>
+                <button 
+                  className={styles.cancelButton}
+                  onClick={() => setCountingFinished(false)}
+                  disabled={timeUp}
+                >
+                  No, seguir contando
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+    return null;
+>>>>>>> 9a12e4b737eadba35ade477a8ade5f6b2065605c
   };
 
   const renderQuestion = () => {
@@ -477,7 +679,11 @@ const ProCalculo6: React.FC = () => {
         
         {showMiniGame ? (
           <div className={styles.miniGameContainer}>
-            <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
+            {miniGameType === 'egg' ? (
+              <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
+            ) : (
+              <SnakeGame onComplete={handleMiniGameComplete} />
+            )}
           </div>
         ) : (
           <>

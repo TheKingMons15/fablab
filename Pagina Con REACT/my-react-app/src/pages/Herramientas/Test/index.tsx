@@ -36,7 +36,7 @@ const Test: React.FC = () => {
       icon: <FaChild size={32} />,
       color: '#006633',
       nivel: 'Inicial',
-      tiempo: '20 min',
+      tiempo: '20 minutos',
       preguntas: 10
     },
     {
@@ -47,7 +47,7 @@ const Test: React.FC = () => {
       icon: <FaCalculator size={32} />,
       color: '#009955',
       nivel: 'Intermedio',
-      tiempo: '25 min',
+      tiempo: '25 minutos',
       preguntas: 15
     },
     {
@@ -58,7 +58,7 @@ const Test: React.FC = () => {
       icon: <FaGraduationCap size={32} />,
       color: '#007744',
       nivel: 'Avanzado',
-      tiempo: '30 min',
+      tiempo: '30 minutos',
       preguntas: 20
     },
   ];

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaArrowLeft, FaCheck, FaTimes, FaRedo, FaMicrophone, FaMicrophoneSlash, FaClock } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
-import { RompeCabezasHuevos } from '../../Minijuego/RompeCabezas';
+import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 
 interface SpeechRecognitionResult {
   [key: number]: SpeechRecognitionAlternative;
