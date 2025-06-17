@@ -31,40 +31,40 @@ const eggImages: EggImage[] = [
     id: 'egg2',
     top: '/img/Huevo2_Sup.jpg',
     bottom: '/img/Huevo2_Inf.jpg',
-    full: '/img/Huevo1_Completo.jpg'
+    full: '/img/Huevo2_Completo.jpg'
   },
   {
     id: 'egg3',
     top: '/img/Huevo3_Sup.jpg',
     bottom: '/img/Huevo3_Inf.jpg',
-    full: '/img/Huevo1_Completo.jpg'
+    full: '/img/Huevo3_Completo.jpg'
   },
   {
     id: 'egg4',
     top: '/img/Huevo4_Sup.jpg',
     bottom: '/img/Huevo4_Inf.jpg',
-    full: '/img/Huevo1_Completo.jpg'
+    full: '/img/Huevo4_Completo.jpg'
   },
   {
     id: 'egg5',
     top: '/img/Huevo5_Sup.jpg',
     bottom: '/img/Huevo5_Inf.jpg',
-    full: '/img/Huevo1_Completo.jpg'
+    full: '/img/Huevo5_Completo.jpg'
   },
   {
     id: 'egg6',
     top: '/img/Huevo6_Sup.jpg',
     bottom: '/img/Huevo6_Inf.jpg',
-    full: '/img/Huevo1_Completo.jpg'
+    full: '/img/Huevo6_Completo.jpg'
   }
 ];
 
-export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComplete }) => {
+const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComplete }) => {
   const [pieces, setPieces] = useState<EggPiece[]>([]);
   const [selectedPieces, setSelectedPieces] = useState<EggPiece[]>([]);
-  const [matches, setMatches] = useState<{id: string, fullImage: string}[]>([]);
+  const [matches, setMatches] = useState<{ id: string; fullImage: string }[]>([]);
   const [gameCompleted, setGameCompleted] = useState(false);
-  const [showMatch, setShowMatch] = useState<{show: boolean, image: string}>({show: false, image: ''});
+  const [showMatch, setShowMatch] = useState<{ show: boolean; image: string }>({ show: false, image: '' });
 
   useEffect(() => {
     initializeGame();
@@ -95,7 +95,7 @@ export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComple
     setSelectedPieces([]);
     setMatches([]);
     setGameCompleted(false);
-    setShowMatch({show: false, image: ''});
+    setShowMatch({ show: false, image: '' });
   };
 
   const handlePieceClick = (piece: EggPiece) => {
@@ -112,7 +112,7 @@ export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComple
       
       if (firstEggId === secondEggId && first.type !== second.type) {
         // Mostrar la imagen completa temporalmente
-        setShowMatch({show: true, image: first.fullImage || ''});
+        setShowMatch({ show: true, image: first.fullImage || '' });
         
         setTimeout(() => {
           setPieces(prevPieces => 
@@ -121,10 +121,10 @@ export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComple
             )
           );
           
-          const newMatches = [...matches, {id: firstEggId, fullImage: first.fullImage || ''}];
+          const newMatches = [...matches, { id: firstEggId, fullImage: first.fullImage || '' }];
           setMatches(newMatches);
           setSelectedPieces([]);
-          setShowMatch({show: false, image: ''});
+          setShowMatch({ show: false, image: '' });
           
           if (newMatches.length === eggImages.length) {
             setGameCompleted(true);
@@ -224,3 +224,5 @@ export const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComple
     </div>
   );
 };
+
+export default RompeCabezasHuevos;

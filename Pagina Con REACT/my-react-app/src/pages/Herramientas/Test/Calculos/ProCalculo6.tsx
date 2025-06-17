@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { FaArrowLeft, FaCheck, FaTimes, FaRedo, FaMicrophone, FaMicrophoneSlash, FaClock } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
-import { RompeCabezasHuevos } from '../../Minijuego/RompeCabezas';
+import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
+import SnakeGame from '../../Minijuego/SnakeGame';
 
 interface SpeechRecognitionResult {
   [key: number]: SpeechRecognitionAlternative;
@@ -65,11 +66,11 @@ const ProCalculo6: React.FC = () => {
   const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
   const [oralAnswerConfirmed, setOralAnswerConfirmed] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 minutos en segundos
+  const [miniGameType, setMiniGameType] = useState<'egg' | 'snake'>('egg');
+  const [timeLeft, setTimeLeft] = useState(20 * 60);
   const [timerActive, setTimerActive] = useState(true);
   const [timeUp, setTimeUp] = useState(false);
 
-  // Configurar el temporizador
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
@@ -92,7 +93,6 @@ const ProCalculo6: React.FC = () => {
     };
   }, [timeLeft, timerActive, showResult, timeUp, score]);
 
-  // Formatear el tiempo restante en minutos:segundos
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -588,6 +588,7 @@ const ProCalculo6: React.FC = () => {
       const nextSubtest = currentSubtest + 1;
       if (nextSubtest > 0 && nextSubtest % 3 === 0 && nextSubtest < subtests.length) {
         setShowMiniGame(true);
+        setMiniGameType(nextSubtest === 3 ? 'egg' : 'snake');
         return;
       }
     }
@@ -662,6 +663,7 @@ const ProCalculo6: React.FC = () => {
     setWrittenAnswerConfirmed(false);
     setOralAnswerConfirmed(false);
     setShowMiniGame(false);
+    setMiniGameType('egg');
     setTimeLeft(20 * 60);
     setTimerActive(true);
     setTimeUp(false);
@@ -835,7 +837,6 @@ const ProCalculo6: React.FC = () => {
       
       return (
         <div className={styles.countingContainer}>
-          {/* Sección de imagen */}
           {currentQuestion.image && (
             <div className={styles.countingImageContainer}>
               <img 
@@ -849,7 +850,6 @@ const ProCalculo6: React.FC = () => {
             </div>
           )}
           
-          {/* Controles de conteo */}
           <div className={styles.countingHeader}>
             <button
               className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
@@ -994,7 +994,11 @@ const ProCalculo6: React.FC = () => {
         
         {showMiniGame ? (
           <div className={styles.miniGameContainer}>
-            <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
+            {miniGameType === 'egg' ? (
+              <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
+            ) : (
+              <SnakeGame onComplete={handleMiniGameComplete} />
+            )}
           </div>
         ) : (
           <>
