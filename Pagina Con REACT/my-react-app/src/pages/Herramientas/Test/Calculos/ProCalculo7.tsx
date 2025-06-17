@@ -69,7 +69,7 @@ const ProCalculo7: React.FC = () => {
   const [showMiniGame, setShowMiniGame] = useState(false);
   const [scaleValue, setScaleValue] = useState(50);
   const [determinationSelections, setDeterminationSelections] = useState<{[key: number]: boolean}>({});
-  const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 minutos en segundos
+  const [timeLeft, setTimeLeft] = useState(25 * 60); // 20 minutos en segundos
   const [timerActive, setTimerActive] = useState(true);
   const [timeUp, setTimeUp] = useState(false);
 

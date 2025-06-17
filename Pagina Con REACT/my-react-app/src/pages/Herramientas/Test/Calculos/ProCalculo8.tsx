@@ -68,7 +68,7 @@ const ProCalculo8: React.FC = () => {
   const [showMiniGame, setShowMiniGame] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
   const numberScale = Array.from({ length: 101 }, (_, i) => i); // [0, 1, 2, ..., 100]
-  const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 minutos en segundos
+  const [timeLeft, setTimeLeft] = useState(30 * 60); // 20 minutos en segundos
   const [timerActive, setTimerActive] = useState(true);
   const [timeUp, setTimeUp] = useState(false);
 
