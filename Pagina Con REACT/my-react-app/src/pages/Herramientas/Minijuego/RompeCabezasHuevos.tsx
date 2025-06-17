@@ -130,7 +130,7 @@ const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComplete }) =
             setGameCompleted(true);
             onComplete(true);
           }
-        }, 1500);
+        }, 4000);
       } else {
         setTimeout(() => {
           setSelectedPieces([]);
