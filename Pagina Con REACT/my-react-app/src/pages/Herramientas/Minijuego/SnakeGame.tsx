@@ -1,17 +1,62 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './SnakeGame.module.css';
 
 const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [score, setScore] = useState(0);
+  const [lives, setLives] = useState(3);
   const [gameOver, setGameOver] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameWon, setGameWon] = useState(false);
+  const [gameState, setGameState] = useState<'menu' | 'countdown' | 'playing' | 'paused'>('menu');
   const [direction, setDirection] = useState<'up' | 'down' | 'left' | 'right'>('right');
+  const [nextDirection, setNextDirection] = useState<'up' | 'down' | 'left' | 'right'>('right');
   const [snake, setSnake] = useState<{ x: number; y: number }[]>([{ x: 5, y: 5 }]);
   const [food, setFood] = useState<{ x: number; y: number }>({ x: 10, y: 10 });
-  const [speed, setSpeed] = useState(150);
-  const [countdown, setCountdown] = useState(4); // Contador regresivo de 4 segundos
+  const [speed, setSpeed] = useState(200);
+  const [countdown, setCountdown] = useState(3);
+  const [highScore, setHighScore] = useState(0);
 
+  const gridSize = 20;
+  const tileCount = 20;
+
+  // Generar nueva comida en posición aleatoria
+  const generateFood = useCallback((): { x: number; y: number } => {
+    let newFood: { x: number; y: number };
+    do {
+      newFood = {
+        x: Math.floor(Math.random() * (tileCount - 2)) + 1,
+        y: Math.floor(Math.random() * (tileCount - 2)) + 1,
+      };
+    } while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y));
+    return newFood;
+  }, [snake]);
+
+  // Reiniciar juego después de perder una vida
+  const resetGameAfterLife = useCallback(() => {
+    setSnake([{ x: 5, y: 5 }]);
+    setDirection('right');
+    setNextDirection('right');
+    setFood(generateFood());
+    setGameState('countdown');
+    setCountdown(3);
+  }, [generateFood]);
+
+  // Iniciar nuevo juego
+  const startNewGame = useCallback(() => {
+    setScore(0);
+    setLives(3);
+    setGameOver(false);
+    setGameWon(false);
+    setSnake([{ x: 5, y: 5 }]);
+    setDirection('right');
+    setNextDirection('right');
+    setFood({ x: 10, y: 10 });
+    setSpeed(200);
+    setGameState('countdown');
+    setCountdown(3);
+  }, []);
+
+  // Lógica del juego
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -19,189 +64,329 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const gridSize = 20;
-    const tileCount = 20;
+    const gameLoop = () => {
+      if (gameState !== 'playing') return;
 
-    const handleGameLoop = () => {
-      if (!gameStarted || gameOver) return;
+      // Actualizar dirección
+      setDirection(nextDirection);
 
-      let newSnake = [...snake];
-      let head = { x: newSnake[0].x, y: newSnake[0].y };
+      setSnake(currentSnake => {
+        const newSnake = [...currentSnake];
+        const head = { x: newSnake[0].x, y: newSnake[0].y };
 
-      // Mover la serpiente
-      switch (direction) {
-        case 'up':
-          head.y -= 1;
-          break;
-        case 'down':
-          head.y += 1;
-          break;
-        case 'left':
-          head.x -= 1;
-          break;
-        case 'right':
-          head.x += 1;
-          break;
-      }
+        // Mover la cabeza
+        switch (nextDirection) {
+          case 'up':
+            head.y -= 1;
+            break;
+          case 'down':
+            head.y += 1;
+            break;
+          case 'left':
+            head.x -= 1;
+            break;
+          case 'right':
+            head.x += 1;
+            break;
+        }
 
-      // Detectar colisiones con paredes
-      if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-        setGameOver(true);
-        onComplete(score >= 10);
-        return;
-      }
+        // Detectar colisiones con paredes
+        if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+          setLives(currentLives => {
+            const newLives = currentLives - 1;
+            if (newLives <= 0) {
+              setGameOver(true);
+              setGameState('menu');
+              if (score > highScore) setHighScore(score);
+            } else {
+              setTimeout(resetGameAfterLife, 1000);
+            }
+            return newLives;
+          });
+          return currentSnake;
+        }
 
-      // Detectar colisiones con sí misma
-      if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
-        setGameOver(true);
-        onComplete(score >= 10);
-        return;
-      }
+        // Detectar colisiones con sí misma
+        if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
+          setLives(currentLives => {
+            const newLives = currentLives - 1;
+            if (newLives <= 0) {
+              setGameOver(true);
+              setGameState('menu');
+              if (score > highScore) setHighScore(score);
+            } else {
+              setTimeout(resetGameAfterLife, 1000);
+            }
+            return newLives;
+          });
+          return currentSnake;
+        }
 
-      newSnake.unshift(head);
+        newSnake.unshift(head);
 
-      // Comer comida
-      if (head.x === food.x && head.y === food.y) {
-        setScore(prev => prev + 1);
-        setFood({
-          x: Math.floor(Math.random() * (tileCount - 2)) + 1,
-          y: Math.floor(Math.random() * (tileCount - 2)) + 1,
-        });
-        setSpeed(prev => Math.max(50, prev - 10)); // Aumentar velocidad
-      } else {
-        newSnake.pop();
-      }
+        // Comer comida
+        if (head.x === food.x && head.y === food.y) {
+          setScore(currentScore => {
+            const newScore = currentScore + 1;
+            if (newScore >= 15) {
+              setGameWon(true);
+              setGameOver(true);
+              setGameState('menu');
+              if (newScore > highScore) setHighScore(newScore);
+            }
+            return newScore;
+          });
+          setFood(generateFood());
+          setSpeed(currentSpeed => Math.max(80, currentSpeed - 5));
+        } else {
+          newSnake.pop();
+        }
 
-      setSnake(newSnake);
+        return newSnake;
+      });
+    };
 
-      // Dibujar
-      ctx.fillStyle = 'black';
+    // Renderizar juego
+    const render = () => {
+      // Limpiar canvas
+      ctx.fillStyle = '#0a0a0a';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Dibujar paredes
-      ctx.fillStyle = 'gray';
-      ctx.fillRect(0, 0, canvas.width, gridSize); // Pared superior
-      ctx.fillRect(0, 0, gridSize, canvas.height); // Pared izquierda
-      ctx.fillRect(0, canvas.height - gridSize, canvas.width, gridSize); // Pared inferior
-      ctx.fillRect(canvas.width - gridSize, 0, gridSize, canvas.height); // Pared derecha
+      // Dibujar grid sutil
+      ctx.strokeStyle = '#1a1a1a';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= tileCount; i++) {
+        ctx.beginPath();
+        ctx.moveTo(i * gridSize, 0);
+        ctx.lineTo(i * gridSize, canvas.height);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, i * gridSize);
+        ctx.lineTo(canvas.width, i * gridSize);
+        ctx.stroke();
+      }
 
-      ctx.fillStyle = 'lime';
-      newSnake.forEach(segment => {
-        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+      // Dibujar serpiente
+      snake.forEach((segment, index) => {
+        if (index === 0) {
+          // Cabeza
+          ctx.fillStyle = '#00ff41';
+          ctx.fillRect(segment.x * gridSize + 1, segment.y * gridSize + 1, gridSize - 2, gridSize - 2);
+          // Ojos
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(segment.x * gridSize + 4, segment.y * gridSize + 4, 3, 3);
+          ctx.fillRect(segment.x * gridSize + 13, segment.y * gridSize + 4, 3, 3);
+        } else {
+          // Cuerpo
+          const opacity = Math.max(0.6, 1 - (index * 0.05));
+          ctx.fillStyle = `rgba(0, 255, 65, ${opacity})`;
+          ctx.fillRect(segment.x * gridSize + 2, segment.y * gridSize + 2, gridSize - 4, gridSize - 4);
+        }
       });
 
-      ctx.fillStyle = 'red';
-      ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+      // Dibujar comida
+      ctx.fillStyle = '#ff4444';
+      ctx.fillRect(food.x * gridSize + 1, food.y * gridSize + 1, gridSize - 2, gridSize - 2);
+      // Brillo de la comida
+      ctx.fillStyle = '#ff8888';
+      ctx.fillRect(food.x * gridSize + 3, food.y * gridSize + 3, gridSize - 6, gridSize - 6);
     };
 
     let gameInterval: NodeJS.Timeout;
-    if (gameStarted && !gameOver) {
-      gameInterval = setInterval(handleGameLoop, speed);
+    if (gameState === 'playing') {
+      gameInterval = setInterval(() => {
+        gameLoop();
+        render();
+      }, speed);
+    } else {
+      render();
     }
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!gameStarted || countdown > 0) return;
-      switch (e.key) {
-        case 'ArrowUp':
-          if (direction !== 'down') setDirection('up');
-          break;
-        case 'ArrowDown':
-          if (direction !== 'up') setDirection('down');
-          break;
-        case 'ArrowLeft':
-          if (direction !== 'right') setDirection('left');
-          break;
-        case 'ArrowRight':
-          if (direction !== 'left') setDirection('right');
-          break;
-        case 'Escape':
-          setGameOver(true);
-          onComplete(score >= 10);
-          break;
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
       if (gameInterval) clearInterval(gameInterval);
-      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [snake, direction, score, gameOver, gameStarted, countdown, speed, onComplete]);
+  }, [gameState, snake, food, nextDirection, speed, score, lives, highScore, generateFood, resetGameAfterLife]);
 
+  // Manejo de teclas
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (gameState !== 'playing') return;
+
+      switch (e.key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          if (direction !== 'down') setNextDirection('up');
+          break;
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          if (direction !== 'up') setNextDirection('down');
+          break;
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          if (direction !== 'right') setNextDirection('left');
+          break;
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          if (direction !== 'left') setNextDirection('right');
+          break;
+        case ' ':
+          setGameState(gameState === 'playing' ? 'paused' : 'playing');
+          break;
+        case 'Escape':
+          setGameState('menu');
+          break;
+      }
+      e.preventDefault();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gameState, direction]);
+
+  // Countdown
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (countdown > 0 && !gameStarted) {
+    if (gameState === 'countdown' && countdown > 0) {
       timer = setTimeout(() => setCountdown(prev => prev - 1), 1000);
-    } else if (countdown === 0 && !gameStarted) {
-      setGameStarted(true);
+    } else if (gameState === 'countdown' && countdown === 0) {
+      setGameState('playing');
+      setCountdown(3);
     }
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [countdown, gameStarted]);
+  }, [countdown, gameState]);
 
-  const startGame = () => {
-    setGameStarted(false); // Reinicia el estado para mostrar el contador
-    setGameOver(false);
-    setScore(0);
-    setSnake([{ x: 5, y: 5 }]);
-    setFood({ x: 10, y: 10 });
-    setSpeed(150);
-    setCountdown(4); // Reinicia el contador
-  };
-
-  if (!gameStarted && countdown > 0) {
+  // Pantalla de menú
+  if (gameState === 'menu') {
     return (
-      <div className={styles.startScreen}>
-        <h1 className={styles.title}>Juego de la Serpiente</h1>
-        <p className={styles.countdown}>Iniciando en: {countdown}</p>
+      <div className={styles.menuScreen}>
+        <div className={styles.menuContainer}>
+          <h1 className={styles.gameTitle}>🐍 SNAKE GAME</h1>
+          
+          {gameOver && (
+            <div className={styles.gameResult}>
+              {gameWon ? (
+                <div className={styles.winMessage}>
+                  <h2>🎉 ¡GANASTE! 🎉</h2>
+                  <p>¡Comiste {score} manzanas!</p>
+                </div>
+              ) : (
+                <div className={styles.loseMessage}>
+                  <h2>💀 GAME OVER</h2>
+                  <p>Puntuación: {score}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className={styles.stats}>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>Récord:</span>
+              <span className={styles.statValue}>{highScore}</span>
+            </div>
+          </div>
+
+          <button className={styles.playButton} onClick={startNewGame}>
+            {gameOver ? '🔄 JUGAR DE NUEVO' : '🎮 COMENZAR JUEGO'}
+          </button>
+
+          <div className={styles.instructions}>
+            <h3>📋 Instrucciones:</h3>
+            <ul>
+              <li>🎯 Come 15 manzanas para ganar</li>
+              <li>⚡ Tienes 3 vidas</li>
+              <li>🕹️ Usa las flechas o WASD</li>
+              <li>⏸️ Espacio para pausar</li>
+              <li>🚪 ESC para salir</li>
+            </ul>
+          </div>
+
+          <button 
+            className={styles.exitButton} 
+            onClick={() => onComplete(gameWon)}
+          >
+            🚪 Salir del Juego
+          </button>
+        </div>
       </div>
     );
   }
 
-  if (!gameStarted) {
+  // Pantalla de countdown
+  if (gameState === 'countdown') {
     return (
-      <div className={styles.startScreen}>
-        <h1 className={styles.title}>Juego de la Serpiente</h1>
-        <p className={styles.instructions}>
-          Usa las flechas para moverte. Come 10 manzanas para ganar. Presiona ESC para salir.
-        </p>
-        <button className={styles.startButton} onClick={startGame}>
-          Iniciar Juego
-        </button>
+      <div className={styles.countdownScreen}>
+        <div className={styles.gameInfo}>
+          <div className={styles.gameStats}>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>Puntuación:</span>
+              <span className={styles.statValue}>{score}</span>
+            </div>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>Vidas:</span>
+              <span className={styles.statValue}>{'❤️'.repeat(lives)}</span>
+            </div>
+          </div>
+        </div>
+        <div className={styles.countdownContainer}>
+          <h2 className={styles.countdownTitle}>¡Prepárate!</h2>
+          <div className={styles.countdownNumber}>{countdown}</div>
+        </div>
+        <canvas ref={canvasRef} width="400" height="400" className={styles.canvas} />
       </div>
     );
   }
 
-  if (gameOver) {
-    return (
-      <div className={styles.gameOverScreen}>
-        <h2>Juego Terminado</h2>
-        <p>Manzanas comidas: {score}</p>
-        {score >= 10 ? (
-          <p>¡Ganaste! 🎉</p>
-        ) : (
-          <p>Perdiste. Chocaste con un límite.</p>
-        )}
-        <button className={styles.restartButton} onClick={startGame}>
-          Reiniciar
-        </button>
-        <button className={styles.exitButton} onClick={() => onComplete(score >= 10)}>
-          Salir
-        </button>
-      </div>
-    );
-  }
-
+  // Pantalla de juego
   return (
     <div className={styles.gameContainer}>
-      <h1 className={styles.title}>Juego de la Serpiente</h1>
-      <p className={styles.score}>Manzanas: {score}</p>
+      <div className={styles.gameHeader}>
+        <div className={styles.gameStats}>
+          <div className={styles.statItem}>
+            <span className={styles.statLabel}>Puntuación:</span>
+            <span className={styles.statValue}>{score}/15</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statLabel}>Vidas:</span>
+            <span className={styles.statValue}>{'❤️'.repeat(lives)}</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statLabel}>Récord:</span>
+            <span className={styles.statValue}>{highScore}</span>
+          </div>
+        </div>
+      </div>
+
       <canvas ref={canvasRef} width="400" height="400" className={styles.canvas} />
-      <p className={styles.instructions}>
-        Usa las flechas para moverte. Come 10 manzanas para ganar. Presiona ESC para salir.
-      </p>
+
+      {gameState === 'paused' && (
+        <div className={styles.pauseOverlay}>
+          <div className={styles.pauseMessage}>
+            <h2>⏸️ PAUSADO</h2>
+            <p>Presiona ESPACIO para continuar</p>
+          </div>
+        </div>
+      )}
+
+      <div className={styles.gameControls}>
+        <button 
+          className={styles.controlButton}
+          onClick={() => setGameState(gameState === 'playing' ? 'paused' : 'playing')}
+        >
+          {gameState === 'playing' ? '⏸️ Pausar' : '▶️ Continuar'}
+        </button>
+        <button 
+          className={styles.controlButton}
+          onClick={() => setGameState('menu')}
+        >
+          🏠 Menú
+        </button>
+      </div>
     </div>
   );
 };
