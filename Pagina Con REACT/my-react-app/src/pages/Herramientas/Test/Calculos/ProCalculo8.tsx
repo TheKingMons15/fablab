@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaArrowLeft, FaCheck, FaTimes, FaRedo, FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
+import { FaArrowLeft, FaCheck, FaTimes, FaRedo, FaMicrophone, FaMicrophoneSlash, FaClock } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import { RompeCabezasHuevos } from '../../Minijuego/RompeCabezas';
@@ -37,6 +37,7 @@ interface QuestionItem {
   options?: string[];
   countingItems?: number;
   numberOptions?: number[];
+  image?: string;
 }
 
 interface Subtest {
@@ -51,7 +52,6 @@ const ProCalculo8: React.FC = () => {
   const [score, setScore] = useState<number[]>(Array(15).fill(0));
   const [showResult, setShowResult] = useState(false);
   const [userAnswers, setUserAnswers] = useState<(string | number)[][]>(Array(15).fill([]));
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [optionSelected, setOptionSelected] = useState<string | number | null>(null);
   const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
@@ -68,6 +68,39 @@ const ProCalculo8: React.FC = () => {
   const [showMiniGame, setShowMiniGame] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<number | null>(null);
   const numberScale = Array.from({ length: 101 }, (_, i) => i); // [0, 1, 2, ..., 100]
+  const [timeLeft, setTimeLeft] = useState(20 * 60); // 20 minutos en segundos
+  const [timerActive, setTimerActive] = useState(true);
+  const [timeUp, setTimeUp] = useState(false);
+
+  // Configurar el temporizador
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    
+    if (timerActive && timeLeft > 0) {
+      timer = setTimeout(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && !showResult && !timeUp) {
+      setTimerActive(false);
+      setTimeUp(true);
+      setShowResult(true);
+      const totalScore = score.reduce((a, b) => a + b, 0);
+      if (totalScore > 80) {
+        launchConfetti();
+      }
+    }
+    
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [timeLeft, timerActive, showResult, timeUp, score]);
+
+  // Formatear el tiempo restante en minutos:segundos
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -436,13 +469,15 @@ const ProCalculo8: React.FC = () => {
           question: "¿Cuántas pelotas hay en la imagen? (57 pelotas)", 
           answer: "57", 
           points: 2,
-          type: "oral" 
+          type: "oral",
+          image: '/img/pelotas57.jpg'
         },
         { 
           question: "¿Cuántos vasos hay en la imagen? (83 vasos)", 
           answer: "83", 
           points: 2,
-          type: "oral" 
+          type: "oral",
+          image: '/img/vasos83.jpg'
         }
       ]
     },
@@ -742,23 +777,6 @@ const ProCalculo8: React.FC = () => {
     }
   ];
 
-  useEffect(() => {
-    if (!showResult && !showFeedback && timeLeft === null && !showMiniGame) {
-      setTimeLeft(30);
-    }
-    
-    let timer: NodeJS.Timeout;
-    if (timeLeft !== null && timeLeft > 0 && !showFeedback && !showMiniGame) {
-      timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
-    } else if (timeLeft === 0 && !showFeedback && !showMiniGame) {
-      handleTimeUp();
-    }
-
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [timeLeft, showFeedback, currentSubtest, currentItem, showResult, showMiniGame]);
-
   const toggleVoiceRecognition = () => {
     if (!recognitionRef.current) {
       alert("El reconocimiento de voz no está disponible en tu navegador. Usa el modo manual.");
@@ -818,26 +836,13 @@ const ProCalculo8: React.FC = () => {
   };
 
   const handlePositionNumber = (position: number) => {
-    setSelectedPosition(position);
-  };
-
-  const handleTimeUp = () => {
-    if (!showFeedback) {
-      setShowFeedback(true);
-      setCorrectAnswer(false);
-      
-      const newAnswers = [...userAnswers];
-      newAnswers[currentSubtest] = [...newAnswers[currentSubtest], "tiempo_agotado"];
-      setUserAnswers(newAnswers);
-      
-      setTimeout(() => {
-        moveToNextItem();
-      }, 2000);
+    if (!timeUp) {
+      setSelectedPosition(position);
     }
   };
 
   const handleAnswer = (selectedAnswer: string | number) => {
-    if (showFeedback) return;
+    if (showFeedback || timeUp) return;
     
     const currentQuestion = subtests[currentSubtest].items[currentItem];
     let isCorrect = false;
@@ -986,7 +991,6 @@ const ProCalculo8: React.FC = () => {
     setOralAnswerConfirmed(false);
     setSelectedPosition(null);
     
-    // Verificar si es momento de mostrar el minijuego (cada 3 subtest completados)
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
       if (nextSubtest > 0 && nextSubtest % 3 === 0 && nextSubtest < subtests.length) {
@@ -995,17 +999,15 @@ const ProCalculo8: React.FC = () => {
       }
     }
     
-    // Lógica normal de navegación entre preguntas
     if (currentItem + 1 < subtests[currentSubtest].items.length) {
       setCurrentItem(currentItem + 1);
-      setTimeLeft(30);
     } else {
       if (currentSubtest + 1 < subtests.length) {
         setCurrentSubtest(currentSubtest + 1);
         setCurrentItem(0);
-        setTimeLeft(30);
       } else {
         setShowResult(true);
+        setTimerActive(false);
         const totalScore = score.reduce((a, b) => a + b, 0);
         if (totalScore > 80) {
           launchConfetti();
@@ -1023,13 +1025,12 @@ const ProCalculo8: React.FC = () => {
       setAnimation('wrong');
     }
     
-    // Continúa con el siguiente subtest
     if (currentSubtest + 1 < subtests.length) {
       setCurrentSubtest(currentSubtest + 1);
       setCurrentItem(0);
-      setTimeLeft(30);
     } else {
       setShowResult(true);
+      setTimerActive(false);
       const totalScore = score.reduce((a, b) => a + b, 0);
       if (totalScore > 80) {
         launchConfetti();
@@ -1056,7 +1057,6 @@ const ProCalculo8: React.FC = () => {
     setScore(Array(15).fill(0));
     setShowResult(false);
     setUserAnswers(Array(15).fill([]));
-    setTimeLeft(30);
     setShowFeedback(false);
     setOptionSelected(null);
     setCorrectAnswer(null);
@@ -1070,11 +1070,18 @@ const ProCalculo8: React.FC = () => {
     setOralAnswerConfirmed(false);
     setShowMiniGame(false);
     setSelectedPosition(null);
+    setTimeLeft(20 * 60);
+    setTimerActive(true);
+    setTimeUp(false);
   };
 
   const getResultMessage = () => {
     const totalScore = score.reduce((a, b) => a + b, 0);
     const percentage = (totalScore / 166) * 100;
+    
+    if (timeUp) {
+      return "¡Tiempo terminado! ⏰";
+    }
     
     if (percentage >= 80) return "¡Excelente trabajo! 🎉";
     if (percentage >= 60) return "¡Muy bien hecho! 🌟";
@@ -1103,11 +1110,12 @@ const ProCalculo8: React.FC = () => {
                   setWrittenAnswerConfirmed(true);
                 }
               }}
+              disabled={timeUp}
             />
             <button 
               className={styles.submitButton}
               onClick={() => writtenAnswer.trim() && setWrittenAnswerConfirmed(true)}
-              disabled={!writtenAnswer.trim()}
+              disabled={!writtenAnswer.trim() || timeUp}
             >
               Terminar
             </button>
@@ -1123,12 +1131,14 @@ const ProCalculo8: React.FC = () => {
                     handleAnswer(writtenAnswer);
                     setWrittenAnswerConfirmed(false);
                   }}
+                  disabled={timeUp}
                 >
                   Sí, enviar
                 </button>
                 <button 
                   className={styles.cancelButton}
                   onClick={() => setWrittenAnswerConfirmed(false)}
+                  disabled={timeUp}
                 >
                   No, corregir
                 </button>
@@ -1151,7 +1161,7 @@ const ProCalculo8: React.FC = () => {
             <button
               className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
               onClick={toggleVoiceRecognition}
-              disabled={oralAnswerConfirmed}
+              disabled={oralAnswerConfirmed || timeUp}
             >
               {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
               {isListening ? ' Escuchando...' : ' Usar micrófono'}
@@ -1179,12 +1189,12 @@ const ProCalculo8: React.FC = () => {
                   setOralAnswerConfirmed(true);
                 }
               }}
-              disabled={oralAnswerConfirmed}
+              disabled={oralAnswerConfirmed || timeUp}
             />
             <button 
               className={styles.submitButton}
               onClick={() => oralAnswer.trim() && setOralAnswerConfirmed(true)}
-              disabled={!oralAnswer.trim() || oralAnswerConfirmed}
+              disabled={!oralAnswer.trim() || oralAnswerConfirmed || timeUp}
             >
               Terminar
             </button>
@@ -1200,6 +1210,7 @@ const ProCalculo8: React.FC = () => {
                     handleAnswer(oralAnswer);
                     setOralAnswerConfirmed(false);
                   }}
+                  disabled={timeUp}
                 >
                   Sí, enviar
                 </button>
@@ -1210,6 +1221,7 @@ const ProCalculo8: React.FC = () => {
                     setRecognizedText('');
                     setOralAnswer('');
                   }}
+                  disabled={timeUp}
                 >
                   No, corregir
                 </button>
@@ -1235,6 +1247,7 @@ const ProCalculo8: React.FC = () => {
             <button
               className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
               onClick={toggleVoiceRecognition}
+              disabled={timeUp}
             >
               {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
               {isListening ? ' Escuchando...' : ' Usar micrófono'}
@@ -1266,7 +1279,7 @@ const ProCalculo8: React.FC = () => {
                 handleManualCount();
                 setCountingFinished(false);
               }}
-              disabled={isCountingUp ? countingProgress >= targetNumber : countingProgress > targetNumber}
+              disabled={isCountingUp ? countingProgress >= targetNumber : countingProgress > targetNumber || timeUp}
             >
               {countingProgress === 0 ? 
                 `Comenzar a contar ${isCountingUp ? 'desde 1' : `desde ${targetNumber}`}` : 
@@ -1278,6 +1291,7 @@ const ProCalculo8: React.FC = () => {
               onClick={() => {
                 setCountingFinished(true);
               }}
+              disabled={timeUp}
             >
               Terminar conteo
             </button>
@@ -1294,12 +1308,14 @@ const ProCalculo8: React.FC = () => {
                     handleAnswer(answer.toString());
                     setCountingFinished(false);
                   }}
+                  disabled={timeUp}
                 >
                   Sí, continuar
                 </button>
                 <button 
                   className={styles.cancelButton}
                   onClick={() => setCountingFinished(false)}
+                  disabled={timeUp}
                 >
                   No, seguir contando
                 </button>
@@ -1343,7 +1359,7 @@ const ProCalculo8: React.FC = () => {
             <button 
               className={styles.submitButton}
               onClick={() => selectedPosition !== null && handleAnswer(selectedPosition)}
-              disabled={selectedPosition === null}
+              disabled={selectedPosition === null || timeUp}
             >
               Confirmar posición
             </button>
@@ -1369,6 +1385,16 @@ const ProCalculo8: React.FC = () => {
         <h3 className={styles.subtestTitle}>{currentSubtestData.name}</h3>
         <p className={styles.questionPrompt}>{currentQuestion.question}</p>
         
+        {currentQuestion.image && (
+          <div className={styles.questionImageContainer}>
+            <img 
+              src={currentQuestion.image} 
+              alt="Imagen para la pregunta"
+              className={styles.questionImage}
+            />
+          </div>
+        )}
+        
         {currentQuestion.type === "opciones" && currentQuestion.options && (
           <div className={styles.optionsGrid}>
             {currentQuestion.options.map((option, index) => (
@@ -1379,7 +1405,7 @@ const ProCalculo8: React.FC = () => {
                   ${showFeedback && option === currentQuestion.answer ? styles.correct : ''} 
                   ${showFeedback && optionSelected === option && option !== currentQuestion.answer ? styles.incorrect : ''}`}
                 onClick={() => handleAnswer(option)}
-                disabled={showFeedback}
+                disabled={showFeedback || timeUp}
               >
                 <span className={styles.optionContent}>
                   <span className={styles.optionText}>{option}</span>
@@ -1406,7 +1432,7 @@ const ProCalculo8: React.FC = () => {
                     ${showFeedback && option === currentQuestion.answer ? styles.correct : ''} 
                     ${showFeedback && optionSelected === option && option !== currentQuestion.answer ? styles.incorrect : ''}`}
                   onClick={() => handleAnswer(option)}
-                  disabled={showFeedback}
+                  disabled={showFeedback || timeUp}
                 >
                   <span className={styles.comparisonContent}>
                     <span className={styles.comparisonText}>{option}</span>
@@ -1483,7 +1509,7 @@ const ProCalculo8: React.FC = () => {
                     Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
                   </div>
                   <div className={styles.timer}>
-                    Tiempo: <span className={timeLeft && timeLeft < 10 ? styles.timerWarning : ''}>{timeLeft}</span>
+                    <FaClock /> Tiempo restante: {formatTime(timeLeft)}
                   </div>
                 </div>
                 
@@ -1504,6 +1530,11 @@ const ProCalculo8: React.FC = () => {
                         <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
                         <span className={styles.scoreTotal}>/166</span>
                       </div>
+                      {timeUp && (
+                        <div className={styles.timeUpWarning}>
+                          ⏰ El tiempo ha terminado
+                        </div>
+                      )}
                     </div>
                     
                     <p className={styles.scoreText}>
