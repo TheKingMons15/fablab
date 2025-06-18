@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './SnakeGame.module.css';
+import snakeBoard from './img/snake_board.png'; // Ajusta el nombre si es diferente
+import appleImage from './img/apple.png'; // Ajusta el nombre si es diferente
 
 const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -17,9 +19,8 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
   const [highScore, setHighScore] = useState(0);
 
   const gridSize = 20;
-  const tileCount = 20;
+  const tileCount = 17; // Ajustado para que encaje mejor con la imagen del escenario
 
-  // Generar nueva comida en posición aleatoria
   const generateFood = useCallback((): { x: number; y: number } => {
     let newFood: { x: number; y: number };
     do {
@@ -31,7 +32,6 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     return newFood;
   }, [snake]);
 
-  // Reiniciar juego después de perder una vida
   const resetGameAfterLife = useCallback(() => {
     setSnake([{ x: 5, y: 5 }]);
     setDirection('right');
@@ -41,7 +41,6 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     setCountdown(3);
   }, [generateFood]);
 
-  // Iniciar nuevo juego
   const startNewGame = useCallback(() => {
     setScore(0);
     setLives(3);
@@ -56,7 +55,6 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     setCountdown(3);
   }, []);
 
-  // Lógica del juego
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -67,14 +65,12 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     const gameLoop = () => {
       if (gameState !== 'playing') return;
 
-      // Actualizar dirección
-      setDirection(nextDirection);
+      setDirection(nextDirection); // Actualizar dirección inmediatamente
 
       setSnake(currentSnake => {
         const newSnake = [...currentSnake];
         const head = { x: newSnake[0].x, y: newSnake[0].y };
 
-        // Mover la cabeza
         switch (nextDirection) {
           case 'up':
             head.y -= 1;
@@ -90,7 +86,6 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
             break;
         }
 
-        // Detectar colisiones con paredes
         if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
           setLives(currentLives => {
             const newLives = currentLives - 1;
@@ -106,7 +101,6 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
           return currentSnake;
         }
 
-        // Detectar colisiones con sí misma
         if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
           setLives(currentLives => {
             const newLives = currentLives - 1;
@@ -124,7 +118,6 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
 
         newSnake.unshift(head);
 
-        // Comer comida
         if (head.x === food.x && head.y === food.y) {
           setScore(currentScore => {
             const newScore = currentScore + 1;
@@ -146,50 +139,32 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
       });
     };
 
-    // Renderizar juego
     const render = () => {
-      // Limpiar canvas
-      ctx.fillStyle = '#0a0a0a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (!ctx) return;
 
-      // Dibujar grid sutil
-      ctx.strokeStyle = '#1a1a1a';
-      ctx.lineWidth = 1;
-      for (let i = 0; i <= tileCount; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * gridSize, 0);
-        ctx.lineTo(i * gridSize, canvas.height);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(0, i * gridSize);
-        ctx.lineTo(canvas.width, i * gridSize);
-        ctx.stroke();
-      }
+      // Fondo con la imagen del escenario
+      const backgroundImage = new Image();
+      backgroundImage.src = snakeBoard;
+      ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
 
-      // Dibujar serpiente
+      // Dibujar serpiente (negra)
       snake.forEach((segment, index) => {
         if (index === 0) {
-          // Cabeza
-          ctx.fillStyle = '#00ff41';
+          ctx.fillStyle = '#000000'; // Cabeza negra
           ctx.fillRect(segment.x * gridSize + 1, segment.y * gridSize + 1, gridSize - 2, gridSize - 2);
-          // Ojos
-          ctx.fillStyle = '#ffffff';
+          ctx.fillStyle = '#ffffff'; // Ojos blancos
           ctx.fillRect(segment.x * gridSize + 4, segment.y * gridSize + 4, 3, 3);
           ctx.fillRect(segment.x * gridSize + 13, segment.y * gridSize + 4, 3, 3);
         } else {
-          // Cuerpo
-          const opacity = Math.max(0.6, 1 - (index * 0.05));
-          ctx.fillStyle = `rgba(0, 255, 65, ${opacity})`;
+          ctx.fillStyle = '#000000'; // Cuerpo negro
           ctx.fillRect(segment.x * gridSize + 2, segment.y * gridSize + 2, gridSize - 4, gridSize - 4);
         }
       });
 
-      // Dibujar comida
-      ctx.fillStyle = '#ff4444';
-      ctx.fillRect(food.x * gridSize + 1, food.y * gridSize + 1, gridSize - 2, gridSize - 2);
-      // Brillo de la comida
-      ctx.fillStyle = '#ff8888';
-      ctx.fillRect(food.x * gridSize + 3, food.y * gridSize + 3, gridSize - 6, gridSize - 6);
+      // Dibujar comida (manzana personalizada)
+      const appleImg = new Image();
+      appleImg.src = appleImage;
+      ctx.drawImage(appleImg, food.x * gridSize, food.y * gridSize, gridSize, gridSize);
     };
 
     let gameInterval: NodeJS.Timeout;
@@ -205,12 +180,11 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     return () => {
       if (gameInterval) clearInterval(gameInterval);
     };
-  }, [gameState, snake, food, nextDirection, speed, score, lives, highScore, generateFood, resetGameAfterLife]);
+  }, [gameState, snake, food, nextDirection, speed, score, lives, highScore, generateFood, resetGameAfterLife, snakeBoard, appleImage]);
 
-  // Manejo de teclas
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (gameState !== 'playing') return;
+      if (gameState !== 'playing' && gameState !== 'paused') return;
 
       switch (e.key) {
         case 'ArrowUp':
@@ -247,7 +221,6 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameState, direction]);
 
-  // Countdown
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (gameState === 'countdown' && countdown > 0) {
@@ -261,7 +234,6 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     };
   }, [countdown, gameState]);
 
-  // Pantalla de menú
   if (gameState === 'menu') {
     return (
       <div className={styles.menuScreen}>
@@ -317,7 +289,6 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     );
   }
 
-  // Pantalla de countdown
   if (gameState === 'countdown') {
     return (
       <div className={styles.countdownScreen}>
@@ -337,12 +308,11 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
           <h2 className={styles.countdownTitle}>¡Prepárate!</h2>
           <div className={styles.countdownNumber}>{countdown}</div>
         </div>
-        <canvas ref={canvasRef} width="350" height="350" className={styles.canvas} />
+        <canvas ref={canvasRef} width="340" height="200" className={styles.canvas} /> {/* Ajustado para la imagen */}
       </div>
     );
   }
 
-  // Pantalla de juego
   return (
     <div className={styles.gameContainer}>
       <div className={styles.gameHeader}>
@@ -362,7 +332,7 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
         </div>
       </div>
 
-      <canvas ref={canvasRef} width="350" height="350" className={styles.canvas} />
+      <canvas ref={canvasRef} width="340" height="200" className={styles.canvas} /> {/* Ajustado para la imagen */}
 
       {gameState === 'paused' && (
         <div className={styles.pauseOverlay}>
