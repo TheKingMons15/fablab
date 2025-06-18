@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './SnakeGame.module.css';
-import snakeBoard from './img/snake_board.png'; // Ajusta el nombre si es diferente
-import appleImage from './img/apple.png'; // Ajusta el nombre si es diferente
+import snakeBoardImage from '../../img/escenario.png'; // Ajuste de la ruta
+import appleImageFile from '../../img/manzana.png'; // Ajuste de la ruta
 
 const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onComplete }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,7 +19,7 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
   const [highScore, setHighScore] = useState(0);
 
   const gridSize = 20;
-  const tileCount = 17; // Ajustado para que encaje mejor con la imagen del escenario
+  const tileCount = 17; // Ajustado para que encaje con la imagen del escenario
 
   const generateFood = useCallback((): { x: number; y: number } => {
     let newFood: { x: number; y: number };
@@ -62,10 +62,16 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Pre cargar las imágenes
+    const backgroundImage = new Image();
+    backgroundImage.src = snakeBoardImage;
+    const appleImg = new Image();
+    appleImg.src = appleImageFile;
+
     const gameLoop = () => {
       if (gameState !== 'playing') return;
 
-      setDirection(nextDirection); // Actualizar dirección inmediatamente
+      setDirection(nextDirection);
 
       setSnake(currentSnake => {
         const newSnake = [...currentSnake];
@@ -142,10 +148,13 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     const render = () => {
       if (!ctx) return;
 
-      // Fondo con la imagen del escenario
-      const backgroundImage = new Image();
-      backgroundImage.src = snakeBoard;
-      ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      // Dibujar fondo solo si la imagen está cargada
+      if (backgroundImage.complete) {
+        ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.fillStyle = '#00ff00'; // Color de fondo temporal si la imagen no carga
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
 
       // Dibujar serpiente (negra)
       snake.forEach((segment, index) => {
@@ -161,10 +170,13 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
         }
       });
 
-      // Dibujar comida (manzana personalizada)
-      const appleImg = new Image();
-      appleImg.src = appleImage;
-      ctx.drawImage(appleImg, food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+      // Dibujar comida (manzana) solo si la imagen está cargada
+      if (appleImg.complete) {
+        ctx.drawImage(appleImg, food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+      } else {
+        ctx.fillStyle = '#ff0000'; // Color rojo temporal si la manzana no carga
+        ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+      }
     };
 
     let gameInterval: NodeJS.Timeout;
@@ -180,7 +192,7 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
     return () => {
       if (gameInterval) clearInterval(gameInterval);
     };
-  }, [gameState, snake, food, nextDirection, speed, score, lives, highScore, generateFood, resetGameAfterLife, snakeBoard, appleImage]);
+  }, [gameState, snake, food, nextDirection, speed, score, lives, highScore, generateFood, resetGameAfterLife, snakeBoardImage, appleImageFile]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -308,7 +320,7 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
           <h2 className={styles.countdownTitle}>¡Prepárate!</h2>
           <div className={styles.countdownNumber}>{countdown}</div>
         </div>
-        <canvas ref={canvasRef} width="340" height="200" className={styles.canvas} /> {/* Ajustado para la imagen */}
+        <canvas ref={canvasRef} width="340" height="200" className={styles.canvas} />
       </div>
     );
   }
@@ -332,7 +344,7 @@ const SnakeGame: React.FC<{ onComplete: (success: boolean) => void }> = ({ onCom
         </div>
       </div>
 
-      <canvas ref={canvasRef} width="340" height="200" className={styles.canvas} /> {/* Ajustado para la imagen */}
+      <canvas ref={canvasRef} width="340" height="200" className={styles.canvas} />
 
       {gameState === 'paused' && (
         <div className={styles.pauseOverlay}>
