@@ -1,33 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { FaArrowLeft, FaCheck, FaTimes, FaRedo, FaMicrophone, FaMicrophoneSlash, FaClock } from 'react-icons/fa';
+import { FaArrowLeft, FaCheck, FaTimes, FaRedo, FaClock } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
-
-interface SpeechRecognitionResult {
-  [key: number]: SpeechRecognitionAlternative;
-  item(index: number): SpeechRecognitionAlternative;
-}
-
-interface SpeechRecognitionAlternative {
-  transcript: string;
-  confidence: number;
-}
-
-interface SpeechRecognitionEvent {
-  results: SpeechRecognitionResult[];
-}
-
-interface SpeechRecognition extends EventTarget {
-  start: () => void;
-  stop: () => void;
-  onresult: (event: SpeechRecognitionEvent) => void;
-  onerror: (event: any) => void;
-  onend: () => void;
-  continuous: boolean;
-  interimResults: boolean;
-  lang: string;
-}
 
 interface QuestionItem {
   question: string;
@@ -58,18 +33,13 @@ const ProCalculo7: React.FC = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [animation, setAnimation] = useState('');
   const [writtenAnswer, setWrittenAnswer] = useState('');
-  const [oralAnswer, setOralAnswer] = useState('');
   const [countingProgress, setCountingProgress] = useState(0);
-  const [isListening, setIsListening] = useState(false);
-  const [recognizedText, setRecognizedText] = useState('');
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [countingFinished, setCountingFinished] = useState(false);
   const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
-  const [oralAnswerConfirmed, setOralAnswerConfirmed] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
   const [scaleValue, setScaleValue] = useState(50);
   const [determinationSelections, setDeterminationSelections] = useState<{[key: number]: boolean}>({});
-  const [timeLeft, setTimeLeft] = useState(25 * 60); // 20 minutos en segundos
+  const [timeLeft, setTimeLeft] = useState(25 * 60); // 25 minutos en segundos
   const [timerActive, setTimerActive] = useState(true);
   const [timeUp, setTimeUp] = useState(false);
 
@@ -102,59 +72,6 @@ const ProCalculo7: React.FC = () => {
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-      
-      if (SpeechRecognition) {
-        const recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = 'es-ES';
-
-        recognition.onresult = (event: SpeechRecognitionEvent) => {
-          const result = event.results[0];
-          const transcript = result[0].transcript;
-          setRecognizedText(transcript);
-          setOralAnswer(transcript);
-          
-          const currentQuestion = subtests[currentSubtest].items[currentItem];
-          
-          if (currentQuestion.type === 'oral') {
-            // Only update answer, don't submit automatically
-          }
-          
-          if (currentQuestion.type === 'conteo') {
-            const numbersFound = transcript.match(/\b(\d+)\b/g) || [];
-            if (numbersFound.length > 0) {
-              const lastNumber = parseInt(numbersFound[numbersFound.length - 1]);
-              if (!isNaN(lastNumber)) {
-                handleCountNumber(lastNumber);
-              }
-            }
-          }
-        };
-
-        recognition.onerror = (event: any) => {
-          console.error('Error en reconocimiento de voz:', event.error);
-          setIsListening(false);
-        };
-        
-        recognition.onend = () => {
-          setIsListening(false);
-        };
-
-        recognitionRef.current = recognition;
-      }
-    }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.stop();
-      }
-    };
-  }, [currentSubtest, currentItem]);
 
   const normalizeText = (text: string): string => {
     return text.toLowerCase()
@@ -244,37 +161,37 @@ const ProCalculo7: React.FC = () => {
           question: "10 + 10", 
           answer: "20", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "1 + 15", 
           answer: "16", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "12 + 7", 
           answer: "19", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "10 - 3", 
           answer: "7", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "18 - 6", 
           answer: "12", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "25 - 12", 
           answer: "13", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         }
       ]
     },
@@ -286,25 +203,25 @@ const ProCalculo7: React.FC = () => {
           question: "Lee este número: 57", 
           answer: "cincuenta y siete", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "Lee este número: 15", 
           answer: "quince", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "Lee este número: 138", 
           answer: "ciento treinta y ocho", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "Lee este número: 9", 
           answer: "nueve", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         }
       ]
     },
@@ -346,7 +263,7 @@ const ProCalculo7: React.FC = () => {
           question: "¿Cuántas pelotas y vasos hay? (57 pelotas, 83 vasos)", 
           answer: "57/83", 
           points: 4,
-          type: "oral" 
+          type: "escrito" 
         }
       ]
     },
@@ -385,25 +302,25 @@ const ProCalculo7: React.FC = () => {
           question: "12 - 5", 
           answer: "7", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "16 - 4", 
           answer: "12", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "6 + 7", 
           answer: "13", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         },
         { 
           question: "4 + (4+3) + (7-2)", 
           answer: "16", 
           points: 2,
-          type: "oral" 
+          type: "escrito" 
         }
       ]
     },
@@ -478,48 +395,6 @@ const ProCalculo7: React.FC = () => {
     }
   ];
 
-  const toggleVoiceRecognition = () => {
-    if (!recognitionRef.current) {
-      alert("El reconocimiento de voz no está disponible en tu navegador. Usa el modo manual.");
-      return;
-    }
-
-    if (isListening) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    } else {
-      try {
-        setRecognizedText('');
-        setOralAnswer('');
-        recognitionRef.current.start();
-        setIsListening(true);
-      } catch (e) {
-        console.error("Error al iniciar reconocimiento de voz:", e);
-        alert("No se pudo iniciar el reconocimiento de voz. Asegúrate de permitir el acceso al micrófono.");
-      }
-    }
-  };
-
-  const handleCountNumber = (number: number) => {
-    const currentQuestion = subtests[currentSubtest].items[currentItem];
-    const isCountingUp = currentSubtest === 0;
-    const countingTarget = currentQuestion.countingItems ?? (isCountingUp ? 20 : 10);
-    
-    if (
-      (isCountingUp && number === countingProgress + 1) ||
-      (!isCountingUp && number === countingTarget - countingProgress)
-    ) {
-      setCountingProgress(prev => prev + 1);
-    }
-
-    if (
-      (isCountingUp && number === countingTarget) ||
-      (!isCountingUp && number === 0)
-    ) {
-      handleAnswer(number.toString());
-    }
-  };
-
   const handleManualCount = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
     const isCountingUp = currentSubtest === 0;
@@ -553,12 +428,6 @@ const ProCalculo7: React.FC = () => {
       isCorrect = (isCountingUp && selectedAnswer.toString() === countingTarget.toString()) ||
                   (!isCountingUp && selectedAnswer.toString() === "0");
     }
-    else if (currentQuestion.type === "oral") {
-      const answerVariations = getAnswerVariations(currentQuestion.answer.toString());
-      isCorrect = answerVariations.some(variation => 
-        normalizeText(selectedAnswer.toString()) === variation
-      );
-    }
     else if (currentQuestion.type === "escala") {
       isCorrect = Math.abs(Number(selectedAnswer) - Number(currentQuestion.answer)) <= 5;
     }
@@ -591,96 +460,15 @@ const ProCalculo7: React.FC = () => {
     }, 2000);
   };
 
-  const getAnswerVariations = (answer: string): string[] => {
-    const variations = [normalizeText(answer)];
-    
-    if (/^\d+$/.test(answer)) {
-      const number = parseInt(answer);
-      variations.push(normalizeText(numberToWords(number)));
-    }
-    
-    if (answer === "20") {
-      variations.push("veinte");
-    } else if (answer === "16") {
-      variations.push("dieciséis", "dieciseis");
-    } else if (answer === "19") {
-      variations.push("diecinueve");
-    } else if (answer === "7") {
-      variations.push("siete");
-    } else if (answer === "12") {
-      variations.push("doce");
-    } else if (answer === "13") {
-      variations.push("trece");
-    } else if (answer === "10") {
-      variations.push("diez");
-    } else if (answer === "5") {
-      variations.push("cinco");
-    }
-    
-    if (answer === "cincuenta y siete") {
-      variations.push("57");
-    } else if (answer === "quince") {
-      variations.push("15");
-    } else if (answer === "ciento treinta y ocho") {
-      variations.push("138");
-    } else if (answer === "nueve") {
-      variations.push("9");
-    }
-    
-    if (answer === "57/83") {
-      variations.push("57 83", "57 y 83", "57,83");
-    }
-    
-    return variations;
-  };
-
-  const numberToWords = (num: number): string => {
-    const units = ['', 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve'];
-    const teens = ['diez', 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 'diecinueve'];
-    const tens = ['', 'diez', 'veinte', 'treinta', 'cuarenta', 'cincuenta', 'sesenta', 'setenta', 'ochenta', 'noventa'];
-    
-    if (num < 10) return units[num];
-    if (num < 20) return teens[num - 10];
-    if (num < 100) {
-      const ten = Math.floor(num / 10);
-      const unit = num % 10;
-      return tens[ten] + (unit !== 0 ? ' y ' + units[unit] : '');
-    }
-    if (num === 100) return 'cien';
-    if (num < 200) return 'ciento ' + numberToWords(num - 100);
-    if (num === 200) return 'doscientos';
-    if (num < 1000) {
-      const hundred = Math.floor(num / 100);
-      const rest = num % 100;
-      return units[hundred] + 'cientos' + (rest !== 0 ? ' ' + numberToWords(rest) : '');
-    }
-    if (num === 1000) return 'mil';
-    if (num < 2000) return 'mil ' + numberToWords(num - 1000);
-    if (num < 1000000) {
-      const thousand = Math.floor(num / 1000);
-      const rest = num % 1000;
-      return numberToWords(thousand) + ' mil' + (rest !== 0 ? ' ' + numberToWords(rest) : '');
-    }
-    return num.toString();
-  };
-
   const moveToNextItem = () => {
-    if (isListening && recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    }
-    
     setShowFeedback(false);
     setOptionSelected(null);
     setCorrectAnswer(null);
     setAnimation('');
     setWrittenAnswer('');
-    setOralAnswer('');
     setCountingProgress(0);
-    setRecognizedText('');
     setCountingFinished(false);
     setWrittenAnswerConfirmed(false);
-    setOralAnswerConfirmed(false);
     setScaleValue(50);
     setDeterminationSelections({});
     
@@ -740,11 +528,6 @@ const ProCalculo7: React.FC = () => {
   };
 
   const restartTest = () => {
-    if (isListening && recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    }
-    
     setCurrentSubtest(0);
     setCurrentItem(0);
     setScore(Array(12).fill(0));
@@ -755,16 +538,13 @@ const ProCalculo7: React.FC = () => {
     setCorrectAnswer(null);
     setAnimation('');
     setWrittenAnswer('');
-    setOralAnswer('');
     setCountingProgress(0);
-    setRecognizedText('');
     setCountingFinished(false);
     setWrittenAnswerConfirmed(false);
-    setOralAnswerConfirmed(false);
     setShowMiniGame(false);
     setScaleValue(50);
     setDeterminationSelections({});
-    setTimeLeft(20 * 60);
+    setTimeLeft(25 * 60);
     setTimerActive(true);
     setTimeUp(false);
   };
@@ -845,89 +625,6 @@ const ProCalculo7: React.FC = () => {
     return null;
   };
 
-  const renderOralInput = () => {
-    const currentQuestion = subtests[currentSubtest].items[currentItem];
-    
-    if (currentQuestion.type === "oral") {
-      return (
-        <div className={styles.oralContainer}>
-          <div className={styles.voiceControl}>
-            <button
-              className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
-              onClick={toggleVoiceRecognition}
-              disabled={oralAnswerConfirmed || timeUp}
-            >
-              {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
-              {isListening ? ' Escuchando...' : ' Usar micrófono'}
-            </button>
-            
-            {recognizedText && (
-              <div className={styles.recognizedText}>
-                <p>Reconocido: <strong>{recognizedText}</strong></p>
-              </div>
-            )}
-          </div>
-          
-          <div className={styles.inputContainer}>
-            <input
-              type="text"
-              className={styles.textInput}
-              placeholder="O escribe tu respuesta aquí..."
-              value={oralAnswer}
-              onChange={(e) => {
-                setOralAnswer(e.target.value);
-                setOralAnswerConfirmed(false);
-              }}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && oralAnswer.trim()) {
-                  setOralAnswerConfirmed(true);
-                }
-              }}
-              disabled={oralAnswerConfirmed || timeUp}
-            />
-            <button 
-              className={styles.submitButton}
-              onClick={() => oralAnswer.trim() && setOralAnswerConfirmed(true)}
-              disabled={!oralAnswer.trim() || oralAnswerConfirmed || timeUp}
-            >
-              Terminar
-            </button>
-          </div>
-
-          {oralAnswerConfirmed && (
-            <div className={styles.confirmationButtons}>
-              <p>¿Estás seguro de tu respuesta?</p>
-              <div className={styles.confirmationButtonGroup}>
-                <button 
-                  className={styles.confirmButton}
-                  onClick={() => {
-                    handleAnswer(oralAnswer);
-                    setOralAnswerConfirmed(false);
-                  }}
-                  disabled={timeUp}
-                >
-                  Sí, enviar
-                </button>
-                <button 
-                  className={styles.cancelButton}
-                  onClick={() => {
-                    setOralAnswerConfirmed(false);
-                    setRecognizedText('');
-                    setOralAnswer('');
-                  }}
-                  disabled={timeUp}
-                >
-                  No, corregir
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      );
-    }
-    return null;
-  };
-
   const renderCountingExercise = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
 
@@ -950,24 +647,6 @@ const ProCalculo7: React.FC = () => {
               </div>
             </div>
           )}
-          
-          {/* Controles de conteo */}
-          <div className={styles.countingHeader}>
-            <button
-              className={`${styles.voiceButton} ${isListening ? styles.listening : ''}`}
-              onClick={toggleVoiceRecognition}
-              disabled={timeUp}
-            >
-              {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
-              {isListening ? ' Escuchando...' : ' Usar micrófono'}
-            </button>
-            
-            {recognizedText && (
-              <div className={styles.recognizedText}>
-                <p>Reconocido: <strong>{recognizedText}</strong></p>
-              </div>
-            )}
-          </div>
           
           <div className={styles.countingProgress}>
             <p>
@@ -1165,7 +844,6 @@ const ProCalculo7: React.FC = () => {
         
         {renderCountingExercise()}
         {renderInputField()}
-        {renderOralInput()}
         {renderScaleInput()}
         {renderDeterminationExercise()}
         
