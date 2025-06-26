@@ -26,15 +26,16 @@ const ProCalculo6: React.FC = () => {
   const [score, setScore] = useState<number[]>(Array(9).fill(0));
   const [showResult, setShowResult] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
   const [animation, setAnimation] = useState('');
   const [writtenAnswer, setWrittenAnswer] = useState('');
+  const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
   const [miniGameType, setMiniGameType] = useState<'egg' | 'snake'>('egg');
   const [timeLeft, setTimeLeft] = useState(20 * 60);
   const [timerActive, setTimerActive] = useState(true);
   const [timeUp, setTimeUp] = useState(false);
 
-  // Configurar el temporizador
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
@@ -304,6 +305,7 @@ const ProCalculo6: React.FC = () => {
     const isCorrect = normalizeText(selectedAnswer.toString()) === 
                      normalizeText(currentQuestion.answer.toString());
     
+    setCorrectAnswer(isCorrect);
     setShowFeedback(true);
     
     if (isCorrect) {
@@ -322,8 +324,10 @@ const ProCalculo6: React.FC = () => {
 
   const moveToNextItem = () => {
     setShowFeedback(false);
+    setCorrectAnswer(null);
     setAnimation('');
     setWrittenAnswer('');
+    setWrittenAnswerConfirmed(false);
     
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
@@ -360,17 +364,20 @@ const ProCalculo6: React.FC = () => {
       setAnimation('wrong');
     }
     
-    if (currentSubtest + 1 < subtests.length) {
-      setCurrentSubtest(currentSubtest + 1);
-      setCurrentItem(0);
-    } else {
-      setShowResult(true);
-      setTimerActive(false);
-      const totalScore = score.reduce((a, b) => a + b, 0);
-      if (totalScore > 30) {
-        launchConfetti();
+    setTimeout(() => {
+      setAnimation('');
+      if (currentSubtest + 1 < subtests.length) {
+        setCurrentSubtest(currentSubtest + 1);
+        setCurrentItem(0);
+      } else {
+        setShowResult(true);
+        setTimerActive(false);
+        const totalScore = score.reduce((a, b) => a + b, 0);
+        if (totalScore > 30) {
+          launchConfetti();
+        }
       }
-    }
+    }, 1000);
   };
 
   const launchConfetti = () => {
@@ -387,8 +394,10 @@ const ProCalculo6: React.FC = () => {
     setScore(Array(9).fill(0));
     setShowResult(false);
     setShowFeedback(false);
+    setCorrectAnswer(null);
     setAnimation('');
     setWrittenAnswer('');
+    setWrittenAnswerConfirmed(false);
     setShowMiniGame(false);
     setMiniGameType('egg');
     setTimeLeft(20 * 60);
@@ -410,6 +419,23 @@ const ProCalculo6: React.FC = () => {
     return "¡Sigue practicando! 💪";
   };
 
+  const handleConfirmAnswer = () => {
+    if (writtenAnswer.trim()) {
+      handleAnswer(writtenAnswer.trim());
+      setWrittenAnswerConfirmed(false);
+    }
+  };
+
+  const handleCancelAnswer = () => {
+    setWrittenAnswerConfirmed(false);
+  };
+
+  const handleSubmitAnswer = () => {
+    if (writtenAnswer.trim() && !showFeedback && !timeUp) {
+      setWrittenAnswerConfirmed(true);
+    }
+  };
+
   const renderInputField = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
     
@@ -419,7 +445,7 @@ const ProCalculo6: React.FC = () => {
           <div className={styles.questionImageContainer}>
             <img 
               src={currentQuestion.image} 
-              alt="Imagen de la pregunta"
+              alt={currentQuestion.question}
               className={styles.questionImage}
             />
           </div>
@@ -431,22 +457,48 @@ const ProCalculo6: React.FC = () => {
             className={styles.textInput}
             placeholder="Escribe tu respuesta aquí..."
             value={writtenAnswer}
-            onChange={(e) => setWrittenAnswer(e.target.value)}
+            onChange={(e) => {
+              setWrittenAnswer(e.target.value);
+              setWrittenAnswerConfirmed(false);
+            }}
             onKeyPress={(e) => {
-              if (e.key === 'Enter' && writtenAnswer.trim()) {
-                handleAnswer(writtenAnswer);
+              if (e.key === 'Enter' && writtenAnswer.trim() && !showFeedback) {
+                handleSubmitAnswer();
               }
             }}
-            disabled={timeUp}
+            disabled={timeUp || showFeedback}
           />
           <button 
             className={styles.submitButton}
-            onClick={() => writtenAnswer.trim() && handleAnswer(writtenAnswer)}
-            disabled={!writtenAnswer.trim() || timeUp}
+            onClick={handleSubmitAnswer}
+            disabled={!writtenAnswer.trim() || timeUp || showFeedback}
           >
             Enviar respuesta
           </button>
         </div>
+
+        {writtenAnswerConfirmed && !showFeedback && (
+          <div className={styles.confirmationButtons}>
+            <p>Tu respuesta: <strong>"{writtenAnswer}"</strong></p>
+            <p>¿Estás seguro de tu respuesta?</p>
+            <div className={styles.confirmationButtonGroup}>
+              <button 
+                className={styles.confirmButton}
+                onClick={handleConfirmAnswer}
+                disabled={timeUp}
+              >
+                Sí, confirmar
+              </button>
+              <button 
+                className={styles.cancelButton}
+                onClick={handleCancelAnswer}
+                disabled={timeUp}
+              >
+                No, corregir
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -463,9 +515,9 @@ const ProCalculo6: React.FC = () => {
         {renderInputField()}
         
         {showFeedback && (
-          <div className={`${styles.feedback} ${animation === 'correct' ? styles.correctFeedback : styles.incorrectFeedback}`}>
+          <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
             <p>
-              {animation === 'correct' 
+              {correctAnswer 
                 ? "¡Correcto! 🎉" 
                 : `La respuesta correcta es: ${currentQuestion.answer}`}
             </p>

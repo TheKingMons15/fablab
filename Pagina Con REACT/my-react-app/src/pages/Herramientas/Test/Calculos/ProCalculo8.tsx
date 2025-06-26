@@ -36,7 +36,6 @@ const ProCalculo8: React.FC = () => {
   const [timerActive, setTimerActive] = useState(true);
   const [timeUp, setTimeUp] = useState(false);
 
-  // Configurar el temporizador
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
@@ -675,17 +674,20 @@ const ProCalculo8: React.FC = () => {
       setAnimation('wrong');
     }
     
-    if (currentSubtest + 1 < subtests.length) {
-      setCurrentSubtest(currentSubtest + 1);
-      setCurrentItem(0);
-    } else {
-      setShowResult(true);
-      setTimerActive(false);
-      const totalScore = score.reduce((a, b) => a + b, 0);
-      if (totalScore > 80) {
-        launchConfetti();
+    setTimeout(() => {
+      setAnimation('');
+      if (currentSubtest + 1 < subtests.length) {
+        setCurrentSubtest(currentSubtest + 1);
+        setCurrentItem(0);
+      } else {
+        setShowResult(true);
+        setTimerActive(false);
+        const totalScore = score.reduce((a, b) => a + b, 0);
+        if (totalScore > 80) {
+          launchConfetti();
+        }
       }
-    }
+    }, 1000);
   };
 
   const launchConfetti = () => {
@@ -728,76 +730,88 @@ const ProCalculo8: React.FC = () => {
     return "¡Sigue practicando! 💪";
   };
 
+  const handleConfirmAnswer = () => {
+    if (writtenAnswer.trim()) {
+      handleAnswer(writtenAnswer.trim());
+      setWrittenAnswerConfirmed(false);
+    }
+  };
+
+  const handleCancelAnswer = () => {
+    setWrittenAnswerConfirmed(false);
+  };
+
+  const handleSubmitAnswer = () => {
+    if (writtenAnswer.trim() && !showFeedback && !timeUp) {
+      setWrittenAnswerConfirmed(true);
+    }
+  };
+
   const renderInputField = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
     
-    if (currentQuestion.type === "escrito") {
-      return (
-        <div className={styles.writtenAnswerContainer}>
-          {currentQuestion.image && (
-            <div className={styles.questionImageContainer}>
-              <img 
-                src={currentQuestion.image} 
-                alt="Imagen para la pregunta"
-                className={styles.questionImage}
-              />
-            </div>
-          )}
-          
-          <div className={styles.inputContainer}>
-            <input
-              type="text"
-              className={styles.textInput}
-              placeholder="Escribe tu respuesta aquí..."
-              value={writtenAnswer}
-              onChange={(e) => {
-                setWrittenAnswer(e.target.value);
-                setWrittenAnswerConfirmed(false);
-              }}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && writtenAnswer.trim()) {
-                  setWrittenAnswerConfirmed(true);
-                }
-              }}
-              disabled={timeUp}
+    return (
+      <div className={styles.writtenAnswerContainer}>
+        {currentQuestion.image && (
+          <div className={styles.questionImageContainer}>
+            <img 
+              src={currentQuestion.image} 
+              alt={currentQuestion.question}
+              className={styles.questionImage}
             />
-            <button 
-              className={styles.submitButton}
-              onClick={() => writtenAnswer.trim() && setWrittenAnswerConfirmed(true)}
-              disabled={!writtenAnswer.trim() || timeUp}
-            >
-              Terminar
-            </button>
           </div>
-
-          {writtenAnswerConfirmed && (
-            <div className={styles.confirmationButtons}>
-              <p>¿Estás seguro de tu respuesta?</p>
-              <div className={styles.confirmationButtonGroup}>
-                <button 
-                  className={styles.confirmButton}
-                  onClick={() => {
-                    handleAnswer(writtenAnswer);
-                    setWrittenAnswerConfirmed(false);
-                  }}
-                  disabled={timeUp}
-                >
-                  Sí, enviar
-                </button>
-                <button 
-                  className={styles.cancelButton}
-                  onClick={() => setWrittenAnswerConfirmed(false)}
-                  disabled={timeUp}
-                >
-                  No, corregir
-                </button>
-              </div>
-            </div>
-          )}
+        )}
+        
+        <div className={styles.inputContainer}>
+          <input
+            type="text"
+            className={styles.textInput}
+            placeholder="Escribe tu respuesta aquí..."
+            value={writtenAnswer}
+            onChange={(e) => {
+              setWrittenAnswer(e.target.value);
+              setWrittenAnswerConfirmed(false);
+            }}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && writtenAnswer.trim() && !showFeedback) {
+                handleSubmitAnswer();
+              }
+            }}
+            disabled={timeUp || showFeedback}
+          />
+          <button 
+            className={styles.submitButton}
+            onClick={handleSubmitAnswer}
+            disabled={!writtenAnswer.trim() || timeUp || showFeedback}
+          >
+            Enviar respuesta
+          </button>
         </div>
-      );
-    }
-    return null;
+
+        {writtenAnswerConfirmed && !showFeedback && (
+          <div className={styles.confirmationButtons}>
+            <p>Tu respuesta: <strong>"{writtenAnswer}"</strong></p>
+            <p>¿Estás seguro de tu respuesta?</p>
+            <div className={styles.confirmationButtonGroup}>
+              <button 
+                className={styles.confirmButton}
+                onClick={handleConfirmAnswer}
+                disabled={timeUp}
+              >
+                Sí, confirmar
+              </button>
+              <button 
+                className={styles.cancelButton}
+                onClick={handleCancelAnswer}
+                disabled={timeUp}
+              >
+                No, corregir
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
   };
 
   const renderQuestion = () => {
@@ -827,14 +841,14 @@ const ProCalculo8: React.FC = () => {
           </div>
         )}
         
-        {renderInputField()}
+        {currentQuestion.type === "escrito" && renderInputField()}
         
         {showFeedback && (
           <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
             <p>
               {correctAnswer 
                 ? "¡Correcto! 🎉" 
-                : `La respuesta correcta es: ${subtests[currentSubtest].items[currentItem].answer}`}
+                : `La respuesta correcta es: ${currentQuestion.answer}`}
             </p>
           </div>
         )}

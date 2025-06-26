@@ -105,7 +105,7 @@ const ProCalculo7: React.FC = () => {
       maxScore: 2,
       items: [
         { 
-          question: "Escribe los números contando hacia atrás desde 15 hasta 0", 
+          question: "Escribe los números contando hacia atrás desde 15 hasta 0 (separados por comas)", 
           answer: "15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", 
           points: 2,
           type: "escrito"
@@ -219,19 +219,19 @@ const ProCalculo7: React.FC = () => {
       maxScore: 6,
       items: [
         { 
-          question: "Escribe dónde colocarías el número 80 en una escala del 0 al 100", 
+          question: "¿Dónde colocarías el número 80 en una escala del 0 al 100?", 
           answer: "80", 
           points: 2,
           type: "escrito"
         },
         { 
-          question: "Escribe dónde colocarías el número 62 en una escala del 0 al 100", 
+          question: "¿Dónde colocarías el número 62 en una escala del 0 al 100?", 
           answer: "62", 
           points: 2,
           type: "escrito"
         },
         { 
-          question: "Escribe dónde colocarías el número 10 en una escala del 0 al 100", 
+          question: "¿Dónde colocarías el número 10 en una escala del 0 al 100?", 
           answer: "10", 
           points: 2,
           type: "escrito"
@@ -243,7 +243,7 @@ const ProCalculo7: React.FC = () => {
       maxScore: 4,
       items: [
         { 
-          question: "¿Cuántas pelotas y vasos hay? (57 pelotas, 83 vasos)", 
+          question: "¿Cuántas pelotas y vasos hay? Escribe: número de pelotas / número de vasos (ej: 57/83)", 
           answer: "57/83", 
           points: 4,
           type: "escrito" 
@@ -335,13 +335,13 @@ const ProCalculo7: React.FC = () => {
         { 
           question: "Escribe el número menor en: 5, 8520, 000, 12, 49, 50, 97", 
           answer: "0", 
-          points: 1,
+          points: 6,
           type: "escrito"
         },
         { 
           question: "Escribe el número mayor en: 1234, 1993, 3000, 8520", 
           answer: "8520", 
-          points: 1,
+          points: 6,
           type: "escrito"
         }
       ]
@@ -351,19 +351,19 @@ const ProCalculo7: React.FC = () => {
       maxScore: 3,
       items: [
         { 
-          question: "Escribe los 5 números que siguen después de 137", 
+          question: "Escribe los 5 números que siguen después de 137 (separados por comas)", 
           answer: "138,139,140,141,142", 
           points: 1,
           type: "escrito" 
         },
         { 
-          question: "Escribe los 5 números antes de 362", 
+          question: "Escribe los 5 números antes de 362 (separados por comas)", 
           answer: "361,360,359,358,357", 
           points: 1,
           type: "escrito" 
         },
         { 
-          question: "Escribe los 5 números después de 362", 
+          question: "Escribe los 5 números después de 362 (separados por comas)", 
           answer: "363,364,365,366,367", 
           points: 1,
           type: "escrito" 
@@ -392,6 +392,9 @@ const ProCalculo7: React.FC = () => {
     }
     
     const newAnswers = [...userAnswers];
+    if (!newAnswers[currentSubtest]) {
+      newAnswers[currentSubtest] = [];
+    }
     newAnswers[currentSubtest] = [...newAnswers[currentSubtest], selectedAnswer];
     setUserAnswers(newAnswers);
     
@@ -441,17 +444,20 @@ const ProCalculo7: React.FC = () => {
       setAnimation('wrong');
     }
     
-    if (currentSubtest + 1 < subtests.length) {
-      setCurrentSubtest(currentSubtest + 1);
-      setCurrentItem(0);
-    } else {
-      setShowResult(true);
-      setTimerActive(false);
-      const totalScore = score.reduce((a, b) => a + b, 0);
-      if (totalScore > 50) {
-        launchConfetti();
+    setTimeout(() => {
+      setAnimation('');
+      if (currentSubtest + 1 < subtests.length) {
+        setCurrentSubtest(currentSubtest + 1);
+        setCurrentItem(0);
+      } else {
+        setShowResult(true);
+        setTimerActive(false);
+        const totalScore = score.reduce((a, b) => a + b, 0);
+        if (totalScore > 50) {
+          launchConfetti();
+        }
       }
-    }
+    }, 1000);
   };
 
   const launchConfetti = () => {
@@ -493,6 +499,23 @@ const ProCalculo7: React.FC = () => {
     return "¡Sigue practicando! 💪";
   };
 
+  const handleConfirmAnswer = () => {
+    if (writtenAnswer.trim()) {
+      handleAnswer(writtenAnswer.trim());
+      setWrittenAnswerConfirmed(false);
+    }
+  };
+
+  const handleCancelAnswer = () => {
+    setWrittenAnswerConfirmed(false);
+  };
+
+  const handleSubmitAnswer = () => {
+    if (writtenAnswer.trim() && !showFeedback && !timeUp) {
+      setWrittenAnswerConfirmed(true);
+    }
+  };
+
   const renderInputField = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
     
@@ -519,38 +542,36 @@ const ProCalculo7: React.FC = () => {
               setWrittenAnswerConfirmed(false);
             }}
             onKeyPress={(e) => {
-              if (e.key === 'Enter' && writtenAnswer.trim()) {
-                setWrittenAnswerConfirmed(true);
+              if (e.key === 'Enter' && writtenAnswer.trim() && !showFeedback) {
+                handleSubmitAnswer();
               }
             }}
-            disabled={timeUp}
+            disabled={timeUp || showFeedback}
           />
           <button 
             className={styles.submitButton}
-            onClick={() => writtenAnswer.trim() && setWrittenAnswerConfirmed(true)}
-            disabled={!writtenAnswer.trim() || timeUp}
+            onClick={handleSubmitAnswer}
+            disabled={!writtenAnswer.trim() || timeUp || showFeedback}
           >
-            Terminar
+            Enviar respuesta
           </button>
         </div>
 
-        {writtenAnswerConfirmed && (
+        {writtenAnswerConfirmed && !showFeedback && (
           <div className={styles.confirmationButtons}>
+            <p>Tu respuesta: <strong>"{writtenAnswer}"</strong></p>
             <p>¿Estás seguro de tu respuesta?</p>
             <div className={styles.confirmationButtonGroup}>
               <button 
                 className={styles.confirmButton}
-                onClick={() => {
-                  handleAnswer(writtenAnswer);
-                  setWrittenAnswerConfirmed(false);
-                }}
+                onClick={handleConfirmAnswer}
                 disabled={timeUp}
               >
-                Sí, enviar
+                Sí, confirmar
               </button>
               <button 
                 className={styles.cancelButton}
-                onClick={() => setWrittenAnswerConfirmed(false)}
+                onClick={handleCancelAnswer}
                 disabled={timeUp}
               >
                 No, corregir
