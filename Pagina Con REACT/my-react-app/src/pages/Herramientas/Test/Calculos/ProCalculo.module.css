@@ -1,21 +1,35 @@
-/* ProCalculo.module.css - Versión Mejorada para Niños */
-
-/* Variables con la paleta de colores */
+/* Variables con la paleta de colores vibrantes pero equilibrados */
 :root {
-  --color-primary-green: #006633;
-  --color-secondary-green: #009955;
-  --color-accent-yellow: #FFCE00;
+  --color-primary: #00C9A7; /* Verde turquesa brillante */
+  --color-primary-light: #7fffd4; /* Versión más clara */
+  --color-secondary: #845EC2; /* Morado suave */
+  --color-secondary-light: #b39ddb; /* Versión más clara */
+  --color-accent: #FF8066; /* Coral vibrante */
+  --color-accent-light: #ffb3a7; /* Versión más clara */
+  --color-light: #FFD166; /* Amarillo dorado */
+  --color-light-light: #ffecb3; /* Versión más clara */
+  --color-soft: #A0E7E5; /* Azul menta claro */
   --color-white: #ffffff;
   --color-light-gray: #f8f9fa;
   --color-text-dark: #333333;
   --color-text-medium: #666666;
-  --color-success: #28a745;
-  --color-error: #dc3545;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.15);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
   --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --colorful-gradient: linear-gradient(
+    135deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 50%,
+    var(--color-accent) 100%
+  );
+  --soft-gradient: linear-gradient(
+    135deg,
+    var(--color-primary-light) 0%,
+    var(--color-secondary-light) 50%,
+    var(--color-accent-light) 100%
+  );
 }
 
 /* Reset y estilos base */
@@ -23,22 +37,58 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  font-family: 'Comic Neue', cursive, sans-serif;
 }
 
-/* Estructura principal con fondo animado */
+/* Animación de burbujas flotantes */
+@keyframes bubbleFloat {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-100px) rotate(180deg);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-200px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+/* Fondo animado con movimiento suave y burbujas */
 .pageContainer {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #f0fff8 0%, #ffffff 100%);
-  padding: 10rem;
+  background: linear-gradient(135deg, #F9F7F7 0%, #DBE2EF 50%, #F9F7F7 100%);
+  padding: 2rem;
   position: relative;
   overflow: hidden;
+  animation: gentleBackground 15s infinite alternate;
 }
 
-/* Elementos flotantes animados */
+.pageContainer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 30%, rgba(255, 214, 102, 0.1) 0%, transparent 20%),
+              radial-gradient(circle at 80% 70%, rgba(132, 94, 194, 0.1) 0%, transparent 20%),
+              radial-gradient(circle at 40% 60%, rgba(0, 201, 167, 0.1) 0%, transparent 20%);
+  z-index: 0;
+}
+
+@keyframes gentleBackground {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+/* Elementos flotantes animados - versión mejorada */
 .floating-elements {
   position: absolute;
   top: 0;
@@ -53,114 +103,229 @@
   position: absolute;
   background-size: contain;
   background-repeat: no-repeat;
-  opacity: 0.15;
+  opacity: 0;
   animation: float 15s infinite linear;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.7));
 }
 
-.floating-element:nth-child(1) {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23006633"><path d="M12 2L4 12l8 10 8-10z"/></svg>');
+/* Burbujas de colores */
+.bubble {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 50%);
+  animation: bubbleFloat 8s linear infinite;
+  opacity: 0;
+}
+
+/* Generamos burbujas de diferentes tamaños y posiciones */
+.bubble:nth-child(1) {
+  width: 30px;
+  height: 30px;
+  background-color: rgba(0, 201, 167, 0.3);
+  left: 10%;
+  top: 100%;
+  animation-delay: 0s;
+  animation-duration: 12s;
+}
+
+.bubble:nth-child(2) {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(255, 128, 102, 0.3);
+  left: 25%;
+  top: 100%;
+  animation-delay: 2s;
+  animation-duration: 15s;
+}
+
+.bubble:nth-child(3) {
+  width: 40px;
+  height: 40px;
+  background-color: rgba(132, 94, 194, 0.3);
+  left: 50%;
+  top: 100%;
+  animation-delay: 4s;
+  animation-duration: 18s;
+}
+
+.bubble:nth-child(4) {
+  width: 25px;
+  height: 25px;
+  background-color: rgba(255, 209, 102, 0.3);
+  left: 75%;
+  top: 100%;
+  animation-delay: 6s;
+  animation-duration: 14s;
+}
+
+.bubble:nth-child(5) {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(160, 231, 229, 0.3);
+  left: 90%;
+  top: 100%;
+  animation-delay: 1s;
+  animation-duration: 20s;
+}
+
+/* Formas flotantes */
+.floating-element:nth-child(6) {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300C9A7"><path d="M12 2L4 12l8 10 8-10z"/></svg>');
   width: 60px;
   height: 60px;
   top: 10%;
   left: 5%;
   animation-duration: 20s;
+  opacity: 0.2;
 }
 
-.floating-element:nth-child(2) {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFCE00"><circle cx="12" cy="12" r="10"/></svg>');
+.floating-element:nth-child(7) {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FFD166"><circle cx="12" cy="12" r="10"/></svg>');
   width: 80px;
   height: 80px;
   top: 70%;
   left: 80%;
   animation-duration: 25s;
   animation-delay: 2s;
+  opacity: 0.2;
 }
 
-.floating-element:nth-child(3) {
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23009955"><path d="M12 2L2 22h20z"/></svg>');
+.floating-element:nth-child(8) {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23845EC2"><path d="M12 2L2 22h20z"/></svg>');
   width: 50px;
   height: 50px;
   top: 30%;
   left: 70%;
   animation-duration: 18s;
   animation-delay: 1s;
+  opacity: 0.2;
+}
+
+.floating-element:nth-child(9) {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23FF8066"><rect x="2" y="2" width="20" height="20" rx="5"/></svg>');
+  width: 40px;
+  height: 40px;
+  top: 50%;
+  left: 30%;
+  animation-duration: 22s;
+  animation-delay: 3s;
+  opacity: 0.2;
 }
 
 @keyframes float {
   0% {
-    transform: translateY(0) rotate(0deg);
+    transform: translateY(0) rotate(0deg) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.2;
   }
   50% {
-    transform: translateY(-50px) rotate(180deg);
+    transform: translateY(-50px) rotate(180deg) scale(1.1);
+    opacity: 0.2;
   }
   100% {
-    transform: translateY(0) rotate(360deg);
+    transform: translateY(-100px) rotate(360deg) scale(1);
+    opacity: 0;
   }
 }
 
-/* Contenedor del test con animación de levitación */
+/* Contenedor principal del test - versión mejorada */
 .testContainer {
   width: 100%;
   max-width: 900px;
   margin: 0 auto;
   background-color: var(--color-white);
   border-radius: 28px;
-  box-shadow: var(--shadow-lg);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.15),
+    0 0 0 5px var(--color-primary),
+    0 0 0 10px var(--color-light),
+    0 0 0 15px var(--color-secondary);
   padding: 3rem;
   position: relative;
   overflow: hidden;
   z-index: 1;
   animation: levitate 4s ease-in-out infinite;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.testContainer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  z-index: -1;
+  pointer-events: none;
 }
 
 @keyframes levitate {
   0%, 100% {
-    transform: translateY(0);
+    transform: translateY(0) rotateX(0deg) rotateY(0deg);
+    box-shadow: 
+      0 10px 30px rgba(0, 0, 0, 0.15),
+      0 0 0 5px var(--color-primary),
+      0 0 0 10px var(--color-light),
+      0 0 0 15px var(--color-secondary);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-8px) rotateX(1deg) rotateY(1deg);
+    box-shadow: 
+      0 15px 40px rgba(0, 0, 0, 0.2),
+      0 0 0 5px var(--color-primary),
+      0 0 0 10px var(--color-light),
+      0 0 0 15px var(--color-secondary);
   }
 }
 
-/* Borde superior con efecto de movimiento continuo y lineal */
+/* Borde superior colorido con efecto arcoíris */
 .testContainer::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 6px;
+  height: 8px;
   background: linear-gradient(
     90deg,
-    var(--color-primary-green) 0%,
-    var(--color-accent-yellow) 50%,
-    var(--color-primary-green) 100%
+    var(--color-primary) 0%,
+    var(--color-light) 20%,
+    var(--color-accent) 40%,
+    var(--color-secondary) 60%,
+    var(--color-primary) 80%,
+    var(--color-light) 100%
   );
   background-size: 200% 100%;
   z-index: 2;
-  animation: rainbowBorder 3s linear infinite;
+  animation: borderFlow 3s linear infinite, rainbowPulse 8s ease infinite;
 }
 
-@keyframes rainbowBorder {
+@keyframes borderFlow {
   0% {
     background-position: 0% 50%;
   }
   100% {
-    background-position: 200% 50%;
+    background-position: 100% 50%;
   }
 }
 
-.cloudBackground {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background-image: url('/img/clouds.png');
-  background-repeat: repeat;
-  opacity: 0.05;
-  z-index: 0;
+@keyframes rainbowPulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
-/* Encabezado */
+/* Encabezado del test - versión mejorada */
 .testHeader {
   display: flex;
   justify-content: space-between;
@@ -174,49 +339,151 @@
   display: flex;
   align-items: center;
   gap: 1.5rem;
+  position: relative;
 }
 
 .testTitle {
-  color: var(--color-primary-green);
-  font-size: 2.2rem;
-  font-weight: 700;
+  font-size: 2.5rem;
+  font-weight: 800;
   display: flex;
   align-items: center;
   gap: 1rem;
+  background: linear-gradient(90deg), var(--color-primary), var(--color-secondary), var(--color-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: titleColorShift 8s infinite alternate, titleBounce 2s infinite ease-in-out;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.testTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+  transform: scaleX(0);
+  transform-origin: left;
+  animation: titleUnderline 3s infinite alternate;
+}
+
+@keyframes titleColorShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes titleBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes titleUnderline {
+  0% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
 }
 
 .logoSmall {
   max-width: 140px;
   height: auto;
   transition: transform 0.3s ease;
-  animation: pulse 2s infinite;
+  animation: pulse 2s infinite, rotate 15s infinite linear;
+  filter: drop-shadow(0 0 5px rgba(0, 201, 167, 0.3));
 }
 
 @keyframes pulse {
   0% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
   }
   50% {
-    transform: scale(1.05);
+    transform: scale(1.05) rotate(5deg);
   }
   100% {
-    transform: scale(1);
+    transform: scale(1) rotate(0deg);
   }
 }
 
-.logoSmall:hover {
-  transform: scale(1.05) rotate(-2deg);
-  animation: none;
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .ageBadge {
-  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
+  background: var(--colorful-gradient);
   color: var(--color-white);
   padding: 0.5rem 1.5rem;
   border-radius: 50px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   box-shadow: var(--shadow-sm);
+  animation: badgePulse 2s infinite alternate, badgeColorShift 6s infinite alternate;
+  position: relative;
+  overflow: hidden;
+}
+
+.ageBadge::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255,255,255,0.3) 0%,
+    rgba(255,255,255,0) 50%
+  );
+  transform: rotate(30deg);
+  animation: badgeShine 3s infinite;
+}
+
+@keyframes badgePulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0, 201, 167, 0.4);
+  }
+  100% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(0, 201, 167, 0);
+  }
+}
+
+@keyframes badgeColorShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes badgeShine {
+  0% {
+    left: -50%;
+    top: -50%;
+  }
+  100% {
+    left: 150%;
+    top: 150%;
+  }
 }
 
 .controlButtons {
@@ -225,7 +492,7 @@
 }
 
 .backButton {
-  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
+  background: var(--colorful-gradient);
   color: var(--color-white);
   border: none;
   padding: 0.8rem 1.8rem;
@@ -238,9 +505,32 @@
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
-  text-decoration: none;
   position: relative;
   overflow: hidden;
+  animation: buttonBackgroundShift 4s infinite linear;
+  z-index: 1;
+}
+
+.backButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0.2) 0%,
+    rgba(255,255,255,0) 50%,
+    rgba(255,255,255,0.2) 100%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  z-index: -1;
+}
+
+.backButton:hover::before {
+  transform: translateX(100%);
 }
 
 .backButton:hover {
@@ -248,28 +538,11 @@
   box-shadow: var(--shadow-md);
 }
 
-.backButton::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0) 45%,
-    rgba(255, 255, 255, 0.8) 50%,
-    rgba(255, 255, 255, 0) 55%
-  );
-  transform: rotate(30deg);
-  animation: buttonShine 3s infinite;
-}
-
 .soundButton {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
+  background: var(--colorful-gradient);
   color: var(--color-white);
   border: none;
   display: flex;
@@ -278,22 +551,34 @@
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.soundButton::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.soundButton:hover::after {
+  opacity: 1;
 }
 
 .soundButton:hover {
   transform: scale(1.1);
+  box-shadow: 0 0 15px rgba(132, 94, 194, 0.5);
 }
 
-@keyframes buttonShine {
-  0% {
-    left: -50%;
-  }
-  100% {
-    left: 150%;
-  }
+.soundButton:active {
+  transform: scale(0.95);
 }
 
-/* Barra de progreso mejorada */
+/* Barra de progreso - versión mejorada */
 .progressContainer {
   width: 100%;
   margin-bottom: 2rem;
@@ -302,24 +587,23 @@
 
 .progressBar {
   width: 100%;
-  height: 8px;
-  background-color: rgba(0, 102, 51, 0.1);
-  border-radius: 4px;
+  height: 12px;
+  background-color: rgba(0, 201, 167, 0.1);
+  border-radius: 6px;
   overflow: hidden;
   position: relative;
-  border: 1px solid rgba(0, 102, 51, 0.1);
+  border: 1px solid rgba(0, 201, 167, 0.1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, 
-    var(--color-primary-green), 
-    var(--color-secondary-green));
-  border-radius: 4px;
+  background: var(--colorful-gradient);
+  border-radius: 6px;
   transition: width 0.6s var(--bounce);
   position: relative;
   width: 0;
-  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 201, 167, 0.5);
 }
 
 .progressFill::after {
@@ -329,18 +613,25 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(90deg, 
-    rgba(255, 255, 255, 0.3) 0%, 
-    rgba(255, 255, 255, 0) 50%, 
-    rgba(255, 255, 255, 0.3) 100%);
-  animation: progressShine 3s infinite linear;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0.8) 0%,
+    rgba(255,255,255,0) 50%,
+    rgba(255,255,255,0.8) 100%
+  );
+  animation: progressShine 2s infinite linear;
 }
 
 @keyframes progressShine {
-  0% { transform: translateX(-100%) skewX(-20deg); }
-  100% { transform: translateX(100%) skewX(-20deg); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
+/* Información de la pregunta - versión mejorada */
 .questionInfo {
   display: flex;
   justify-content: space-between;
@@ -353,53 +644,119 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.timerWarning {
-  color: var(--color-primary-green);
+  color: var(--color-accent);
   font-weight: 700;
-  animation: pulse 1.5s infinite;
+  animation: pulse 1.5s infinite, colorChange 5s infinite alternate;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+@keyframes colorChange {
+  0% {
+    color: var(--color-accent);
+  }
+  50% {
+    color: var(--color-secondary);
+  }
+  100% {
+    color: var(--color-primary);
+  }
 }
 
-/* Pregunta con efecto 3D */
+/* Tarjeta de pregunta - versión mejorada */
 .questionCard {
   background-color: var(--color-white);
   border-radius: 20px;
   padding: 2.5rem;
   margin-bottom: 2rem;
   box-shadow: 
-    0 6px 10px rgba(0, 102, 51, 0.1),
-    0 15px 30px rgba(0, 153, 85, 0.15);
-  border: 1px solid rgba(0, 102, 51, 0.1);
+    0 6px 10px rgba(0, 201, 167, 0.1),
+    0 15px 30px rgba(132, 94, 194, 0.15);
+  border: 1px solid rgba(0, 201, 167, 0.1);
   position: relative;
   overflow: hidden;
   transition: var(--transition);
   transform-style: preserve-3d;
 }
 
+.questionCard::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: linear-gradient(
+    45deg,
+    var(--color-primary) 0%,
+    var(--color-secondary) 50%,
+    var(--color-accent) 100%
+  );
+  z-index: -1;
+  filter: blur(15px);
+  opacity: 0.3;
+  animation: cardGlow 6s infinite alternate;
+}
+
+@keyframes cardGlow {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
 .questionCard:hover {
-  transform: translateY(-5px) rotateX(2deg) rotateY(2deg);
+  transform: translateY(-5px) rotateX(1deg) rotateY(1deg);
   box-shadow: 
-    0 10px 20px rgba(0, 102, 51, 0.2),
-    0 20px 40px rgba(0, 153, 85, 0.25);
+    0 10px 20px rgba(0, 201, 167, 0.2),
+    0 20px 40px rgba(132, 94, 194, 0.25);
 }
 
 .questionContent {
   text-align: center;
   margin-bottom: 2rem;
+  position: relative;
 }
 
 .questionPrompt {
-  font-size: 1.5rem;
-  color: var(--color-text-dark);
+  font-size: 1.8rem;
+  color: var(--color-primary);
   margin-bottom: 1.5rem;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.5;
+  position: relative;
+  display: inline-block;
+}
+
+.questionPrompt::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 4px;
+  background: var(--color-accent);
+  border-radius: 2px;
+  animation: promptUnderline 2s infinite alternate;
+}
+
+@keyframes promptUnderline {
+  0% {
+    width: 50px;
+    background: var(--color-accent);
+  }
+  50% {
+    width: 100px;
+    background: var(--color-secondary);
+  }
+  100% {
+    width: 50px;
+    background: var(--color-primary);
+  }
 }
 
 .enumerationImage {
@@ -410,528 +767,129 @@
   border-radius: 12px;
   object-fit: contain;
   box-shadow: var(--shadow-sm);
-  border: 1px solid rgba(0, 102, 51, 0.1);
+  border: 1px solid rgba(0, 201, 167, 0.1);
   transition: var(--transition);
+  transform-style: preserve-3d;
 }
 
 .enumerationImage:hover {
-  transform: scale(1.02);
+  transform: scale(1.02) rotateY(5deg);
+  box-shadow: 0 10px 20px rgba(0, 201, 167, 0.3);
 }
 
-/* Opciones con animaciones mejoradas */
-.optionsGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.2rem;
-  width: 100%;
-  margin-top: 1.5rem;
-}
-
-.optionButton {
-  background-color: var(--color-white);
-  border: 2px solid rgba(0, 102, 51, 0.15);
-  border-radius: 14px;
-  padding: 1.5rem 1.2rem;
-  cursor: pointer;
-  transition: all 0.3s var(--bounce);
-  font-size: 1.1rem;
-  color: var(--color-text-dark);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 80px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-
-.optionButton:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-primary-green);
-}
-
-.optionButton.selected {
-  border-color: var(--color-secondary-green);
-  background-color: rgba(0, 153, 85, 0.05);
-  animation: selectedPulse 1s infinite alternate;
-}
-
-@keyframes selectedPulse {
-  from {
-    box-shadow: 0 0 0 0 rgba(0, 153, 85, 0.2);
-  }
-  to {
-    box-shadow: 0 0 0 10px rgba(0, 153, 85, 0);
-  }
-}
-
-.optionButton.correct {
-  background-color: rgba(40, 167, 69, 0.1);
-  border-color: var(--color-success);
-  color: var(--color-success);
-  animation: correctJump 0.5s var(--bounce);
-}
-
-@keyframes correctJump {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-15px);
-  }
-}
-
-.optionButton.incorrect {
-  background-color: rgba(220, 53, 69, 0.1);
-  border-color: var(--color-error);
-  color: var(--color-error);
-  animation: shake 0.5s;
-}
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  20%, 60% {
-    transform: translateX(-5px);
-  }
-  40%, 80% {
-    transform: translateX(5px);
-  }
-}
-
-.feedbackIcon {
-  margin-left: 0.5rem;
-  font-size: 1.2rem;
-}
-
-/* Feedback con confeti */
-.feedback {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
-  border-radius: 12px;
-  text-align: center;
-  font-size: 1.1rem;
-  font-weight: 500;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
-  overflow: hidden;
-}
-
-.feedback.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.feedback.show::after {
-  content: '';
-  position: absolute;
-  top: -50px;
-  left: 0;
-  right: 0;
-  height: 10px;
-  background: linear-gradient(90deg, 
-    var(--color-primary-green),
-    var(--color-accent-yellow),
-    var(--color-secondary-green));
-  animation: confettiRain 2s linear forwards;
-  z-index: 1;
-}
-
-.correctFeedback {
-  background-color: rgba(0, 153, 85, 0.1);
-  color: var(--color-secondary-green);
-  border: 1px solid rgba(0, 153, 85, 0.2);
-}
-
-.incorrectFeedback {
-  background-color: rgba(255, 206, 0, 0.1);
-  color: var(--color-text-dark);
-  border: 1px solid rgba(255, 206, 0, 0.2);
-}
-
-.explanation {
-  font-style: italic;
-  margin-top: 0.8rem;
-  font-size: 1rem;
-  opacity: 0.8;
-}
-
-@keyframes confettiRain {
-  0% {
-    transform: translateY(-50px) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(100vh) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* Resultados con animaciones */
-.resultSection {
-  width: 100%;
-  position: relative;
-  z-index: 1;
-  animation: fadeIn 0.8s both;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.resultContainer {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-  background: var(--color-white);
-  border-radius: 24px;
-  padding: 3rem;
-  box-shadow: var(--shadow-md);
-  text-align: center;
-}
-
-.resultTitle {
-  font-size: 2.5rem;
-  color: var(--color-primary-green);
-  margin-bottom: 1rem;
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.resultSubtitle {
-  font-size: 1.2rem;
-  color: var(--color-text-medium);
-  margin-bottom: 2rem;
-}
-
-.scoreCard {
-  background: var(--color-light-gray);
-  border-radius: 20px;
-  padding: 2.5rem;
-  margin-bottom: 2rem;
-}
-
-.scoreVisual {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1.5rem;
-}
-
-.scoreCircle {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: white;
-  margin-bottom: 1.5rem;
-  box-shadow: var(--shadow-md);
-  position: relative;
-  overflow: hidden;
-  animation: 
-    scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards,
-    celebrate 2s 0.6s infinite alternate;
-}
-
-@keyframes scaleIn {
-  0% { transform: scale(0); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes celebrate {
-  0% {
-    transform: scale(1) rotate(0deg);
-    box-shadow: 
-      0 0 0 0 rgba(0, 102, 51, 0.2),
-      0 0 0 0 rgba(255, 206, 0, 0.2);
-  }
-  100% {
-    transform: scale(1.05) rotate(5deg);
-    box-shadow: 
-      0 0 20px 10px rgba(0, 102, 51, 0.1),
-      0 0 30px 15px rgba(255, 206, 0, 0.1);
-  }
-}
-
-.scoreNumber {
-  font-size: 3.5rem;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.scoreTotal {
-  font-size: 1.2rem;
-  opacity: 0.9;
-}
-
-.starContainer {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.star {
-  color: #ddd;
-  font-size: 1.5rem;
-  transition: all 0.3s ease;
-  animation: twinkle 2s infinite alternate;
-}
-
-.star.activeStar {
-  color: var(--color-accent-yellow);
-  animation: 
-    twinkle 1s infinite alternate,
-    bounce 0.5s var(--bounce);
-}
-
-@keyframes twinkle {
-  0% {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.2);
-    text-shadow: 0 0 10px var(--color-accent-yellow);
-  }
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.scoreText {
-  font-size: 1.3rem;
-  color: var(--color-text-dark);
-  margin-bottom: 1rem;
-}
-
-.scoreHighlight {
-  color: var(--color-primary-green);
-  font-weight: 700;
-}
-
-.medalContainer {
-  margin-bottom: 2rem;
-}
-
-.medal {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(255, 206, 0, 0.1);
-  padding: 0.8rem 1.5rem;
-  border-radius: 50px;
-  font-weight: 600;
-  color: var(--color-text-dark);
-}
-
-.trophyIcon {
-  color: var(--color-accent-yellow);
-  font-size: 1.5rem;
-}
-
-.medalIcon {
-  color: var(--color-accent-yellow);
-  font-size: 1.3rem;
-}
-
-.summaryTitle {
-  font-size: 1.5rem;
-  color: var(--color-primary-green);
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid rgba(0, 102, 51, 0.1);
-}
-
-.resultSummary {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem;
-  margin-bottom: 2rem;
-}
-
-.resultItem {
-  background: var(--color-white);
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  border-left: 4px solid transparent;
-  transition: var(--transition);
-}
-
-.resultItem:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-.resultItem.correctItem {
-  border-left-color: var(--color-success);
-  background-color: rgba(40, 167, 69, 0.05);
-}
-
-.resultItem.incorrectItem {
-  border-left-color: var(--color-error);
-  background-color: rgba(220, 53, 69, 0.05);
-}
-
-.resultQuestion {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.questionNumber {
-  background-color: var(--color-primary-green);
-  color: white;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-.questionPreview {
-  font-weight: 500;
-}
-
-.resultAnswers {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.userAnswer {
-  font-size: 0.95rem;
-  color: var(--color-text-dark);
-}
-
-.timeUp {
-  color: var(--color-error);
-  font-weight: 500;
-}
-
-.correctAnswerText {
-  font-size: 0.9rem;
-  color: var(--color-text-medium);
-  display: block;
-  margin-top: 0.3rem;
-}
-
-.resultIcon {
-  font-size: 1.2rem;
-}
-
-.correctIcon {
-  color: var(--color-success);
-}
-
-.incorrectIcon {
-  color: var(--color-error);
-}
-
-.actionsContainer {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
+/* Controles para respuesta escrita - versión mejorada */
+.writtenAnswerContainer {
   margin-top: 2rem;
+  width: 100%;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.restartButton {
-  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
-  color: white;
-  border: none;
-  padding: 0.8rem 1.8rem;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
+.inputContainer {
   display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   align-items: center;
-  gap: 0.5rem;
+  width: 100%;
+}
+
+.textInput {
+  width: 100%;
+  padding: 1.2rem 1.8rem;
+  border: 2px solid rgba(0, 201, 167, 0.3);
+  border-radius: 16px;
+  font-size: 1.2rem;
+  transition: var(--transition);
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+.textInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(0, 201, 167, 0.2), 0 5px 15px rgba(0, 201, 167, 0.1);
+  transform: translateY(-2px);
+}
+
+.textInput::placeholder {
+  color: rgba(0, 201, 167, 0.5);
+}
+
+.submitButton {
+  background: var(--color-primary);
+  color: var(--color-white);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
   cursor: pointer;
   transition: var(--transition);
   box-shadow: var(--shadow-sm);
+  width: 100%;
+  max-width: 300px;
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
-.restartButton:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-.restartButton::after {
+.submitButton::before {
   content: '';
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0) 45%,
-    rgba(255, 255, 255, 0.8) 50%,
-    rgba(255, 255, 255, 0) 55%
+    to right,
+    rgba(255,255,255,0.2) 0%,
+    rgba(255,255,255,0) 50%,
+    rgba(255,255,255,0.2) 100%
   );
-  transform: rotate(30deg);
-  animation: buttonShine 3s infinite;
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+  z-index: -1;
 }
 
-.homeButton {
-  background: var(--color-white);
-  color: var(--color-primary-green);
-  border: 2px solid var(--color-primary-green);
-  padding: 0.8rem 1.8rem;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
+.submitButton:hover::before {
+  transform: translateX(100%);
 }
 
-.homeButton:hover {
-  background-color: rgba(0, 102, 51, 0.1);
+.submitButton:hover {
   transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  background: var(--color-secondary);
 }
 
-/* MINIJUEGO mejorado */
+.submitButton:active {
+  transform: translateY(1px);
+}
+
+/* Mini juego de recompensa - versión mejorada */
 .gameOverlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.95) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="%2300663320"><circle cx="25" cy="25" r="5"/><circle cx="75" cy="25" r="5"/><circle cx="25" cy="75" r="5"/><circle cx="75" cy="75" r="5"/></svg>');
+  background: rgba(255, 255, 255, 0.95);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  animation: 
-    fadeIn 0.3s ease-out,
-    gameBackground 20s linear infinite;
+  animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(5px);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .gameModal {
@@ -943,38 +901,53 @@
   overflow: auto;
   box-shadow: 
     0 10px 25px rgba(0, 0, 0, 0.2),
-    0 0 0 10px var(--color-primary-green),
-    0 0 0 15px var(--color-accent-yellow);
+    0 0 0 10px var(--color-primary),
+    0 0 0 15px var(--color-light);
   position: relative;
-  animation: levitate 3s ease-in-out infinite;
+  animation: levitate 3s ease-in-out infinite, modalGlow 4s infinite alternate;
+  transform-style: preserve-3d;
+}
+
+@keyframes modalGlow {
+  0% {
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.2),
+      0 0 0 10px var(--color-primary),
+      0 0 0 15px var(--color-light);
+  }
+  50% {
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.2),
+      0 0 0 10px var(--color-accent),
+      0 0 0 15px var(--color-secondary);
+  }
+  100% {
+    box-shadow: 
+      0 10px 25px rgba(0, 0, 0, 0.2),
+      0 0 0 10px var(--color-primary),
+      0 0 0 15px var(--color-light);
+  }
 }
 
 .gameModal h1 {
-  color: var(--color-primary-green);
-  text-shadow: 2px 2px 0 var(--color-accent-yellow);
-  animation: colorChange 5s infinite alternate;
+  color: var(--color-primary);
   margin-bottom: 20px;
   font-size: 2rem;
+  text-align: center;
+  animation: titleColorShift 8s infinite alternate;
 }
 
-@keyframes colorChange {
-  0% {
-    color: var(--color-primary-green);
-  }
-  50% {
-    color: var(--color-secondary-green);
-  }
-  100% {
-    color: var(--color-accent-yellow);
-  }
+.gameModal p {
+  font-size: 1.2rem;
+  color: var(--color-text-medium);
+  margin-bottom: 20px;
+  text-align: center;
 }
 
 .gameModal button {
   margin-top: 20px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, 
-    var(--color-primary-green), 
-    var(--color-secondary-green));
+  background: var(--colorful-gradient);
   color: white;
   border: none;
   border-radius: 50px;
@@ -982,230 +955,104 @@
   cursor: pointer;
   transition: all 0.3s;
   box-shadow: 
-    0 4px 0 var(--color-primary-green),
+    0 4px 0 var(--color-primary),
     0 6px 8px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
-  font-size: 1rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 1.1rem;
+}
+
+.gameModal button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255,255,255,0.3) 0%,
+    rgba(255,255,255,0) 50%,
+    rgba(255,255,255,0.3) 100%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.gameModal button:hover::before {
+  transform: translateX(100%);
 }
 
 .gameModal button:hover {
   transform: translateY(-2px);
   box-shadow: 
-    0 6px 0 var(--color-primary-green),
+    0 6px 0 var(--color-primary),
     0 8px 12px rgba(0, 0, 0, 0.2);
 }
 
 .gameModal button:active {
   transform: translateY(2px);
   box-shadow: 
-    0 2px 0 var(--color-primary-green),
+    0 2px 0 var(--color-primary),
     0 3px 4px rgba(0, 0, 0, 0.2);
 }
 
-.gameModal button::after {
-  content: '';
+/* Efectos de confeti */
+.confetti {
   position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    to bottom right,
-    rgba(255, 255, 255, 0) 45%,
-    rgba(255, 255, 255, 0.8) 50%,
-    rgba(255, 255, 255, 0) 55%
-  );
-  transform: rotate(30deg);
-  animation: buttonShine 3s infinite;
+  width: 10px;
+  height: 10px;
+  background-color: var(--color-primary);
+  opacity: 0;
+  animation: confettiFall 5s linear forwards;
+  z-index: 1001;
 }
 
-@keyframes gameBackground {
-  from {
-    background-position: 0 0;
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-100vh) rotate(0deg);
+    opacity: 1;
   }
-  to {
-    background-position: 100px 100px;
+  100% {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
   }
 }
 
-/* Estilos para los botones de confirmación del conteo */
-.confirmationButtons {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  background-color: rgba(0, 102, 51, 0.05);
-  border-radius: 12px;
-  text-align: center;
-  border: 1px solid rgba(0, 102, 51, 0.1);
-  box-shadow: var(--shadow-sm);
-  animation: fadeIn 0.3s ease-out;
+/* Efecto de estrellas */
+.star {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: var(--color-light);
+  border-radius: 50%;
+  animation: twinkle 2s infinite alternate;
+  opacity: 0;
 }
 
-.confirmationButtons p {
-  margin-bottom: 1rem;
-  font-weight: 600;
-  color: var(--color-primary-green);
-  font-size: 1.1rem;
+@keyframes twinkle {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 
-.confirmButton {
-  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
-  color: var(--color-white);
-  padding: 0.8rem 1.8rem;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  margin: 0 0.5rem;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.confirmButton:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  background: linear-gradient(135deg, var(--color-secondary-green), var(--color-primary-green));
-}
-
-.cancelButton {
-  background: var(--color-white);
-  color: var(--color-primary-green);
-  padding: 0.8rem 1.8rem;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: 2px solid var(--color-primary-green);
-  margin: 0 0.5rem;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.cancelButton:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  background-color: rgba(0, 102, 51, 0.05);
-}
-
-/* Ajustes para los botones del conteo */
-.countingControls {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1.5rem;
-}
-
-.countingButton {
-  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
-  color: var(--color-white);
-  padding: 1rem 1.8rem;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-  text-align: center;
-}
-
-.countingButton:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-.countingButton:disabled {
-  background: var(--color-light-gray);
-  color: var(--color-text-medium);
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.submitButton {
-  background: var(--color-white);
-  color: var(--color-primary-green);
-  padding: 1rem 1.8rem;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 600;
-  border: 2px solid var(--color-primary-green);
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: var(--shadow-sm);
-  text-align: center;
-  width: 100%;
-}
-
-.submitButton:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  background-color: rgba(0, 102, 51, 0.05);
-}
-
-.submitButton:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* Estilos específicos para la sección de escritura */
-.writtenAnswerContainer {
-  margin-top: 2rem;
-  width: 100%;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.inputContainer {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  width: 100%;
-}
-
-.textInput {
-  flex: 1;
-  padding: 1rem 1.5rem;
-  border: 2px solid rgba(0, 102, 51, 0.2);
-  border-radius: 12px;
-  font-size: 1.1rem;
-  transition: var(--transition);
-  background-color: var(--color-white);
-  box-shadow: var(--shadow-sm);
-}
-
-.textInput:focus {
-  outline: none;
-  border-color: var(--color-secondary-green);
-  box-shadow: 0 0 0 3px rgba(0, 153, 85, 0.2);
-}
-
-.textInput::placeholder {
-  color: rgba(0, 102, 51, 0.4);
-}
-
-/* Responsive */
+/* Responsive - versión mejorada */
 @media (max-width: 768px) {
   .testContainer {
     padding: 1.5rem;
-    animation: levitateMobile 4s ease-in-out infinite;
-  }
-  
-  @keyframes levitateMobile {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-5px);
-    }
+    box-shadow: 
+      0 5px 15px rgba(0, 0, 0, 0.1),
+      0 0 0 3px var(--color-primary),
+      0 0 0 6px var(--color-light),
+      0 0 0 9px var(--color-secondary);
   }
   
   .testHeader {
@@ -1220,32 +1067,38 @@
     gap: 0.5rem;
   }
   
-  .optionsGrid {
-    grid-template-columns: 1fr;
+  .testTitle {
+    font-size: 2rem;
   }
   
-  .resultContainer {
+  .questionCard {
     padding: 1.5rem;
   }
   
-  .scoreCircle {
-    width: 120px;
-    height: 120px;
+  .questionPrompt {
+    font-size: 1.5rem;
   }
   
-  .scoreNumber {
-    font-size: 2.8rem;
+  .textInput {
+    padding: 1rem;
+    font-size: 1rem;
   }
   
-  .actionsContainer {
-    flex-direction: column;
-    gap: 1rem;
+  .submitButton {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
   }
   
-  .restartButton,
-  .homeButton {
-    width: 100%;
-    justify-content: center;
+  .gameModal {
+    padding: 20px;
+  }
+  
+  .gameModal h1 {
+    font-size: 1.5rem;
+  }
+  
+  .gameModal p {
+    font-size: 1rem;
   }
 }
 
@@ -1254,19 +1107,21 @@
     font-size: 1.8rem;
   }
   
-  .questionCard {
-    padding: 1.5rem;
-  }
-  
   .questionPrompt {
     font-size: 1.3rem;
   }
   
-  .resultTitle {
-    font-size: 2rem;
+  .enumerationImage {
+    max-height: 180px;
   }
   
-  .resultItem {
-    padding: 1rem;
+  .controlButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .backButton, .soundButton {
+    width: 100%;
+    justify-content: center;
   }
 }

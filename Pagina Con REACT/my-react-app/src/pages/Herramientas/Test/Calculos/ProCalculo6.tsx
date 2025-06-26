@@ -76,21 +76,21 @@ const ProCalculo6: React.FC = () => {
       maxScore: 12,
       items: [
         { 
-          question: "¿Cuántos puntos hay en la imagen? (Escribe el número)", 
+          question: "¿Cuántos puntos hay en la imagen?", 
           answer: "5", 
           points: 4,
           type: "escrito",
           image: '/img/puntos5.jpg'
         },
         { 
-          question: "¿Cuántos puntos hay en la imagen? (Escribe el número)", 
+          question: "¿Cuántos puntos hay en la imagen?", 
           answer: "8", 
           points: 4,
           type: "escrito",
           image: '/img/puntos8.jpg'
         },
         { 
-          question: "¿Cuántos puntos hay en la imagen? (Escribe el número)", 
+          question: "¿Cuántos puntos hay en la imagen?", 
           answer: "10", 
           points: 4,
           type: "escrito",
@@ -106,7 +106,8 @@ const ProCalculo6: React.FC = () => {
           question: "Escribe los números del 10 al 0 en orden descendente, separados por comas", 
           answer: "10,9,8,7,6,5,4,3,2,1,0", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: '/img/contar-atras.jpg'
         }
       ]
     },
@@ -118,19 +119,22 @@ const ProCalculo6: React.FC = () => {
           question: "Escribe el número 'siete'", 
           answer: "7", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/numeros/siete.jpg'
         },
         { 
           question: "Escribe el número 'veinte'", 
           answer: "20", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/numeros/veinte.jpg'
         },
         { 
           question: "Escribe el número 'trescientos cinco'", 
           answer: "305", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/numeros/trescientos.jpg'
         }
       ]
     },
@@ -142,37 +146,43 @@ const ProCalculo6: React.FC = () => {
           question: "10 + 10", 
           answer: "20", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/calculos/suma10.jpg'
         },
         { 
           question: "1 + 15", 
           answer: "16", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/calculos/suma15.jpg'
         },
         { 
           question: "2 + 7", 
           answer: "9", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/calculos/suma7.jpg'
         },
         { 
           question: "10 - 3", 
           answer: "7", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/calculos/resta3.jpg'
         },
         { 
           question: "18 - 6", 
           answer: "12", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/calculos/resta6.jpg'
         },
         { 
           question: "7 - 4", 
           answer: "3", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/calculos/resta4.jpg'
         }
       ]
     },
@@ -184,25 +194,29 @@ const ProCalculo6: React.FC = () => {
           question: "Escribe con palabras el número: 57", 
           answer: "cincuenta y siete", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/numeros/lectura57.jpg'
         },
         { 
           question: "Escribe con palabras el número: 15", 
           answer: "quince", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/numeros/lectura15.jpg'
         },
         { 
           question: "Escribe con palabras el número: 138", 
           answer: "ciento treinta y ocho", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/numeros/lectura138.jpg'
         },
         { 
           question: "Escribe con palabras el número: 9", 
           answer: "nueve", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/numeros/lectura9.jpg'
         }
       ]
     },
@@ -211,22 +225,25 @@ const ProCalculo6: React.FC = () => {
       maxScore: 6,
       items: [
         { 
-          question: "¿2 nubes en el cielo es poco o mucho? (escribe 'poco' o 'mucho')", 
+          question: "¿2 nubes en el cielo es poco o mucho?", 
           answer: "poco", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/estimacion/nubes.jpg'
         },
         { 
-          question: "¿2 niños jugando en el recreo es poco o mucho? (escribe 'poco' o 'mucho')", 
+          question: "¿2 niños jugando en el recreo es poco o mucho?", 
           answer: "poco", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/estimacion/ninos.jpg'
         },
         { 
-          question: "¿60 chicos en un cumpleaños es poco o mucho? (escribe 'poco' o 'mucho')", 
+          question: "¿60 chicos en un cumpleaños es poco o mucho?", 
           answer: "mucho", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/estimacion/cumple.jpg'
         }
       ]
     },
@@ -238,13 +255,15 @@ const ProCalculo6: React.FC = () => {
           question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?", 
           answer: "10", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/problemas/bolitas.jpg'
         },
         { 
           question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
           answer: "5", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/problemas/bolitas-perdidas.jpg'
         }
       ]
     },
@@ -253,28 +272,32 @@ const ProCalculo6: React.FC = () => {
       maxScore: 8,
       items: [
         { 
-          question: "¿Cuánto crees que cuesta una bicicleta? (escribe el número)", 
+          question: "¿Cuánto crees que cuesta una bicicleta?", 
           answer: "150", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/adaptacion/bicicleta.jpg'
         },
         { 
-          question: "¿Cuánto crees que cuesta una radio? (escribe el número)", 
+          question: "¿Cuánto crees que cuesta una radio?", 
           answer: "90", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/adaptacion/radio.jpg'
         },
         { 
-          question: "¿Cuánto crees que cuesta una pelota de cuero? (escribe el número)", 
+          question: "¿Cuánto crees que cuesta una pelota de cuero?", 
           answer: "50", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/adaptacion/pelota.jpg'
         },
         { 
-          question: "¿Cuánto crees que cuesta una gaseosa? (escribe el número)", 
+          question: "¿Cuánto crees que cuesta una gaseosa?", 
           answer: "1.50", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/adaptacion/gaseosa.jpg'
         }
       ]
     },
@@ -286,17 +309,22 @@ const ProCalculo6: React.FC = () => {
           question: "Escribe el número 'quince'", 
           answer: "15", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/numeros/quince.jpg'
         },
         { 
           question: "Escribe el número 'veinticinco'", 
           answer: "25", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: '/img/numeros/veinticinco.jpg'
         }
       ]
     }
   ];
+
+  // ... (resto de las funciones handleAnswer, moveToNextItem, etc. permanecen IGUALES)
+  // Solo se modificó el array 'subtests' para incluir imágenes en todas las preguntas
 
   const handleAnswer = (selectedAnswer: string | number) => {
     if (showFeedback || timeUp) return;
@@ -563,7 +591,7 @@ const ProCalculo6: React.FC = () => {
                   <div 
                     className={styles.progressFill} 
                     style={{ 
-                      width: `${((currentSubtest + (currentItem / subtests[currentSubtest].items.length)) / subtests.length) * 100}%` 
+                      width: `${(currentSubtest + (currentItem / subtests[currentSubtest].items.length) / subtests.length) * 100}%` 
                     }}
                   ></div>
                 </div>
