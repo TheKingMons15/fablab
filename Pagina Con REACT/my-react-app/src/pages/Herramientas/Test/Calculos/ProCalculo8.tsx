@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaRedo, FaClock } from 'react-icons/fa';
+import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
@@ -20,6 +20,7 @@ interface Subtest {
 }
 
 const ProCalculo8: React.FC = () => {
+  // Estados del test
   const [currentSubtest, setCurrentSubtest] = useState(0);
   const [currentItem, setCurrentItem] = useState(0);
   const [score, setScore] = useState<number[]>(Array(15).fill(0));
@@ -33,13 +34,26 @@ const ProCalculo8: React.FC = () => {
   const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30 * 60);
-  const [timerActive, setTimerActive] = useState(true);
+  const [timerActive, setTimerActive] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
+
+  // Estados del formulario
+  const [studentData, setStudentData] = useState({
+    nombres: '',
+    apellidos: '',
+    edad: '',
+    genero: '',
+    curso: '',
+    institucion: ''
+  });
+  const [showStudentForm, setShowStudentForm] = useState(true);
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
-    if (timerActive && timeLeft > 0) {
+    if (!showStudentForm && timerActive && timeLeft > 0) {
       timer = setTimeout(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
@@ -56,7 +70,43 @@ const ProCalculo8: React.FC = () => {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, timerActive, showResult, timeUp, score]);
+  }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm]);
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    const edadNum = parseInt(studentData.edad);
+
+    if (!studentData.nombres.trim()) errors.nombres = 'Por favor ingresa los nombres';
+    if (!studentData.apellidos.trim()) errors.apellidos = 'Por favor ingresa los apellidos';
+    if (!studentData.edad || isNaN(edadNum)) errors.edad = 'Edad inválida';
+    if (edadNum < 7 || edadNum > 9) errors.edad = 'La edad debe estar entre 7 y 9 años';
+    if (!studentData.genero) errors.genero = 'Selecciona un género';
+    if (!studentData.curso.trim()) errors.curso = 'Ingresa el curso/grado';
+    if (!studentData.institucion.trim()) errors.institucion = 'Ingresa la institución';
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const saveStudentData = async () => {
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Simulamos el envío a la API con un retraso
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Iniciamos el test después de "guardar" los datos
+      setShowStudentForm(false);
+      setTimerActive(true);
+    } catch (error) {
+      console.error('Error al guardar datos:', error);
+      alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -712,8 +762,9 @@ const ProCalculo8: React.FC = () => {
     setWrittenAnswerConfirmed(false);
     setShowMiniGame(false);
     setTimeLeft(30 * 60);
-    setTimerActive(true);
+    setTimerActive(false);
     setTimeUp(false);
+    setShowStudentForm(true);
   };
 
   const getResultMessage = () => {
@@ -746,6 +797,144 @@ const ProCalculo8: React.FC = () => {
       setWrittenAnswerConfirmed(true);
     }
   };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setStudentData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Limpiar error si se corrige
+    if (formErrors[name]) {
+      setFormErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
+      });
+    }
+  };
+
+  const renderStudentForm = () => (
+    <div className={styles.studentFormContainer}>
+      <div className={styles.studentFormCard}>
+        <h2 className={styles.formTitle}>
+          <FaUser /> Datos del Estudiante
+        </h2>
+        
+        <div className={styles.formGroup}>
+          <label htmlFor="nombres">
+            <FaUser /> Nombres:
+          </label>
+          <input
+            type="text"
+            id="nombres"
+            name="nombres"
+            value={studentData.nombres}
+            onChange={handleInputChange}
+            className={formErrors.nombres ? styles.inputError : ''}
+            disabled={isSubmitting}
+          />
+          {formErrors.nombres && <span className={styles.errorMessage}>{formErrors.nombres}</span>}
+        </div>
+        
+        <div className={styles.formGroup}>
+          <label htmlFor="apellidos">
+            <FaUser /> Apellidos:
+          </label>
+          <input
+            type="text"
+            id="apellidos"
+            name="apellidos"
+            value={studentData.apellidos}
+            onChange={handleInputChange}
+            className={formErrors.apellidos ? styles.inputError : ''}
+            disabled={isSubmitting}
+          />
+          {formErrors.apellidos && <span className={styles.errorMessage}>{formErrors.apellidos}</span>}
+        </div>
+        
+        <div className={styles.formGroup}>
+          <label htmlFor="edad">
+            <FaBirthdayCake /> Edad:
+          </label>
+          <input
+            type="number"
+            id="edad"
+            name="edad"
+            value={studentData.edad}
+            onChange={handleInputChange}
+            min="7"
+            max="9"
+            className={formErrors.edad ? styles.inputError : ''}
+            disabled={isSubmitting}
+          />
+          {formErrors.edad && <span className={styles.errorMessage}>{formErrors.edad}</span>}
+        </div>
+        
+        <div className={styles.formGroup}>
+          <label htmlFor="genero">
+            <FaVenusMars /> Género:
+          </label>
+          <select
+            id="genero"
+            name="genero"
+            value={studentData.genero}
+            onChange={handleInputChange}
+            className={formErrors.genero ? styles.inputError : ''}
+            disabled={isSubmitting}
+          >
+            <option value="">Selecciona...</option>
+            <option value="M">Masculino</option>
+            <option value="F">Femenino</option>
+          </select>
+          {formErrors.genero && <span className={styles.errorMessage}>{formErrors.genero}</span>}
+        </div>
+        
+        <div className={styles.formGroup}>
+          <label htmlFor="curso">
+            <FaSchool /> Curso/Grado:
+          </label>
+          <input
+            type="text"
+            id="curso"
+            name="curso"
+            value={studentData.curso}
+            onChange={handleInputChange}
+            className={formErrors.curso ? styles.inputError : ''}
+            disabled={isSubmitting}
+          />
+          {formErrors.curso && <span className={styles.errorMessage}>{formErrors.curso}</span>}
+        </div>
+        
+        <div className={styles.formGroup}>
+          <label htmlFor="institucion">
+            <FaSchool /> Institución Educativa:
+          </label>
+          <input
+            type="text"
+            id="institucion"
+            name="institucion"
+            value={studentData.institucion}
+            onChange={handleInputChange}
+            className={formErrors.institucion ? styles.inputError : ''}
+            disabled={isSubmitting}
+          />
+          {formErrors.institucion && <span className={styles.errorMessage}>{formErrors.institucion}</span>}
+        </div>
+        
+        <div className={styles.formActions}>
+          <button 
+            className={styles.startTestButton}
+            onClick={saveStudentData}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Cargando...' : 'Comenzar Test'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   const renderInputField = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
@@ -861,7 +1050,9 @@ const ProCalculo8: React.FC = () => {
       <main className={styles.testContainer}>
         <div className={styles.cloudBackground}></div>
         
-        {showMiniGame ? (
+        {showStudentForm ? (
+          renderStudentForm()
+        ) : showMiniGame ? (
           <div className={styles.miniGameContainer}>
             <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
           </div>
