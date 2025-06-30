@@ -130,7 +130,7 @@ const MediaLab: React.FC = () => {
             </div>
             <div className={styles.homeContent}>
               <h1 className={styles.mainTitle}>MEDIALAB</h1>
-              <h2 className={styles.subtitle}>Centro de Fabricación Digital Universitario</h2>
+              <h2 className={styles.subtitle}>Centr de Fabricación Digital Universitario</h2>
               
               <div className={styles.infoBlocks}>
                 <div className={styles.infoBlock}>
