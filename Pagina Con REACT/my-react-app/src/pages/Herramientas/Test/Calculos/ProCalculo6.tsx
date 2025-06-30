@@ -93,33 +93,6 @@ const ProCalculo6: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Función para guardar datos en el backend
-  const saveToBackend = async () => {
-    try {
-      const response = await fetch('http://localhost:3001/save-student', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...studentData,
-          score,
-          subtests: subtests.map((subtest, index) => ({
-            name: subtest.name,
-            score: score[index],
-            maxScore: subtest.maxScore
-          }))
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al guardar datos en el servidor');
-      }
-      console.log('✅ Datos guardados correctamente en el servidor');
-    } catch (error) {
-      console.error('❌ Error al guardar en el servidor:', error);
-      alert('Error al guardar datos en el servidor');
-    }
-  };
-
   // Función para guardar datos del estudiante
   const saveStudentData = async () => {
     if (!validateForm()) return;
@@ -127,7 +100,6 @@ const ProCalculo6: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      await saveToBackend();
       setShowStudentForm(false);
       setTimerActive(true);
     } catch (error) {
@@ -467,7 +439,6 @@ const ProCalculo6: React.FC = () => {
     if (totalScore > 30) {
       launchConfetti();
     }
-    saveToBackend();
   };
 
   // Función para completar minijuego
