@@ -4,6 +4,8 @@ import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 import SnakeGame from '../../Minijuego/SnakeGame';
+import { connectToDB } from '../../api/dbConfig.ts';
+import type { ResultSetHeader } from 'mysql2/promise';
 
 interface QuestionItem {
   question: string;
@@ -50,11 +52,14 @@ const ProCalculo6: React.FC = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Array que define en qué subtests mostrar minijuegos
+  const minigameSubtests = [3, 6]; // Mostrar minijuego después de los subtests 3 y 6
+
   // Efecto para el temporizador
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
-    if (!showStudentForm && timerActive && timeLeft > 0) {
+    if (!showStudentForm && timerActive && timeLeft > 0 && !showMiniGame) {
       timer = setTimeout(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
@@ -71,7 +76,7 @@ const ProCalculo6: React.FC = () => {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm]);
+  }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm, showMiniGame]);
 
   // Función para validar el formulario
   const validateForm = () => {
@@ -90,20 +95,58 @@ const ProCalculo6: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Función para guardar datos del estudiante (simulado)
+  // Función para guardar datos en XAMPP
+
+// Función corregida sin errores de tipo
+const saveToXAMPP = async () => {
+  try {
+    const connection = await connectToDB();
+
+    // 1. Guardar estudiante
+    const [studentResult] = await connection.query(
+      'INSERT INTO estudiantes1 (nombres, apellidos, edad, genero, curso, institucion) VALUES (?, ?, ?, ?, ?, ?)',
+      [
+        studentData.nombres,
+        studentData.apellidos,
+        parseInt(studentData.edad),
+        studentData.genero,
+        studentData.curso,
+        studentData.institucion
+      ]
+    ) as ResultSetHeader[]; // Tipo corregido aquí
+
+    // 2. Guardar resultados
+    const totalScore = score.reduce((a, b) => a + b, 0);
+    const detalles = subtests.map((subtest, index) => ({
+      subtest: subtest.name,
+      score: score[index],
+      maxScore: subtest.maxScore
+    }));
+
+    await connection.query(
+      'INSERT INTO resultados_test (estudiante_id, test_tipo, puntuacion_total, detalles_puntuacion) VALUES (?, ?, ?, ?)',
+      [
+        studentResult.insertId,
+        'Pro-Cálculo 6 años',
+        totalScore,
+        JSON.stringify(detalles)
+      ]
+    );
+
+    console.log('✅ Datos guardados correctamente en XAMPP');
+    await connection.end();
+  } catch (error) {
+    console.error('❌ Error al guardar en XAMPP:', error);
+  }
+};
+
+  // Función para guardar datos del estudiante
   const saveStudentData = async () => {
     if (!validateForm()) return;
     
     setIsSubmitting(true);
     
     try {
-      // Simulamos el envío a la API con un retraso
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // En una implementación real, aquí iría la conexión a tu API
-      // const response = await fetch('/api/estudiantes', {...});
-      
-      // Iniciamos el test después de "guardar" los datos
       setShowStudentForm(false);
       setTimerActive(true);
     } catch (error) {
@@ -121,7 +164,7 @@ const ProCalculo6: React.FC = () => {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Función para normalizar texto (comparación de respuestas)
+  // Función para normalizar texto
   const normalizeText = (text: string): string => {
     return text.toLowerCase()
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -170,7 +213,216 @@ const ProCalculo6: React.FC = () => {
         }
       ]
     },
-    // ... (otros subtests aquí)
+    {
+      name: "Escritura de números",
+      maxScore: 6,
+      items: [
+        { 
+          question: "Escribe el número 'siete'", 
+          answer: "7", 
+          points: 2,
+          type: "escrito",
+          image: '/img/numeros/siete.jpg'
+        },
+        { 
+          question: "Escribe el número 'veinte'", 
+          answer: "20", 
+          points: 2,
+          type: "escrito",
+          image: '/img/numeros/veinte.jpg'
+        },
+        { 
+          question: "Escribe el número 'trescientos cinco'", 
+          answer: "305", 
+          points: 2,
+          type: "escrito",
+          image: '/img/numeros/trescientos.jpg'
+        }
+      ]
+    },
+    {
+      name: "Cálculo mental",
+      maxScore: 12,
+      items: [
+        { 
+          question: "10 + 10", 
+          answer: "20", 
+          points: 2,
+          type: "escrito",
+          image: '/img/calculos/suma10.jpg'
+        },
+        { 
+          question: "1 + 15", 
+          answer: "16", 
+          points: 2,
+          type: "escrito",
+          image: '/img/calculos/suma15.jpg'
+        },
+        { 
+          question: "2 + 7", 
+          answer: "9", 
+          points: 2,
+          type: "escrito",
+          image: '/img/calculos/suma7.jpg'
+        },
+        { 
+          question: "10 - 3", 
+          answer: "7", 
+          points: 2,
+          type: "escrito",
+          image: '/img/calculos/resta3.jpg'
+        },
+        { 
+          question: "18 - 6", 
+          answer: "12", 
+          points: 2,
+          type: "escrito",
+          image: '/img/calculos/resta6.jpg'
+        },
+        { 
+          question: "7 - 4", 
+          answer: "3", 
+          points: 2,
+          type: "escrito",
+          image: '/img/calculos/resta4.jpg'
+        }
+      ]
+    },
+    {
+      name: "Lectura de números",
+      maxScore: 8,
+      items: [
+        { 
+          question: "Escribe con palabras el número: 57", 
+          answer: "cincuenta y siete", 
+          points: 2,
+          type: "escrito",
+          image: '/img/numeros/lectura57.jpg'
+        },
+        { 
+          question: "Escribe con palabras el número: 15", 
+          answer: "quince", 
+          points: 2,
+          type: "escrito",
+          image: '/img/numeros/lectura15.jpg'
+        },
+        { 
+          question: "Escribe con palabras el número: 138", 
+          answer: "ciento treinta y ocho", 
+          points: 2,
+          type: "escrito",
+          image: '/img/numeros/lectura138.jpg'
+        },
+        { 
+          question: "Escribe con palabras el número: 9", 
+          answer: "nueve", 
+          points: 2,
+          type: "escrito",
+          image: '/img/numeros/lectura9.jpg'
+        }
+      ]
+    },
+    {
+      name: "Estimación",
+      maxScore: 6,
+      items: [
+        { 
+          question: "¿2 nubes en el cielo es poco o mucho?", 
+          answer: "poco", 
+          points: 2,
+          type: "escrito",
+          image: '/img/estimacion/nubes.jpg'
+        },
+        { 
+          question: "¿2 niños jugando en el recreo es poco o mucho?", 
+          answer: "poco", 
+          points: 2,
+          type: "escrito",
+          image: '/img/estimacion/ninos.jpg'
+        },
+        { 
+          question: "¿60 chicos en un cumpleaños es poco o mucho?", 
+          answer: "mucho", 
+          points: 2,
+          type: "escrito",
+          image: '/img/estimacion/cumple.jpg'
+        }
+      ]
+    },
+    {
+      name: "Resolución de problemas",
+      maxScore: 4,
+      items: [
+        { 
+          question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?", 
+          answer: "10", 
+          points: 2,
+          type: "escrito",
+          image: '/img/problemas/bolitas.jpg'
+        },
+        { 
+          question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
+          answer: "5", 
+          points: 2,
+          type: "escrito",
+          image: '/img/problemas/bolitas-perdidas.jpg'
+        }
+      ]
+    },
+    {
+      name: "Adaptación",
+      maxScore: 8,
+      items: [
+        { 
+          question: "¿Cuánto crees que cuesta una bicicleta?", 
+          answer: "150", 
+          points: 2,
+          type: "escrito",
+          image: '/img/adaptacion/bicicleta.jpg'
+        },
+        { 
+          question: "¿Cuánto crees que cuesta una radio?", 
+          answer: "90", 
+          points: 2,
+          type: "escrito",
+          image: '/img/adaptacion/radio.jpg'
+        },
+        { 
+          question: "¿Cuánto crees que cuesta una pelota de cuero?", 
+          answer: "50", 
+          points: 2,
+          type: "escrito",
+          image: '/img/adaptacion/pelota.jpg'
+        },
+        { 
+          question: "¿Cuánto crees que cuesta una gaseosa?", 
+          answer: "1.50", 
+          points: 2,
+          type: "escrito",
+          image: '/img/adaptacion/gaseosa.jpg'
+        }
+      ]
+    },
+    {
+      name: "Escribir en cifra",
+      maxScore: 2,
+      items: [
+        { 
+          question: "Escribe el número 'quince'", 
+          answer: "15", 
+          points: 1,
+          type: "escrito",
+          image: '/img/numeros/quince.jpg'
+        },
+        { 
+          question: "Escribe el número 'veinticinco'", 
+          answer: "25", 
+          points: 1,
+          type: "escrito",
+          image: '/img/numeros/veinticinco.jpg'
+        }
+      ]
+    }
   ];
 
   // Función para manejar respuestas
@@ -208,52 +460,51 @@ const ProCalculo6: React.FC = () => {
     
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
-      if (nextSubtest > 0 && nextSubtest % 3 === 0 && nextSubtest < subtests.length) {
+      
+      // Verificar si debemos mostrar un minijuego después de este subtest
+      if (minigameSubtests.includes(currentSubtest)) {
         setShowMiniGame(true);
-        setMiniGameType(nextSubtest === 3 ? 'egg' : 'snake');
+        setMiniGameType(currentSubtest === 3 ? 'egg' : 'snake');
         return;
       }
-    }
-    
-    if (currentItem + 1 < subtests[currentSubtest].items.length) {
-      setCurrentItem(currentItem + 1);
-    } else {
-      if (currentSubtest + 1 < subtests.length) {
-        setCurrentSubtest(currentSubtest + 1);
+      
+      // Si no hay minijuego, avanzar al siguiente subtest o terminar
+      if (nextSubtest < subtests.length) {
+        setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        setShowResult(true);
-        setTimerActive(false);
-        const totalScore = score.reduce((a, b) => a + b, 0);
-        if (totalScore > 30) {
-          launchConfetti();
-        }
+        finishTest();
       }
+    } else {
+      setCurrentItem(currentItem + 1);
     }
+  };
+
+  // Función para finalizar el test
+  const finishTest = () => {
+    setShowResult(true);
+    setTimerActive(false);
+    const totalScore = score.reduce((a, b) => a + b, 0);
+    if (totalScore > 30) {
+      launchConfetti();
+    }
+    saveToXAMPP();
   };
 
   // Función para completar minijuego
   const handleMiniGameComplete = (success: boolean) => {
     setShowMiniGame(false);
-
-    if (success) {
-      setAnimation('correct');
-    } else {
-      setAnimation('wrong');
-    }
+    setAnimation(success ? 'correct' : 'wrong');
     
     setTimeout(() => {
       setAnimation('');
-      if (currentSubtest + 1 < subtests.length) {
-        setCurrentSubtest(currentSubtest + 1);
+      const nextSubtest = currentSubtest + 1;
+      
+      if (nextSubtest < subtests.length) {
+        setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        setShowResult(true);
-        setTimerActive(false);
-        const totalScore = score.reduce((a, b) => a + b, 0);
-        if (totalScore > 30) {
-          launchConfetti();
-        }
+        finishTest();
       }
     }, 1000);
   };
@@ -552,6 +803,110 @@ const ProCalculo6: React.FC = () => {
     );
   };
 
+  // Renderizado del minijuego
+  const renderMiniGame = () => (
+    <div className={styles.miniGameContainer}>
+      {miniGameType === 'egg' ? (
+        <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
+      ) : (
+        <SnakeGame onComplete={handleMiniGameComplete} />
+      )}
+    </div>
+  );
+
+  // Renderizado de resultados
+  const renderResults = () => (
+    <section className={styles.resultSection}>
+      <div className={styles.resultContainer}>
+        <h2 className={styles.resultTitle}>
+          {getResultMessage()}
+        </h2>
+        
+        <div className={styles.scoreCard}>
+          <div className={styles.scoreVisual}>
+            <div className={styles.scoreCircle}>
+              <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
+              <span className={styles.scoreTotal}>/60</span>
+            </div>
+            {timeUp && (
+              <div className={styles.timeUpWarning}>
+                ⏰ El tiempo ha terminado
+              </div>
+            )}
+          </div>
+          
+          <p className={styles.scoreText}>
+            Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 60 puntos
+          </p>
+          
+          <div className={styles.subtestScores}>
+            <h3>Puntuación por subtest:</h3>
+            <ul>
+              {subtests.map((subtest, index) => (
+                <li key={index}>
+                  {subtest.name}: {score[index]} / {subtest.maxScore}
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          <div className={styles.actionsContainer}>
+            <button className={styles.restartButton} onClick={restartTest}>
+              <FaRedo /> Intentar de nuevo
+            </button>
+            <a href="/test" className={styles.homeButton}>
+              Elegir otra prueba
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  // Renderizado del test en progreso
+  const renderTestInProgress = () => (
+    <>
+      <section className={styles.testHeader}>
+        <div className={styles.titleWrapper}>
+          <h1 className={styles.testTitle}>
+            <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
+            Pro-Cálculo <span className={styles.ageBadge}>6 años</span>
+          </h1>
+        </div>
+        
+        <div className={styles.controlButtons}>
+          <a href="/Herramientas/test" className={styles.backButton}>
+            <FaArrowLeft /> Volver
+          </a>
+        </div>
+      </section>
+
+      <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
+        <div className={styles.progressBar}>
+          <div 
+            className={styles.progressFill} 
+            style={{ 
+              width: `${(currentSubtest + (currentItem / subtests[currentSubtest].items.length) / subtests.length) * 100}%` 
+            }}
+          ></div>
+        </div>
+        
+        <div className={styles.questionInfo}>
+          <div className={styles.questionCounter}>
+            Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
+          </div>
+          <div className={styles.timer}>
+            <FaClock /> Tiempo restante: {formatTime(timeLeft)}
+          </div>
+        </div>
+        
+        <div className={styles.questionCard}>
+          {renderQuestion()}
+        </div>
+      </section>
+    </>
+  );
+
   // Renderizado principal del componente
   return (
     <div className={styles.pageContainer}>
@@ -561,102 +916,11 @@ const ProCalculo6: React.FC = () => {
         {showStudentForm ? (
           renderStudentForm()
         ) : showMiniGame ? (
-          <div className={styles.miniGameContainer}>
-            {miniGameType === 'egg' ? (
-              <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
-            ) : (
-              <SnakeGame onComplete={handleMiniGameComplete} />
-            )}
-          </div>
+          renderMiniGame()
+        ) : showResult ? (
+          renderResults()
         ) : (
-          <>
-            <section className={styles.testHeader}>
-              <div className={styles.titleWrapper}>
-                <h1 className={styles.testTitle}>
-                  <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
-                  Pro-Cálculo <span className={styles.ageBadge}>6 años</span>
-                </h1>
-              </div>
-              
-              <div className={styles.controlButtons}>
-                <a href="/Herramientas/test" className={styles.backButton}>
-                  <FaArrowLeft /> Volver
-                </a>
-              </div>
-            </section>
-
-            {!showResult ? (
-              <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
-                <div className={styles.progressBar}>
-                  <div 
-                    className={styles.progressFill} 
-                    style={{ 
-                      width: `${(currentSubtest + (currentItem / subtests[currentSubtest].items.length) / subtests.length) * 100}%` 
-                    }}
-                  ></div>
-                </div>
-                
-                <div className={styles.questionInfo}>
-                  <div className={styles.questionCounter}>
-                    Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
-                  </div>
-                  <div className={styles.timer}>
-                    <FaClock /> Tiempo restante: {formatTime(timeLeft)}
-                  </div>
-                </div>
-                
-                <div className={styles.questionCard}>
-                  {renderQuestion()}
-                </div>
-              </section>
-            ) : (
-              <section className={styles.resultSection}>
-                <div className={styles.resultContainer}>
-                  <h2 className={styles.resultTitle}>
-                    {getResultMessage()}
-                  </h2>
-                  
-                  <div className={styles.scoreCard}>
-                    <div className={styles.scoreVisual}>
-                      <div className={styles.scoreCircle}>
-                        <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
-                        <span className={styles.scoreTotal}>/60</span>
-                      </div>
-                      {timeUp && (
-                        <div className={styles.timeUpWarning}>
-                          ⏰ El tiempo ha terminado
-                        </div>
-                      )}
-                    </div>
-                    
-                    <p className={styles.scoreText}>
-                      Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 60 puntos
-                    </p>
-                    
-                    <div className={styles.subtestScores}>
-                      <h3>Puntuación por subtest:</h3>
-                      <ul>
-                        {subtests.map((subtest, index) => (
-                          <li key={index}>
-                            {subtest.name}: {score[index]} / {subtest.maxScore}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div className={styles.actionsContainer}>
-                      <button className={styles.restartButton} onClick={restartTest}>
-                        <FaRedo /> Intentar de nuevo
-                      </button>
-                      <a href="/test" className={styles.homeButton}>
-                        Elegir otra prueba
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            )}
-          </>
+          renderTestInProgress()
         )}
       </main>
     </div>
