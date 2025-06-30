@@ -129,25 +129,29 @@ const ProCalculo8: React.FC = () => {
           question: "Escribe los números del 1 al 30", 
           answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
           points: 4,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe los números del 1 al 30 nuevamente", 
           answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
           points: 4,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe los números del 1 al 30 una vez más", 
           answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
           points: 4,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe los números del 1 al 30 una última vez", 
           answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
           points: 4,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -159,7 +163,8 @@ const ProCalculo8: React.FC = () => {
           question: "Escribe los números contando hacia atrás desde 23 hasta 0", 
           answer: "23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -171,37 +176,43 @@ const ProCalculo8: React.FC = () => {
           question: "Escribe el número 'ciento sesenta y nueve'", 
           answer: "169", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 'treinta y ocho'", 
           answer: "38", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 'mil doscientos'", 
           answer: "1200", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 'trescientos cinco'", 
           answer: "305", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 'catorce'", 
           answer: "14", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 'seis mil doscientos ochenta y cinco'", 
           answer: "6285", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -213,73 +224,85 @@ const ProCalculo8: React.FC = () => {
           question: "5 + 8", 
           answer: "13", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "12 + 6", 
           answer: "18", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "4 + 13", 
           answer: "17", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "9 + 7", 
           answer: "16", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "15 + 12", 
           answer: "27", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "13 + 19", 
           answer: "32", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "17 - 5", 
           answer: "12", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "14 - 6", 
           answer: "8", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "24 - 17", 
           answer: "7", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "19 - 6", 
           answer: "13", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "15 - 9", 
           answer: "6", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "25 - 12", 
           answer: "13", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -291,37 +314,43 @@ const ProCalculo8: React.FC = () => {
           question: "Escribe con palabras el número: 305", 
           answer: "trescientos cinco", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe con palabras el número: 57", 
           answer: "cincuenta y siete", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe con palabras el número: 6485", 
           answer: "seis mil cuatrocientos ochenta y cinco", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe con palabras el número: 138", 
           answer: "ciento treinta y ocho", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe con palabras el número: 15", 
           answer: "quince", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe con palabras el número: 1900", 
           answer: "mil novecientos", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -333,31 +362,36 @@ const ProCalculo8: React.FC = () => {
           question: "Escribe dónde colocarías el número 56 en una escala del 0 al 100", 
           answer: "56", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe dónde colocarías el número 80 en una escala del 0 al 100", 
           answer: "80", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe dónde colocarías el número 62 en una escala del 0 al 100", 
           answer: "62", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe dónde colocarías el número 10 en una escala del 0 al 100", 
           answer: "10", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe dónde colocarías el número 35 en una escala del 0 al 100", 
           answer: "35", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -389,31 +423,36 @@ const ProCalculo8: React.FC = () => {
           question: "¿4 profesores en la misma clase es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
           answer: "mucho", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿2 nubes en el cielo es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
           answer: "poco", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿8 niños en una familia es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
           answer: "más o menos", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿10 hojas en un árbol es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
           answer: "poco", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿8 lámparas en una habitación es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
           answer: "mucho", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -425,25 +464,29 @@ const ProCalculo8: React.FC = () => {
           question: "Pedro tiene 12 bolitas. Le da 5 bolitas a Ana. ¿Cuántas bolitas le quedan en total?", 
           answer: "7", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Pedro tiene 16 bolitas. Él tiene 4 bolitas más que Ana. ¿Cuántas bolitas tiene Ana?", 
           answer: "12", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Pedro tiene muchas bolitas. Le da 6 bolitas a Ana. Sólo le quedan 7 bolitas. ¿Cuántas bolitas tenía al comienzo?", 
           answer: "13", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Pedro tiene 4 bolitas. Ana tiene 3 bolitas más que Pedro y Julio tiene 2 bolitas menos que Ana. ¿Cuántas bolitas tienen entre todos?", 
           answer: "16", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -455,49 +498,57 @@ const ProCalculo8: React.FC = () => {
           question: "¿Cuál es mayor: 654 o 546? (Escribe el número mayor)", 
           answer: "654", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Cuál es mayor: 79 o 81? (Escribe el número mayor)", 
           answer: "81", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Cuál es mayor: 1007 o 1070? (Escribe el número mayor)", 
           answer: "1070", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Cuál es mayor: 511 o 298? (Escribe el número mayor)", 
           answer: "511", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Cuál es mayor: 13 o 31? (Escribe el número mayor)", 
           answer: "31", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Cuál es mayor: 9768 o 35201? (Escribe el número mayor)", 
           answer: "35201", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Cuál es mayor: 96 o 69? (Escribe el número mayor)", 
           answer: "96", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Cuál es mayor: 377 o 433? (Escribe el número mayor)", 
           answer: "433", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -509,37 +560,43 @@ const ProCalculo8: React.FC = () => {
           question: "Escribe la cifra menor de todas: 12, 549755813888, 00000000000000, 12, 49, 50, 97", 
           answer: "12", 
           points: 1,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe la cifra mayor de todas: 1234, 1993, 3000, 7777, 8520, 10000, 12345, 100000, 3000000, 123456, 549755813888", 
           answer: "549755813888", 
           points: 1,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe las cifras menores de 100: 1234, 1993, 3000, 7777, 8520, 10000, 12345, 100000, 3000000, 123456, 549755813888", 
           answer: "ninguna", 
           points: 5,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe las cifras más grandes que mil: 1234, 1993, 3000, 7777, 8520, 10000, 12345, 100000, 3000000, 123456, 549755813888", 
           answer: "todas", 
           points: 11,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el cien mil: 100000, 3000000, 549755813888", 
           answer: "100000", 
           points: 1,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe las cifras más grandes que un millón: 3000000, 549755813888", 
           answer: "ambas", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -551,19 +608,22 @@ const ProCalculo8: React.FC = () => {
           question: "Escribe los 5 números que vienen después de 137", 
           answer: "138,139,140,141,142", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe los 5 números antes de 362", 
           answer: "361,360,359,358,357", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe los 5 números después de 362", 
           answer: "363,364,365,366,367", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -575,31 +635,36 @@ const ProCalculo8: React.FC = () => {
           question: "Escribe el número 102 entre estas opciones: 200, 1200, 102, 2100, 1102, 120", 
           answer: "102", 
           points: 1,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 5012 entre estas opciones: 50012, 512000, 5121, 510012, 5012, 500102", 
           answer: "5012", 
           points: 1,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 8357 entre estas opciones: 80003103307, 50357, 8357, 833037, 8003067, 800030057", 
           answer: "8357", 
           points: 1,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 1005 entre estas opciones: 1005, 10028, 1300, 135, 1050, 10080", 
           answer: "1005", 
           points: 1,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 1111 entre estas opciones: 10010811, 1001011, 11111, 1111, 10111, 10100", 
           answer: "1111", 
           points: 1,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -611,43 +676,50 @@ const ProCalculo8: React.FC = () => {
           question: "Escribe 'trescientos' en cifra", 
           answer: "300", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe 'ochocientos veintisiete' en cifra", 
           answer: "827", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe 'doscientos sesenta y nueve' en cifra", 
           answer: "269", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe 'seiscientos dos' en cifra", 
           answer: "602", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe 'cinco mil doce' en cifra", 
           answer: "5012", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe 'mil uno' en cifra", 
           answer: "1001", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe 'mil cuatrocientos cinco' en cifra", 
           answer: "1405", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     }
