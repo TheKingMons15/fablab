@@ -129,25 +129,25 @@ const ProCalculo7: React.FC = () => {
       maxScore: 12,
       items: [
         { 
-          question: "¿Cuántos globos hay en la imagen? (13 puntos)", 
+          question: "¿Cuántos globos hay en la imagen?", 
           answer: "13", 
           points: 4,
           type: "escrito",
-          image: '/img/puntos13.jpg'
+          image: '/img/13_globos.png'
         },
         { 
-          question: "¿Cuántos paletas hay en la imagen? (8 puntos)", 
+          question: "¿Cuántos paletas hay en la imagen?", 
           answer: "8", 
           points: 4,
           type: "escrito",
-          image: '/img/puntos8.jpg'
+          image: '/img/8_paletas.png'
         },
         { 
-          question: "¿Cuántos autos hay en la imagen? (10 puntos)", 
+          question: "¿Cuántos autos hay en la imagen?", 
           answer: "10", 
           points: 4,
           type: "escrito",
-          image: '/img/puntos10.jpg'
+          image: '/img/10_carros.png'
         }
       ]
     },
@@ -325,25 +325,25 @@ const ProCalculo7: React.FC = () => {
       maxScore: 6,
       items: [
         { 
-          question: "¿2 nubes en el cielo es poco o mucho? (Escribe 'poco' o 'mucho')", 
-          answer: "poco", 
+          question: "¿12 nubes en el cielo es poco o mucho? (Escribe 'poco' o 'mucho')", 
+          answer: "mucho", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/12_nubes.png'
         },
         { 
           question: "¿2 niños jugando en el recreo es poco o mucho? (Escribe 'poco' o 'mucho')", 
           answer: "poco", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/2_niños.png'
         },
         { 
           question: "¿60 niños en un cumpleaños es poco o mucho? (Escribe 'poco' o 'mucho')", 
           answer: "mucho", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/60_cumpleaños.png'
         }
       ]
     },
@@ -926,7 +926,7 @@ const ProCalculo7: React.FC = () => {
                       <button className={styles.restartButton} onClick={restartTest}>
                         <FaRedo /> Intentar de nuevo
                       </button>
-                      <a href="/test" className={styles.homeButton}>
+                      <a href="/herramientas/test" className={styles.homeButton}>
                         Elegir otra prueba
                       </a>
                     </div>
