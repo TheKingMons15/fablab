@@ -159,7 +159,8 @@ const ProCalculo7: React.FC = () => {
           question: "Escribe los números contando hacia atrás desde 15 hasta 0 (separados por comas)", 
           answer: "15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -171,25 +172,29 @@ const ProCalculo7: React.FC = () => {
           question: "Escribe el número 'treinta y ocho'", 
           answer: "38", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 'ciento sesenta y nueve'", 
           answer: "169", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 'noventa y siete'", 
           answer: "97", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número 'mil doscientos'", 
           answer: "1200", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -201,37 +206,43 @@ const ProCalculo7: React.FC = () => {
           question: "10 + 10", 
           answer: "20", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "1 + 15", 
           answer: "16", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "12 + 7", 
           answer: "19", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "10 - 3", 
           answer: "7", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "18 - 6", 
           answer: "12", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "25 - 12", 
           answer: "13", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -243,25 +254,29 @@ const ProCalculo7: React.FC = () => {
           question: "Lee este número: 57", 
           answer: "cincuenta y siete", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Lee este número: 15", 
           answer: "quince", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Lee este número: 138", 
           answer: "ciento treinta y ocho", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Lee este número: 9", 
           answer: "nueve", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -273,19 +288,22 @@ const ProCalculo7: React.FC = () => {
           question: "¿Dónde colocarías el número 80 en una escala del 0 al 100?", 
           answer: "80", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Dónde colocarías el número 62 en una escala del 0 al 100?", 
           answer: "62", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Dónde colocarías el número 10 en una escala del 0 al 100?", 
           answer: "10", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -297,7 +315,8 @@ const ProCalculo7: React.FC = () => {
           question: "¿Cuántas pelotas y vasos hay? Escribe: número de pelotas / número de vasos (ej: 57/83)", 
           answer: "57/83", 
           points: 4,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -309,19 +328,22 @@ const ProCalculo7: React.FC = () => {
           question: "¿2 nubes en el cielo es poco o mucho? (Escribe 'poco' o 'mucho')", 
           answer: "poco", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿2 niños jugando en el recreo es poco o mucho? (Escribe 'poco' o 'mucho')", 
           answer: "poco", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿60 niños en un cumpleaños es poco o mucho? (Escribe 'poco' o 'mucho')", 
           answer: "mucho", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -333,25 +355,29 @@ const ProCalculo7: React.FC = () => {
           question: "12 - 5", 
           answer: "7", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "16 - 4", 
           answer: "12", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "6 + 7", 
           answer: "13", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "4 + (4+3) + (7-2)", 
           answer: "16", 
           points: 2,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -363,19 +389,22 @@ const ProCalculo7: React.FC = () => {
           question: "¿Cuál es mayor: 654 o 546? (Escribe el número mayor)", 
           answer: "654", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Cuál es mayor: 97 o 352? (Escribe el número mayor)", 
           answer: "352", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "¿Cuál es mayor: 96 o 69? (Escribe el número mayor)", 
           answer: "96", 
           points: 2,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -387,13 +416,15 @@ const ProCalculo7: React.FC = () => {
           question: "Escribe el número menor en: 5, 8520, 000, 12, 49, 50, 97", 
           answer: "0", 
           points: 6,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe el número mayor en: 1234, 1993, 3000, 8520", 
           answer: "8520", 
           points: 6,
-          type: "escrito"
+          type: "escrito",
+          image: ''
         }
       ]
     },
@@ -405,19 +436,22 @@ const ProCalculo7: React.FC = () => {
           question: "Escribe los 5 números que siguen después de 137 (separados por comas)", 
           answer: "138,139,140,141,142", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe los 5 números antes de 362 (separados por comas)", 
           answer: "361,360,359,358,357", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         },
         { 
           question: "Escribe los 5 números después de 362 (separados por comas)", 
           answer: "363,364,365,366,367", 
           points: 1,
-          type: "escrito" 
+          type: "escrito",
+          image: ''
         }
       ]
     }
