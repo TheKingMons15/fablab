@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
@@ -21,6 +22,7 @@ interface Subtest {
 }
 
 const ProCalculo6: React.FC = () => {
+  const navigate = useNavigate(); // Hook para navegación
   // Estados del test
   const [currentSubtest, setCurrentSubtest] = useState(0);
   const [currentItem, setCurrentItem] = useState(0);
@@ -131,25 +133,25 @@ const ProCalculo6: React.FC = () => {
       maxScore: 12,
       items: [
         { 
-          question: "¿Cuántos puntos hay en la imagen?", 
+          question: "¿Cuántos animales hay en la imagen?", 
           answer: "5", 
           points: 4,
           type: "escrito",
-          image: '/img/puntos5.jpg'
+          image: '/img/5_animales.png'
         },
         { 
-          question: "¿Cuántos puntos hay en la imagen?", 
+          question: "¿Cuántos animales hay en la imagen?", 
           answer: "8", 
           points: 4,
           type: "escrito",
-          image: '/img/puntos8.jpg'
+          image: '/img/8_animales.png'
         },
         { 
-          question: "¿Cuántos puntos hay en la imagen?", 
+          question: "¿Cuántos animales hay en la imagen?", 
           answer: "10", 
           points: 4,
           type: "escrito",
-          image: '/img/puntos10.jpg'
+          image: '/img/10_animales.png'
         }
       ]
     },
@@ -284,21 +286,21 @@ const ProCalculo6: React.FC = () => {
           answer: "poco", 
           points: 2,
           type: "escrito",
-          image: '/img/estimacion/nubes.jpg'
+          image: '/img/2_nubes.png'
         },
         { 
           question: "¿2 niños jugando en el recreo es poco o mucho?", 
           answer: "poco", 
           points: 2,
           type: "escrito",
-          image: '/img/estimacion/ninos.jpg'
+          image: '/img/2_niños.png'
         },
         { 
           question: "¿60 chicos en un cumpleaños es poco o mucho?", 
           answer: "mucho", 
           points: 2,
           type: "escrito",
-          image: '/img/estimacion/cumple.jpg'
+          image: '/img/60_cumpleaños.png'
         }
       ]
     },
@@ -311,14 +313,14 @@ const ProCalculo6: React.FC = () => {
           answer: "10", 
           points: 2,
           type: "escrito",
-          image: '/img/problemas/bolitas.jpg'
+          image: '/img/10_pelotas.png'
         },
         { 
           question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
           answer: "5", 
           points: 2,
           type: "escrito",
-          image: '/img/problemas/bolitas-perdidas.jpg'
+          image: '/img/5_pelotas.png'
         }
       ]
     },
@@ -331,28 +333,28 @@ const ProCalculo6: React.FC = () => {
           answer: "150", 
           points: 2,
           type: "escrito",
-          image: '/img/adaptacion/bicicleta.jpg'
+          image: '/img/bicicleta.png'
         },
         { 
           question: "¿Cuánto crees que cuesta una radio?", 
           answer: "90", 
           points: 2,
           type: "escrito",
-          image: '/img/adaptacion/radio.jpg'
+          image: '/img/radio.png'
         },
         { 
           question: "¿Cuánto crees que cuesta una pelota de cuero?", 
           answer: "50", 
           points: 2,
           type: "escrito",
-          image: '/img/adaptacion/pelota.jpg'
+          image: '/img/pelota.png'
         },
         { 
           question: "¿Cuánto crees que cuesta una gaseosa?", 
           answer: "1.50", 
           points: 2,
           type: "escrito",
-          image: '/img/adaptacion/gaseosa.jpg'
+          image: '/img/gaseosa.png'
         }
       ]
     },
@@ -803,9 +805,12 @@ const ProCalculo6: React.FC = () => {
             <button className={styles.restartButton} onClick={restartTest}>
               <FaRedo /> Intentar de nuevo
             </button>
-            <a href="/test" className={styles.homeButton}>
+            <button 
+              className={styles.homeButton} 
+              onClick={() => navigate('/herramientas/test')}
+            >
               Elegir otra prueba
-            </a>
+            </button>
           </div>
         </div>
       </div>
