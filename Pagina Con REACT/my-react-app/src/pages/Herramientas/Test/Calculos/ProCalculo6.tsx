@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
@@ -21,6 +22,7 @@ interface Subtest {
 }
 
 const ProCalculo6: React.FC = () => {
+  const navigate = useNavigate(); // Hook para navegación
   // Estados del test
   const [currentSubtest, setCurrentSubtest] = useState(0);
   const [currentItem, setCurrentItem] = useState(0);
@@ -832,9 +834,12 @@ const ProCalculo6: React.FC = () => {
             <button className={styles.restartButton} onClick={restartTest}>
               <FaRedo /> Intentar de nuevo
             </button>
-            <a href="/test" className={styles.homeButton}>
+            <button 
+              className={styles.homeButton} 
+              onClick={() => navigate('/herramientas/test')}
+            >
               Elegir otra prueba
-            </a>
+            </button>
           </div>
         </div>
       </div>
