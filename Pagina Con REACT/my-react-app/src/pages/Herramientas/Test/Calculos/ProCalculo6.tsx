@@ -4,8 +4,6 @@ import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 import SnakeGame from '../../Minijuego/SnakeGame';
-import { connectToDB } from '../../api/dbConfig.ts';
-import type { ResultSetHeader } from 'mysql2/promise';
 
 interface QuestionItem {
   question: string;
@@ -53,7 +51,7 @@ const ProCalculo6: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Array que define en qué subtests mostrar minijuegos
-  const minigameSubtests = [3, 6]; // Mostrar minijuego después de los subtests 3 y 6
+  const minigameSubtests = [3, 6];
 
   // Efecto para el temporizador
   useEffect(() => {
@@ -95,50 +93,32 @@ const ProCalculo6: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Función para guardar datos en XAMPP
+  // Función para guardar datos en el backend
+  const saveToBackend = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/save-student', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...studentData,
+          score,
+          subtests: subtests.map((subtest, index) => ({
+            name: subtest.name,
+            score: score[index],
+            maxScore: subtest.maxScore
+          }))
+        })
+      });
 
-// Función corregida sin errores de tipo
-const saveToXAMPP = async () => {
-  try {
-    const connection = await connectToDB();
-
-    // 1. Guardar estudiante
-    const [studentResult] = await connection.query(
-      'INSERT INTO estudiantes1 (nombres, apellidos, edad, genero, curso, institucion) VALUES (?, ?, ?, ?, ?, ?)',
-      [
-        studentData.nombres,
-        studentData.apellidos,
-        parseInt(studentData.edad),
-        studentData.genero,
-        studentData.curso,
-        studentData.institucion
-      ]
-    ) as ResultSetHeader[]; // Tipo corregido aquí
-
-    // 2. Guardar resultados
-    const totalScore = score.reduce((a, b) => a + b, 0);
-    const detalles = subtests.map((subtest, index) => ({
-      subtest: subtest.name,
-      score: score[index],
-      maxScore: subtest.maxScore
-    }));
-
-    await connection.query(
-      'INSERT INTO resultados_test (estudiante_id, test_tipo, puntuacion_total, detalles_puntuacion) VALUES (?, ?, ?, ?)',
-      [
-        studentResult.insertId,
-        'Pro-Cálculo 6 años',
-        totalScore,
-        JSON.stringify(detalles)
-      ]
-    );
-
-    console.log('✅ Datos guardados correctamente en XAMPP');
-    await connection.end();
-  } catch (error) {
-    console.error('❌ Error al guardar en XAMPP:', error);
-  }
-};
+      if (!response.ok) {
+        throw new Error('Error al guardar datos en el servidor');
+      }
+      console.log('✅ Datos guardados correctamente en el servidor');
+    } catch (error) {
+      console.error('❌ Error al guardar en el servidor:', error);
+      alert('Error al guardar datos en el servidor');
+    }
+  };
 
   // Función para guardar datos del estudiante
   const saveStudentData = async () => {
@@ -147,6 +127,7 @@ const saveToXAMPP = async () => {
     setIsSubmitting(true);
     
     try {
+      await saveToBackend();
       setShowStudentForm(false);
       setTimerActive(true);
     } catch (error) {
@@ -461,14 +442,12 @@ const saveToXAMPP = async () => {
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
       
-      // Verificar si debemos mostrar un minijuego después de este subtest
       if (minigameSubtests.includes(currentSubtest)) {
         setShowMiniGame(true);
         setMiniGameType(currentSubtest === 3 ? 'egg' : 'snake');
         return;
       }
       
-      // Si no hay minijuego, avanzar al siguiente subtest o terminar
       if (nextSubtest < subtests.length) {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
@@ -488,7 +467,7 @@ const saveToXAMPP = async () => {
     if (totalScore > 30) {
       launchConfetti();
     }
-    saveToXAMPP();
+    saveToBackend();
   };
 
   // Función para completar minijuego
@@ -578,7 +557,6 @@ const saveToXAMPP = async () => {
       [name]: value
     }));
     
-    // Limpiar error si se corrige
     if (formErrors[name]) {
       setFormErrors(prev => {
         const newErrors = { ...prev };
@@ -886,7 +864,7 @@ const saveToXAMPP = async () => {
           <div 
             className={styles.progressFill} 
             style={{ 
-              width: `${(currentSubtest + (currentItem / subtests[currentSubtest].items.length) / subtests.length) * 100}%` 
+              width: `${((currentSubtest + currentItem / subtests[currentSubtest].items.length) / subtests.length) * 100}%` 
             }}
           ></div>
         </div>
