@@ -129,21 +129,21 @@ const ProCalculo7: React.FC = () => {
       maxScore: 12,
       items: [
         { 
-          question: "¿Cuántos puntos hay en la imagen? (13 puntos)", 
+          question: "¿Cuántos globos hay en la imagen? (13 puntos)", 
           answer: "13", 
           points: 4,
           type: "escrito",
           image: '/img/puntos13.jpg'
         },
         { 
-          question: "¿Cuántos puntos hay en la imagen? (8 puntos)", 
+          question: "¿Cuántos paletas hay en la imagen? (8 puntos)", 
           answer: "8", 
           points: 4,
           type: "escrito",
           image: '/img/puntos8.jpg'
         },
         { 
-          question: "¿Cuántos puntos hay en la imagen? (10 puntos)", 
+          question: "¿Cuántos autos hay en la imagen? (10 puntos)", 
           answer: "10", 
           points: 4,
           type: "escrito",
