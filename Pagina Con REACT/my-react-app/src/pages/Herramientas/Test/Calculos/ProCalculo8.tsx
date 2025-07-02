@@ -400,15 +400,15 @@ const ProCalculo8: React.FC = () => {
       maxScore: 4,
       items: [
         { 
-          question: "¿Cuántas pelotas hay en la imagen? (57 pelotas)", 
-          answer: "57", 
+          question: "¿Cuántas pelotas hay en la imagen? 54", 
+          answer: "54", 
           points: 2,
           type: "escrito",
           image: '/img/pelotas57.jpg'
         },
         { 
-          question: "¿Cuántos vasos hay en la imagen? (83 vasos)", 
-          answer: "83", 
+          question: "¿Cuántos vasos hay en la imagen? (66 vasos)", 
+          answer: "66", 
           points: 2,
           type: "escrito",
           image: '/img/vasos83.jpg'
@@ -431,7 +431,7 @@ const ProCalculo8: React.FC = () => {
           answer: "poco", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/2_nubes.png'
         },
         { 
           question: "¿8 niños en una familia es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
