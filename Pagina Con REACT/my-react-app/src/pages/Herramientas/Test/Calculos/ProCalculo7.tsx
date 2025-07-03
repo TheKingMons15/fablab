@@ -223,7 +223,7 @@ const ProCalculo7: React.FC = () => {
           type: "escrito",
           image: ''
         },
-        { 
+        {   
           question: "10 - 3", 
           answer: "7", 
           points: 2,
@@ -251,28 +251,28 @@ const ProCalculo7: React.FC = () => {
       maxScore: 8,
       items: [
         { 
-          question: "Lee este número: 57", 
+          question: "Lee y escribe con palabras minúsculas el número: 57", 
           answer: "cincuenta y siete", 
           points: 2,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Lee este número: 15", 
+          question: "Lee y escribe con palabras minúsculas el número: 15", 
           answer: "quince", 
           points: 2,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Lee este número: 138", 
+          question: "Lee y escribe con palabras minúsculas el número: 138", 
           answer: "ciento treinta y ocho", 
           points: 2,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Lee este número: 9", 
+          question: "Lee y escribe con palabras minúsculas el número: 9", 
           answer: "nueve", 
           points: 2,
           type: "escrito",

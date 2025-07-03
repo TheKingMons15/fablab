@@ -196,7 +196,7 @@ const ProCalculo6: React.FC = () => {
       ]
     },
     {
-      name: "Cálculo mental",
+      name: "Cálculo mental oral",
       maxScore: 12,
       items: [
         { 
@@ -248,28 +248,28 @@ const ProCalculo6: React.FC = () => {
       maxScore: 8,
       items: [
         { 
-          question: "Escribe con palabras minúsculas el número: 57", 
+          question: "Lee y escribe con palabras minúsculas el número: 57", 
           answer: "cincuenta y siete", 
           points: 2,
           type: "escrito",
           image: '/img/cincuenta_siete.jpg'
         },
         { 
-          question: "Escribe con palabras minúsculas el número: 15", 
+          question: "Lee y escribe con palabras minúsculas el número: 15", 
           answer: "quince", 
           points: 2,
           type: "escrito",
           image: '/img/quince.jpg'
         },
         { 
-          question: "Escribe con palabras minúsculas el número: 138", 
+          question: "Lee y escribe con palabras minúsculas el número: 138", 
           answer: "ciento treinta y ocho", 
           points: 2,
           type: "escrito",
           image: '/img/ciento_treinta_ocho.jpg'
         },
         { 
-          question: "Escribe con palabras minúsculas el número: 9", 
+          question: "Lee y escribe con palabras minúsculas el número: 9", 
           answer: "nueve", 
           points: 2,
           type: "escrito",
