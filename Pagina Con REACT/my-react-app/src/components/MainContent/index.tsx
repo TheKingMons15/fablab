@@ -102,17 +102,17 @@ const MainContent = () => {
             <div className={styles.misionCard}>
               <FaBullseye className={styles.icon} />
               <h2>Misión</h2>
-              <p>Ser un referente regional en innovación, educación y emprendimiento tecnológico, impulsando la fabricación digital, 
-                la creatividad y la transferencia de conocimiento, con impacto social y económico en la provincia del Carchi y la zona 
-                fronteriza, integrando a la academia, la industria y la comunidad.</p>
+              <p>Fomentar el aprendizaje práctico, la investigación aplicada y el desarrollo de soluciones tecnológicas mediante 
+                el uso de herramientas de fabricación digital. El FabLab UPEC ofrece un espacio abierto e inclusivo donde estudiantes, 
+                docentes, emprendedores y ciudadanía colaboran para transformar ideas en prototipos funcionales, promoviendo el desarrollo sostenible, 
+                la cultura maker y la innovación en la región.</p>
             </div>
             <div className={styles.visionCard}>
               <FaEye className={styles.icon} />
               <h2>Visión</h2>
-              <p>Fomentar el aprendizaje práctico, la investigación aplicada y el desarrollo de soluciones tecnológicas mediante el uso 
-                de herramientas de fabricación digital. El FabLab UPEC ofrece un espacio abierto e inclusivo donde estudiantes, docentes, 
-                emprendedores y ciudadanía colaboran para transformar ideas en prototipos funcionales, promoviendo el desarrollo sostenible, 
-                la cultura maker y la innovación en la región.</p>
+              <p>Ser un referente regional en innovación, educación y emprendimiento tecnológico, impulsando la fabricación digital, la creatividad y la 
+                transferencia de conocimiento, con impacto social y económico en la provincia del Carchi y la zona fronteriza, integrando a la academia, 
+                la industria y la comunidad.</p>
               </div>
           </div>
         </div>
