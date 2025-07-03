@@ -161,10 +161,10 @@ const ProCalculo6: React.FC = () => {
       items: [
         { 
           question: "Escribe los números del 10 al 0 en orden descendente, separados por comas", 
-          answer: "10,9,8,7,6,5,4,3,2,1,0", 
+          answer: "10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0", 
           points: 2,
           type: "escrito",
-          image: '/img/contar-atras.jpg'
+          image: '/img/Contar10_0.jpg'
         }
       ]
     },
@@ -177,21 +177,21 @@ const ProCalculo6: React.FC = () => {
           answer: "7", 
           points: 2,
           type: "escrito",
-          image: '/img/numeros/siete.jpg'
+          image: '/img/Escribe_7.jpg'
         },
         { 
           question: "Escribe el número 'veinte'", 
           answer: "20", 
           points: 2,
           type: "escrito",
-          image: '/img/numeros/veinte.jpg'
+          image: '/img/Escribe_20.jpg'
         },
         { 
           question: "Escribe el número 'trescientos cinco'", 
           answer: "305", 
           points: 2,
           type: "escrito",
-          image: '/img/numeros/trescientos.jpg'
+          image: '/img/Escribe_305.jpg'
         }
       ]
     },
@@ -204,42 +204,42 @@ const ProCalculo6: React.FC = () => {
           answer: "20", 
           points: 2,
           type: "escrito",
-          image: '/img/calculos/suma10.jpg'
+          image: '/img/Sumar10_10.jpg'
         },
         { 
           question: "1 + 15", 
           answer: "16", 
           points: 2,
           type: "escrito",
-          image: '/img/calculos/suma15.jpg'
+          image: '/img/Sumar1_15.jpg'
         },
         { 
           question: "2 + 7", 
           answer: "9", 
           points: 2,
           type: "escrito",
-          image: '/img/calculos/suma7.jpg'
+          image: '/img/Sumar2_7.jpg'
         },
         { 
           question: "10 - 3", 
           answer: "7", 
           points: 2,
           type: "escrito",
-          image: '/img/calculos/resta3.jpg'
+          image: '/img/Restar10_3.jpg'
         },
         { 
           question: "18 - 6", 
           answer: "12", 
           points: 2,
           type: "escrito",
-          image: '/img/calculos/resta6.jpg'
+          image: '/img/Restar18_6.jpg'
         },
         { 
           question: "7 - 4", 
           answer: "3", 
           points: 2,
           type: "escrito",
-          image: '/img/calculos/resta4.jpg'
+          image: '/img/Restar7_4.jpg'
         }
       ]
     },
@@ -248,32 +248,32 @@ const ProCalculo6: React.FC = () => {
       maxScore: 8,
       items: [
         { 
-          question: "Escribe con palabras el número: 57", 
+          question: "Escribe con palabras minúsculas el número: 57", 
           answer: "cincuenta y siete", 
           points: 2,
           type: "escrito",
-          image: '/img/numeros/lectura57.jpg'
+          image: '/img/cincuenta_siete.jpg'
         },
         { 
-          question: "Escribe con palabras el número: 15", 
+          question: "Escribe con palabras minúsculas el número: 15", 
           answer: "quince", 
           points: 2,
           type: "escrito",
-          image: '/img/numeros/lectura15.jpg'
+          image: '/img/quince.jpg'
         },
         { 
-          question: "Escribe con palabras el número: 138", 
+          question: "Escribe con palabras minúsculas el número: 138", 
           answer: "ciento treinta y ocho", 
           points: 2,
           type: "escrito",
-          image: '/img/numeros/lectura138.jpg'
+          image: '/img/ciento_treinta_ocho.jpg'
         },
         { 
-          question: "Escribe con palabras el número: 9", 
+          question: "Escribe con palabras minúsculas el número: 9", 
           answer: "nueve", 
           points: 2,
           type: "escrito",
-          image: '/img/numeros/lectura9.jpg'
+          image: '/img/nueve.jpg'
         }
       ]
     },
@@ -367,14 +367,14 @@ const ProCalculo6: React.FC = () => {
           answer: "15", 
           points: 1,
           type: "escrito",
-          image: '/img/numeros/quince.jpg'
+          image: '/img/cifra_quince.jpg'
         },
         { 
           question: "Escribe el número 'veinticinco'", 
           answer: "25", 
           points: 1,
           type: "escrito",
-          image: '/img/numeros/veinticinco.jpg'
+          image: '/img/cifra_veinticinco.jpg'
         }
       ]
     }
