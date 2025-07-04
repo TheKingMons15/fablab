@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
+import SnakeGame from '../../Minijuego/SnakeGame';
 
 interface QuestionItem {
   question: string;
@@ -19,7 +21,7 @@ interface Subtest {
 }
 
 const ProCalculo7: React.FC = () => {
-  // Estados del test
+  const navigate = useNavigate();
   const [currentSubtest, setCurrentSubtest] = useState(0);
   const [currentItem, setCurrentItem] = useState(0);
   const [score, setScore] = useState<number[]>(Array(12).fill(0));
@@ -30,11 +32,10 @@ const ProCalculo7: React.FC = () => {
   const [writtenAnswer, setWrittenAnswer] = useState('');
   const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
+  const [miniGameType, setMiniGameType] = useState<'egg' | 'snake'>('egg');
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [timerActive, setTimerActive] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
-
-  // Estados del formulario
   const [studentData, setStudentData] = useState({
     nombres: '',
     apellidos: '',
@@ -47,11 +48,12 @@ const ProCalculo7: React.FC = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Efecto para el temporizador
+  const minigameSubtests = [3, 6, 9];
+
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
-    if (!showStudentForm && timerActive && timeLeft > 0) {
+    if (!showStudentForm && timerActive && timeLeft > 0 && !showMiniGame) {
       timer = setTimeout(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
@@ -68,9 +70,8 @@ const ProCalculo7: React.FC = () => {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm]);
+  }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm, showMiniGame]);
 
-  // Función para validar el formulario
   const validateForm = () => {
     const errors: Record<string, string> = {};
     const edadNum = parseInt(studentData.edad);
@@ -87,17 +88,13 @@ const ProCalculo7: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  // Función para guardar datos del estudiante (simulado)
   const saveStudentData = async () => {
     if (!validateForm()) return;
     
     setIsSubmitting(true);
     
     try {
-      // Simulamos el envío a la API con un retraso
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Iniciamos el test después de "guardar" los datos
       setShowStudentForm(false);
       setTimerActive(true);
     } catch (error) {
@@ -108,21 +105,18 @@ const ProCalculo7: React.FC = () => {
     }
   };
 
-  // Función para formatear el tiempo
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Función para normalizar texto (comparación de respuestas)
   const normalizeText = (text: string): string => {
     return text.toLowerCase()
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       .trim();
   };
 
-  // Definición de los subtests y preguntas para 7 años
   const subtests: Subtest[] = [
     {
       name: "Enumeración",
@@ -223,7 +217,7 @@ const ProCalculo7: React.FC = () => {
           type: "escrito",
           image: ''
         },
-        {   
+        { 
           question: "10 - 3", 
           answer: "7", 
           points: 2,
@@ -464,7 +458,6 @@ const ProCalculo7: React.FC = () => {
     }
   ];
 
-  // Función para manejar respuestas
   const handleAnswer = (selectedAnswer: string | number) => {
     if (showFeedback || timeUp) return;
     
@@ -489,7 +482,6 @@ const ProCalculo7: React.FC = () => {
     }, 2000);
   };
 
-  // Función para avanzar a la siguiente pregunta
   const moveToNextItem = () => {
     setShowFeedback(false);
     setCorrectAnswer(null);
@@ -499,56 +491,50 @@ const ProCalculo7: React.FC = () => {
     
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
-      if (nextSubtest > 0 && nextSubtest % 3 === 0 && nextSubtest < subtests.length) {
+      
+      if (minigameSubtests.includes(currentSubtest)) {
         setShowMiniGame(true);
+        setMiniGameType(currentSubtest === 3 || currentSubtest === 9 ? 'egg' : 'snake');
         return;
       }
-    }
-    
-    if (currentItem + 1 < subtests[currentSubtest].items.length) {
-      setCurrentItem(currentItem + 1);
-    } else {
-      if (currentSubtest + 1 < subtests.length) {
-        setCurrentSubtest(currentSubtest + 1);
+      
+      if (nextSubtest < subtests.length) {
+        setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        setShowResult(true);
-        setTimerActive(false);
-        const totalScore = score.reduce((a, b) => a + b, 0);
-        if (totalScore > 50) {
-          launchConfetti();
-        }
+        finishTest();
       }
+    } else {
+      setCurrentItem(currentItem + 1);
     }
   };
 
-  // Función para completar minijuego
+  const finishTest = () => {
+    setShowResult(true);
+    setTimerActive(false);
+    const totalScore = score.reduce((a, b) => a + b, 0);
+    if (totalScore > 50) {
+      launchConfetti();
+    }
+  };
+
   const handleMiniGameComplete = (success: boolean) => {
     setShowMiniGame(false);
-
-    if (success) {
-      setAnimation('correct');
-    } else {
-      setAnimation('wrong');
-    }
+    setAnimation(success ? 'correct' : 'wrong');
     
     setTimeout(() => {
       setAnimation('');
-      if (currentSubtest + 1 < subtests.length) {
-        setCurrentSubtest(currentSubtest + 1);
+      const nextSubtest = currentSubtest + 1;
+      
+      if (nextSubtest < subtests.length) {
+        setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        setShowResult(true);
-        setTimerActive(false);
-        const totalScore = score.reduce((a, b) => a + b, 0);
-        if (totalScore > 50) {
-          launchConfetti();
-        }
+        finishTest();
       }
     }, 1000);
   };
 
-  // Función para lanzar confeti
   const launchConfetti = () => {
     confetti({
       particleCount: 100,
@@ -557,7 +543,6 @@ const ProCalculo7: React.FC = () => {
     });
   };
 
-  // Función para reiniciar el test
   const restartTest = () => {
     setCurrentSubtest(0);
     setCurrentItem(0);
@@ -569,13 +554,13 @@ const ProCalculo7: React.FC = () => {
     setWrittenAnswer('');
     setWrittenAnswerConfirmed(false);
     setShowMiniGame(false);
+    setMiniGameType('egg');
     setTimeLeft(25 * 60);
     setTimerActive(false);
     setTimeUp(false);
     setShowStudentForm(true);
   };
 
-  // Función para obtener mensaje de resultado
   const getResultMessage = () => {
     const totalScore = score.reduce((a, b) => a + b, 0);
     const percentage = (totalScore / 87) * 100;
@@ -590,7 +575,6 @@ const ProCalculo7: React.FC = () => {
     return "¡Sigue practicando! 💪";
   };
 
-  // Funciones para manejar respuestas escritas
   const handleConfirmAnswer = () => {
     if (writtenAnswer.trim()) {
       handleAnswer(writtenAnswer.trim());
@@ -608,7 +592,6 @@ const ProCalculo7: React.FC = () => {
     }
   };
 
-  // Función para manejar cambios en el formulario
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setStudentData(prev => ({
@@ -616,7 +599,6 @@ const ProCalculo7: React.FC = () => {
       [name]: value
     }));
     
-    // Limpiar error si se corrige
     if (formErrors[name]) {
       setFormErrors(prev => {
         const newErrors = { ...prev };
@@ -626,7 +608,6 @@ const ProCalculo7: React.FC = () => {
     }
   };
 
-  // Renderizado del formulario de estudiante
   const renderStudentForm = () => (
     <div className={styles.studentFormContainer}>
       <div className={styles.studentFormCard}>
@@ -748,7 +729,6 @@ const ProCalculo7: React.FC = () => {
     </div>
   );
 
-  // Renderizado del campo de entrada de texto
   const renderInputField = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
     
@@ -816,7 +796,6 @@ const ProCalculo7: React.FC = () => {
     );
   };
 
-  // Renderizado de la pregunta actual
   const renderQuestion = () => {
     const currentSubtestData = subtests[currentSubtest];
     const currentQuestion = currentSubtestData.items[currentItem];
@@ -841,7 +820,110 @@ const ProCalculo7: React.FC = () => {
     );
   };
 
-  // Renderizado principal del componente
+  const renderMiniGame = () => (
+    <div className={styles.miniGameContainer}>
+      {miniGameType === 'egg' ? (
+        <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
+      ) : (
+        <SnakeGame onComplete={handleMiniGameComplete} />
+      )}
+    </div>
+  );
+
+  const renderResults = () => (
+    <section className={styles.resultSection}>
+      <div className={styles.resultContainer}>
+        <h2 className={styles.resultTitle}>
+          {getResultMessage()}
+        </h2>
+        
+        <div className={styles.scoreCard}>
+          <div className={styles.scoreVisual}>
+            <div className={styles.scoreCircle}>
+              <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
+              <span className={styles.scoreTotal}>/87</span>
+            </div>
+            {timeUp && (
+              <div className={styles.timeUpWarning}>
+                ⏰ El tiempo ha terminado
+              </div>
+            )}
+          </div>
+          
+          <p className={styles.scoreText}>
+            Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 87 puntos
+          </p>
+          
+          <div className={styles.subtestScores}>
+            <h3>Puntuación por subtest:</h3>
+            <ul>
+              {subtests.map((subtest, index) => (
+                <li key={index}>
+                  {subtest.name}: {score[index]} / {subtest.maxScore}
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          <div className={styles.actionsContainer}>
+            <button className={styles.restartButton} onClick={restartTest}>
+              <FaRedo /> Intentar de nuevo
+            </button>
+            <button 
+              className={styles.homeButton} 
+              onClick={() => navigate('/herramientas/test')}
+            >
+              Elegir otra prueba
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+
+  const renderTestInProgress = () => (
+    <>
+      <section className={styles.testHeader}>
+        <div className={styles.titleWrapper}>
+          <h1 className={styles.testTitle}>
+            <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
+            Pro-Cálculo <span className={styles.ageBadge}>7 años</span>
+          </h1>
+        </div>
+        
+        <div className={styles.controlButtons}>
+          <a href="/Herramientas/test" className={styles.backButton}>
+            <FaArrowLeft /> Volver
+          </a>
+        </div>
+      </section>
+
+      <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
+        <div className={styles.progressBar}>
+          <div 
+            className={styles.progressFill} 
+            style={{ 
+              width: `${((currentSubtest + currentItem / subtests[currentSubtest].items.length) / subtests.length) * 100}%` 
+            }}
+          ></div>
+        </div>
+        
+        <div className={styles.questionInfo}>
+          <div className={styles.questionCounter}>
+            Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
+          </div>
+          <div className={styles.timer}>
+            <FaClock /> Tiempo restante: {formatTime(timeLeft)}
+          </div>
+        </div>
+        
+        <div className={styles.questionCard}>
+          {renderQuestion()}
+        </div>
+      </section>
+    </>
+  );
+
   return (
     <div className={styles.pageContainer}>
       <main className={styles.testContainer}>
@@ -850,98 +932,11 @@ const ProCalculo7: React.FC = () => {
         {showStudentForm ? (
           renderStudentForm()
         ) : showMiniGame ? (
-          <div className={styles.miniGameContainer}>
-            <RompeCabezasHuevos onComplete={handleMiniGameComplete} />
-          </div>
+          renderMiniGame()
+        ) : showResult ? (
+          renderResults()
         ) : (
-          <>
-            <section className={styles.testHeader}>
-              <div className={styles.titleWrapper}>
-                <h1 className={styles.testTitle}>
-                  <img src="/img/test.png" alt="Logo de Media Lab" className={styles.logoSmall} />
-                  Pro-Cálculo <span className={styles.ageBadge}>7 años</span>
-                </h1>
-              </div>
-              
-              <div className={styles.controlButtons}>
-                <a href="/Herramientas/test" className={styles.backButton}>
-                  <FaArrowLeft /> Volver
-                </a>
-              </div>
-            </section>
-
-            {!showResult ? (
-              <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
-                <div className={styles.progressBar}>
-                  <div 
-                    className={styles.progressFill} 
-                    style={{ 
-                      width: `${((currentSubtest + (currentItem / subtests[currentSubtest].items.length)) / subtests.length) * 100}%` 
-                    }}
-                  ></div>
-                </div>
-                
-                <div className={styles.questionInfo}>
-                  <div className={styles.questionCounter}>
-                    Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
-                  </div>
-                  <div className={styles.timer}>
-                    <FaClock /> Tiempo restante: {formatTime(timeLeft)}
-                  </div>
-                </div>
-                
-                <div className={styles.questionCard}>
-                  {renderQuestion()}
-                </div>
-              </section>
-            ) : (
-              <section className={styles.resultSection}>
-                <div className={styles.resultContainer}>
-                  <h2 className={styles.resultTitle}>
-                    {getResultMessage()}
-                  </h2>
-                  
-                  <div className={styles.scoreCard}>
-                    <div className={styles.scoreVisual}>
-                      <div className={styles.scoreCircle}>
-                        <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
-                        <span className={styles.scoreTotal}>/87</span>
-                      </div>
-                      {timeUp && (
-                        <div className={styles.timeUpWarning}>
-                          ⏰ El tiempo ha terminado
-                        </div>
-                      )}
-                    </div>
-                    
-                    <p className={styles.scoreText}>
-                      Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 87 puntos
-                    </p>
-                    
-                    <div className={styles.subtestScores}>
-                      <h3>Puntuación por subtest:</h3>
-                      <ul>
-                        {subtests.map((subtest, index) => (
-                          <li key={index}>
-                            {subtest.name}: {score[index]} / {subtest.maxScore}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div className={styles.actionsContainer}>
-                      <button className={styles.restartButton} onClick={restartTest}>
-                        <FaRedo /> Intentar de nuevo
-                      </button>
-                      <a href="/herramientas/test" className={styles.homeButton}>
-                        Elegir otra prueba
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </section>
-            )}
-          </>
+          renderTestInProgress()
         )}
       </main>
     </div>
