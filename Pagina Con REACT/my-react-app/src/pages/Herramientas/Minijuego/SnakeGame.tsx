@@ -71,7 +71,7 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
       if (onComplete) {
         onComplete(won);
       }
-    }, 100);
+    }, 10);
   }, [score, highScore, onComplete]);
 
   useEffect(() => {
