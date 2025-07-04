@@ -126,28 +126,28 @@ const ProCalculo8: React.FC = () => {
       maxScore: 16,
       items: [
         { 
-          question: "Escribe los números del 1 al 30", 
+          question: "Escribe los números del 1 al 30 seprados por comas. Ejemplo (1,2,...)", 
           answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
           points: 4,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Escribe los números del 1 al 30 nuevamente", 
+          question: "Escribe los números del 1 al 30 nuevamente seprados por comas. Ejemplo (1,2,...)", 
           answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
           points: 4,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Escribe los números del 1 al 30 una vez más", 
+          question: "Escribe los números del 1 al 30 una vez más seprados por comas. Ejemplo (1,2,...)", 
           answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
           points: 4,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Escribe los números del 1 al 30 una última vez", 
+          question: "Escribe los números del 1 al 30 una última vez seprados por comas. Ejemplo (1,2,...)", 
           answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
           points: 4,
           type: "escrito",
@@ -160,7 +160,7 @@ const ProCalculo8: React.FC = () => {
       maxScore: 2,
       items: [
         { 
-          question: "Escribe los números contando hacia atrás desde 23 hasta 0", 
+          question: "Escribe los números contando hacia atrás desde 23 hasta 0 seprados por comas. Ejemplo (1,2,...)", 
           answer: "23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", 
           points: 2,
           type: "escrito",
@@ -360,38 +360,45 @@ const ProCalculo8: React.FC = () => {
       items: [
         { 
           question: "Escribe dónde colocarías el número 56 en una escala del 0 al 100", 
-          answer: "56", 
+          answer: "2", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/escala_56.png'
         },
         { 
-          question: "Escribe dónde colocarías el número 80 en una escala del 0 al 100", 
-          answer: "80", 
+          question: "Escribe dónde colocarías el número 86 en una escala del 0 al 100", 
+          answer: "3", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/escala_86.png'
+        },
+        { 
+          question: "Escribe dónde colocarías el número 48 en una escala del 0 al 100", 
+          answer: "2", 
+          points: 2,
+          type: "escrito",
+          image: '/img/escala_48.png'
+        },
+        { 
+          question: "Escribe dónde colocarías el número 32 en una escala del 0 al 100", 
+          answer: "32", 
+          points: 2,
+          type: "escrito",
+          image: '/img/escala_32.png'
+        },
+        { 
+          question: "Escribe dónde colocarías el número 5 en una escala del 0 al 100", 
+          answer: "1", 
+          points: 2,
+          type: "escrito",
+          image: '/img/escala_5.png'
         },
         { 
           question: "Escribe dónde colocarías el número 62 en una escala del 0 al 100", 
-          answer: "62", 
+          answer: "2", 
           points: 2,
           type: "escrito",
-          image: ''
-        },
-        { 
-          question: "Escribe dónde colocarías el número 10 en una escala del 0 al 100", 
-          answer: "10", 
-          points: 2,
-          type: "escrito",
-          image: ''
-        },
-        { 
-          question: "Escribe dónde colocarías el número 35 en una escala del 0 al 100", 
-          answer: "35", 
-          points: 2,
-          type: "escrito",
-          image: ''
+          image: '/img/escala_62.png'
         }
       ]
     },
@@ -404,14 +411,14 @@ const ProCalculo8: React.FC = () => {
           answer: "54", 
           points: 2,
           type: "escrito",
-          image: '/img/pelotas57.jpg'
+          image: '/img/54_pelotas.png'
         },
         { 
-          question: "¿Cuántos vasos hay en la imagen? (66 vasos)", 
+          question: "¿Cuántos vasos hay en la imagen?", 
           answer: "66", 
           points: 2,
           type: "escrito",
-          image: '/img/vasos83.jpg'
+          image: '/img/66_vasos.png'
         }
       ]
     },
@@ -424,7 +431,7 @@ const ProCalculo8: React.FC = () => {
           answer: "mucho", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/4_profesores.png'
         },
         { 
           question: "¿2 nubes en el cielo es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
@@ -438,21 +445,21 @@ const ProCalculo8: React.FC = () => {
           answer: "más o menos", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/8_niños.png'
         },
         { 
           question: "¿10 hojas en un árbol es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
           answer: "poco", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/10_hojas.png'
         },
         { 
           question: "¿8 lámparas en una habitación es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
           answer: "mucho", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/8_lamparas.png'
         }
       ]
     },
