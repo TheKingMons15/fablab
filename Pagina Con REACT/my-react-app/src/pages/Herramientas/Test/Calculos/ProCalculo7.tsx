@@ -285,25 +285,32 @@ const ProCalculo7: React.FC = () => {
       maxScore: 6,
       items: [
         { 
+          question: "Escribe dónde colocarías el número 56 en una escala del 0 al 100", 
+          answer: "2", 
+          points: 2,
+          type: "escrito",
+          image: '/img/escala_56.png'
+        },
+        { 
           question: "¿Dónde colocarías el número 80 en una escala del 0 al 100?", 
           answer: "80", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/escala_80.png'
         },
         { 
           question: "¿Dónde colocarías el número 62 en una escala del 0 al 100?", 
           answer: "62", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/escala_62.png'
         },
         { 
           question: "¿Dónde colocarías el número 10 en una escala del 0 al 100?", 
           answer: "10", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/escala_10.png'
         }
       ]
     },
