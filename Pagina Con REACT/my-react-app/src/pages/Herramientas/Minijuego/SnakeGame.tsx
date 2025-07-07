@@ -15,12 +15,21 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
   const [speed, setSpeed] = useState(180);
   const [countdown, setCountdown] = useState(3);
   const [highScore, setHighScore] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(120); // 2 minutes in seconds
+  const lastDirectionChangeRef = useRef(0);
 
   // Configuración del juego optimizada para 20x20
   const gridSize = 20;
   const tileCount = 20;
   const canvasWidth = tileCount * gridSize;
   const canvasHeight = tileCount * gridSize;
+  const initialSpeed = 180;
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const generateFood = useCallback((currentSnake: { x: number; y: number }[]) => {
     let newFood: { x: number; y: number };
@@ -41,6 +50,7 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
     setDirection('right');
     setNextDirection('right');
     setFood(generateFood(newSnake));
+    setSpeed(initialSpeed); // Reset speed to initial value
     setGameState('countdown');
     setCountdown(3);
   }, [generateFood]);
@@ -55,7 +65,8 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
     setDirection('right');
     setNextDirection('right');
     setFood(generateFood(initialSnake));
-    setSpeed(180);
+    setSpeed(initialSpeed); // Reset speed to initial value
+    setTimeLeft(120); // Reset timer to 2 minutes
     setGameState('countdown');
     setCountdown(3);
   }, [generateFood]);
@@ -66,12 +77,11 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
     setGameState('menu');
     if (score > highScore) setHighScore(score);
     
-    // Llamar a onComplete después de un pequeño delay para que la UI se actualice
     setTimeout(() => {
       if (onComplete) {
         onComplete(won);
       }
-    }, 100);
+    }, 10);
   }, [score, highScore, onComplete]);
 
   useEffect(() => {
@@ -84,13 +94,18 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
     const gameLoop = () => {
       if (gameState !== 'playing') return;
 
-      setDirection(nextDirection);
-
       setSnake(currentSnake => {
         const newSnake = [...currentSnake];
         const head = { x: newSnake[0].x, y: newSnake[0].y };
 
-        switch (nextDirection) {
+        // Update direction only if sufficient time has passed
+        const currentTime = performance.now();
+        if (currentTime - lastDirectionChangeRef.current >= speed) {
+          setDirection(nextDirection);
+          lastDirectionChangeRef.current = currentTime;
+        }
+
+        switch (direction) { // Use current direction instead of nextDirection
           case 'up':
             head.y -= 1;
             break;
@@ -111,26 +126,33 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
             const newLives = currentLives - 1;
             if (newLives <= 0) {
               handleGameEnd(false);
+              return 0;
             } else {
-              setTimeout(resetGameAfterLife, 1000);
+              setTimeout(() => {
+                resetGameAfterLife();
+              }, 1000);
+              return newLives;
             }
-            return newLives;
           });
-          return currentSnake;
+          return currentSnake; // Return current snake to prevent movement during reset
         }
 
         // Verificar colisiones con el propio cuerpo
-        if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
+        // Check collision with body excluding the head itself
+        if (newSnake.slice(1).some(segment => segment.x === head.x && segment.y === head.y)) {
           setLives(currentLives => {
             const newLives = currentLives - 1;
             if (newLives <= 0) {
               handleGameEnd(false);
+              return 0;
             } else {
-              setTimeout(resetGameAfterLife, 1000);
+              setTimeout(() => {
+                resetGameAfterLife();
+              }, 1000);
+              return newLives;
             }
-            return newLives;
           });
-          return currentSnake;
+          return currentSnake; // Return current snake to prevent movement during reset
         }
 
         newSnake.unshift(head);
@@ -141,6 +163,7 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
             const newScore = currentScore + 1;
             if (newScore >= 20) {
               handleGameEnd(true);
+              return newScore;
             }
             return newScore;
           });
@@ -175,7 +198,7 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
         }
       }
 
-      // Líneas de cuadrícula más sutiles para el tablero más pequeño
+      // Líneas de cuadrícula más sutiles
       ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
       ctx.lineWidth = 0.5;
       for (let i = 0; i <= tileCount; i++) {
@@ -183,20 +206,18 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
         ctx.moveTo(i * gridSize, 0);
         ctx.lineTo(i * gridSize, canvas.height);
         ctx.stroke();
-        
         ctx.beginPath();
         ctx.moveTo(0, i * gridSize);
         ctx.lineTo(canvas.width, i * gridSize);
         ctx.stroke();
       }
 
-      // Dibujar serpiente con elementos ajustados al tamaño más pequeño
+      // Dibujar serpiente
       snake.forEach((segment, index) => {
         const x = segment.x * gridSize;
         const y = segment.y * gridSize;
         
         if (index === 0) {
-          // Cabeza de la serpiente
           const headGradient = ctx.createRadialGradient(
             x + gridSize/2, y + gridSize/2, 0,
             x + gridSize/2, y + gridSize/2, gridSize/2
@@ -208,12 +229,10 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
           ctx.fillStyle = headGradient;
           ctx.fillRect(x + 1, y + 1, gridSize - 2, gridSize - 2);
           
-          // Borde de la cabeza
           ctx.strokeStyle = '#BBDEFB';
           ctx.lineWidth = 1.5;
           ctx.strokeRect(x + 1, y + 1, gridSize - 2, gridSize - 2);
           
-          // Ojos ajustados al tamaño más pequeño
           ctx.fillStyle = '#FFEB3B';
           const eyeSize = 4;
           const eyeOffset = 4;
@@ -225,7 +244,6 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
           ctx.arc(x + gridSize - eyeOffset - eyeSize/2, y + eyeOffset + eyeSize/2, eyeSize/2, 0, Math.PI * 2);
           ctx.fill();
           
-          // Pupilas
           ctx.fillStyle = '#000000';
           ctx.beginPath();
           ctx.arc(x + eyeOffset + eyeSize/2, y + eyeOffset + eyeSize/2, 1.5, 0, Math.PI * 2);
@@ -234,7 +252,6 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
           ctx.arc(x + gridSize - eyeOffset - eyeSize/2, y + eyeOffset + eyeSize/2, 1.5, 0, Math.PI * 2);
           ctx.fill();
           
-          // Brillo en los ojos
           ctx.fillStyle = '#FFFFFF';
           ctx.beginPath();
           ctx.arc(x + eyeOffset + eyeSize/2 - 0.5, y + eyeOffset + eyeSize/2 - 0.5, 0.5, 0, Math.PI * 2);
@@ -242,9 +259,7 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
           ctx.beginPath();
           ctx.arc(x + gridSize - eyeOffset - eyeSize/2 - 0.5, y + eyeOffset + eyeSize/2 - 0.5, 0.5, 0, Math.PI * 2);
           ctx.fill();
-          
         } else {
-          // Cuerpo de la serpiente
           const alpha = Math.max(0.7, 1 - (index * 0.03));
           const bodyGradient = ctx.createRadialGradient(
             x + gridSize/2, y + gridSize/2, 0,
@@ -257,12 +272,10 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
           ctx.fillStyle = bodyGradient;
           ctx.fillRect(x + 2, y + 2, gridSize - 4, gridSize - 4);
           
-          // Borde del cuerpo
           ctx.strokeStyle = `rgba(129, 199, 132, ${alpha})`;
           ctx.lineWidth = 1;
           ctx.strokeRect(x + 2, y + 2, gridSize - 4, gridSize - 4);
           
-          // Patrón decorativo más pequeño
           if (index % 2 === 0) {
             ctx.fillStyle = `rgba(76, 175, 80, ${alpha * 0.5})`;
             ctx.fillRect(x + 6, y + 6, gridSize - 12, gridSize - 12);
@@ -270,18 +283,16 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
         }
       });
 
-      // Dibujar comida (manzana) ajustada al tamaño más pequeño
+      // Dibujar comida (manzana)
       const appleX = food.x * gridSize;
       const appleY = food.y * gridSize;
       const appleRadius = (gridSize / 2) - 2;
       
-      // Sombra de la manzana
       ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
       ctx.beginPath();
       ctx.arc(appleX + gridSize/2 + 1, appleY + gridSize/2 + 1, appleRadius, 0, Math.PI * 2);
       ctx.fill();
       
-      // Cuerpo principal de la manzana
       const appleGradient = ctx.createRadialGradient(
         appleX + gridSize/2 - 2, appleY + gridSize/2 - 2, 0,
         appleX + gridSize/2, appleY + gridSize/2, appleRadius
@@ -295,29 +306,24 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
       ctx.arc(appleX + gridSize/2, appleY + gridSize/2, appleRadius, 0, Math.PI * 2);
       ctx.fill();
       
-      // Brillo principal más pequeño
       ctx.fillStyle = '#FFCDD2';
       ctx.beginPath();
       ctx.arc(appleX + gridSize/2 - 3, appleY + gridSize/2 - 3, 2.5, 0, Math.PI * 2);
       ctx.fill();
       
-      // Brillo secundario
       ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
       ctx.arc(appleX + gridSize/2 - 2, appleY + gridSize/2 - 2, 1.5, 0, Math.PI * 2);
       ctx.fill();
       
-      // Tallo más pequeño
       ctx.fillStyle = '#8D6E63';
       ctx.fillRect(appleX + gridSize/2 - 1, appleY + 2, 2, 4);
       
-      // Hoja más pequeña
       ctx.fillStyle = '#4CAF50';
       ctx.beginPath();
       ctx.ellipse(appleX + gridSize/2 + 3, appleY + 3, 3, 2, Math.PI/4, 0, Math.PI * 2);
       ctx.fill();
       
-      // Detalles de la hoja
       ctx.strokeStyle = '#2E7D32';
       ctx.lineWidth = 0.5;
       ctx.beginPath();
@@ -339,7 +345,25 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
     return () => {
       if (gameInterval) clearInterval(gameInterval);
     };
-  }, [gameState, snake, food, nextDirection, speed, score, lives, highScore, generateFood, resetGameAfterLife, tileCount, gridSize, handleGameEnd]);
+  }, [gameState, snake, food, direction, nextDirection, speed, generateFood, resetGameAfterLife, tileCount, gridSize, handleGameEnd]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (gameState === 'playing' && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prev => {
+          if (prev <= 1) {
+            handleGameEnd(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => {
+      if (timer) clearInterval(timer);
+    };
+  }, [gameState, timeLeft, handleGameEnd]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -434,6 +458,7 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
             <ul>
               <li>🎯 Come 20 manzanas para ganar</li>
               <li>⚡ Tienes 3 vidas</li>
+              <li>⏰ Tienes 2 minutos</li>
               <li>🕹️ Usa las flechas o WASD</li>
               <li>⏸️ Espacio para pausar</li>
               <li>🚪 ESC para salir</li>
@@ -460,11 +485,15 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
           <div className={styles.gameStats}>
             <div className={styles.statItem}>
               <span className={styles.statLabel}>Puntuación:</span>
-              <span className={styles.statValue}>{score}</span>
+              <span className={styles.statValue}>{score}/20</span>
             </div>
             <div className={styles.statItem}>
               <span className={styles.statLabel}>Vidas:</span>
               <span className={styles.statValue}>{'❤️'.repeat(lives)}</span>
+            </div>
+            <div className={styles.statItem}>
+              <span className={styles.statLabel}>Tiempo:</span>
+              <span className={styles.statValue}>{formatTime(timeLeft)}</span>
             </div>
           </div>
         </div>
@@ -492,6 +521,10 @@ const SnakeGame: React.FC<{ onComplete?: (success: boolean) => void }> = ({ onCo
           <div className={styles.statItem}>
             <span className={styles.statLabel}>Vidas</span>
             <span className={styles.statValue}>{'❤️'.repeat(lives)}</span>
+          </div>
+          <div className={styles.statItem}>
+            <span className={styles.statLabel}>Tiempo</span>
+            <span className={styles.statValue}>{formatTime(timeLeft)}</span>
           </div>
           <div className={styles.statItem}>
             <span className={styles.statLabel}>Récord</span>
