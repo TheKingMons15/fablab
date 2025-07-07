@@ -23,7 +23,7 @@
   position: absolute;
   top: -5px;
   left: -5px;
-  right: -5px;
+  right: -10px;
   bottom: -5px;
   background: linear-gradient(45deg, #f8d486, #f1c40f, #f8d486, #ffd700);
   z-index: -1;
