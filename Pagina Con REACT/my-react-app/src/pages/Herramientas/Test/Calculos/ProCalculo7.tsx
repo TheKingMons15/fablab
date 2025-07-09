@@ -201,7 +201,7 @@ const ProCalculo7: React.FC = () => {
           answer: "20", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: 'lista'
         },
         { 
           question: "1 + 15", 
