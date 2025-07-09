@@ -279,7 +279,7 @@ const ProCalculo7: React.FC = () => {
       maxScore: 6,
       items: [
         { 
-          question: "Escribe dónde colocarías el número 56 en una escala del 0 al 100", 
+          question: "Escribe el dónde colocarías el número 56 en una escala del 0 al 100 (elige 1, 2 o 3)", 
           answer: "2", 
           points: 2,
           type: "escrito",
