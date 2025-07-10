@@ -357,28 +357,28 @@ const ProCalculo7: React.FC = () => {
           answer: "7", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Restar12_5.png'
         },
         { 
           question: "16 - 4", 
           answer: "12", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Restar16_4.png'
         },
         { 
           question: "6 + 7", 
           answer: "13", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Sumar6_7.png'
         },
         { 
           question: "4 + (4+3) + (7-2)", 
           answer: "16", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Sumar4_0.png'
         }
       ]
     },
