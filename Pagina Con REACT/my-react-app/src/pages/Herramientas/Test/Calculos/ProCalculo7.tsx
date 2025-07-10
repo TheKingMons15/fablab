@@ -154,7 +154,7 @@ const ProCalculo7: React.FC = () => {
           answer: "15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Contar15_0.png'
         }
       ]
     },
@@ -167,28 +167,28 @@ const ProCalculo7: React.FC = () => {
           answer: "38", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Escritura de números_38.png'
         },
         { 
           question: "Escribe el número 'ciento sesenta y nueve'", 
           answer: "169", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Escritura de números_169.png'
         },
         { 
           question: "Escribe el número 'noventa y siete'", 
           answer: "97", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Escritura de números_97.png'
         },
         { 
           question: "Escribe el número 'mil doscientos'", 
           answer: "1200", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Escritura de números_1200.png'
         }
       ]
     },
@@ -201,42 +201,42 @@ const ProCalculo7: React.FC = () => {
           answer: "20", 
           points: 2,
           type: "escrito",
-          image: 'lista'
+          image: '/img/Sumar10_10.jpg'
         },
         { 
           question: "1 + 15", 
           answer: "16", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Sumar1_15.jpg'
         },
         { 
           question: "12 + 7", 
           answer: "19", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Sumar12_7.png'
         },
         { 
           question: "10 - 3", 
           answer: "7", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Restar10_3.jpg'
         },
         { 
           question: "18 - 6", 
           answer: "12", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Restar18_6.jpg'
         },
         { 
           question: "25 - 12", 
           answer: "13", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Restar25_12.png.'
         }
       ]
     },
@@ -249,28 +249,28 @@ const ProCalculo7: React.FC = () => {
           answer: "cincuenta y siete", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Lectura de números cincuenta_siete.jpg'
         },
         { 
           question: "Lee y escribe con palabras minúsculas el número: 15", 
           answer: "quince", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Lectura de números quince.jpg'
         },
         { 
           question: "Lee y escribe con palabras minúsculas el número: 138", 
           answer: "ciento treinta y ocho", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Lectura de números ciento_treinta_ocho.jpg'
         },
         { 
           question: "Lee y escribe con palabras minúsculas el número: 9", 
           answer: "nueve", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Lectura de números nueve.jpg'
         }
       ]
     },
@@ -313,11 +313,11 @@ const ProCalculo7: React.FC = () => {
       maxScore: 4,
       items: [
         { 
-          question: "¿Cuántas pelotas y vasos hay? Escribe: número de pelotas / número de vasos (ej: 57/83)", 
-          answer: "57/83", 
+          question: "¿Cuántas pelotas y vasos hayen total? Escribe: número de pelotas y número de vasos totales", 
+          answer: "16", 
           points: 4,
           type: "escrito",
-          image: ''
+          image: '/img/Estimación perceptiva_16.png'
         }
       ]
     },
@@ -357,28 +357,28 @@ const ProCalculo7: React.FC = () => {
           answer: "7", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Restar12_5.png'
         },
         { 
           question: "16 - 4", 
           answer: "12", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Restar16_4.png'
         },
         { 
           question: "6 + 7", 
           answer: "13", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Sumar6_7.png'
         },
         { 
           question: "4 + (4+3) + (7-2)", 
           answer: "16", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/Sumar4_0.png'
         }
       ]
     },
