@@ -23,6 +23,7 @@ interface Subtest {
 
 const ProCalculo6: React.FC = () => {
   const navigate = useNavigate();
+  // Estados del test
   const [currentSubtest, setCurrentSubtest] = useState(0);
   const [currentItem, setCurrentItem] = useState(0);
   const [score, setScore] = useState<number[]>(Array(9).fill(0));
@@ -37,6 +38,10 @@ const ProCalculo6: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(20 * 60);
   const [timerActive, setTimerActive] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
+  const [_, forceUpdate] = React.useReducer(x => x + 1, 0);
+  const [studentId, setStudentId] = useState<string | null>(null);
+
+  // Estados del formulario
   const [studentData, setStudentData] = useState({
     nombres: '',
     apellidos: '',
@@ -48,10 +53,11 @@ const ProCalculo6: React.FC = () => {
   const [showStudentForm, setShowStudentForm] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [studentId, setStudentId] = useState<number | null>(null); // Nuevo estado para el ID del estudiante
 
+  // Array que define en qué subtests mostrar minijuegos
   const minigameSubtests = [3, 6];
 
+  // Efecto para el temporizador
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
@@ -67,6 +73,7 @@ const ProCalculo6: React.FC = () => {
       if (totalScore > 30) {
         launchConfetti();
       }
+      saveTestResults();
     }
     
     return () => {
@@ -74,20 +81,29 @@ const ProCalculo6: React.FC = () => {
     };
   }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm, showMiniGame]);
 
-  const validateForm = () => {
-    const errors: Record<string, string> = {};
-    const edadNum = parseInt(studentData.edad);
-
-    if (!studentData.nombres.trim()) errors.nombres = 'Por favor ingresa los nombres';
-    if (!studentData.apellidos.trim()) errors.apellidos = 'Por favor ingresa los apellidos';
-    if (!studentData.edad || isNaN(edadNum)) errors.edad = 'Edad inválida';
-    if (edadNum < 5 || edadNum > 12) errors.edad = 'La edad debe estar entre 5 y 12 años';
-    if (!studentData.genero) errors.genero = 'Selecciona un género';
-    if (!studentData.curso.trim()) errors.curso = 'Ingresa el curso/grado';
-    if (!studentData.institucion.trim()) errors.institucion = 'Ingresa la institución';
+  const saveTestResults = async () => {
+    if (!studentId) return;
     
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+    try {
+      const response = await fetch('/procalculo-api/guardar-resultados', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentId,
+          score,
+          timeSpent: 20 * 60 - timeLeft,
+          completed: !timeUp
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al guardar resultados');
+      }
+
+      console.log('Resultados guardados exitosamente');
+    } catch (error) {
+      console.error('Error al guardar resultados:', error);
+    }
   };
 
   const saveStudentData = async () => {
@@ -115,14 +131,36 @@ const ProCalculo6: React.FC = () => {
 
       const data = await response.json();
       setStudentId(data.id);
+      
+      await new Promise(resolve => setTimeout(resolve, 50));
+      
       setShowStudentForm(false);
       setTimerActive(true);
+      
+      forceUpdate();
+      
     } catch (error) {
       console.error('Error al guardar datos:', error);
       alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    const edadNum = parseInt(studentData.edad);
+
+    if (!studentData.nombres.trim()) errors.nombres = 'Por favor ingresa los nombres';
+    if (!studentData.apellidos.trim()) errors.apellidos = 'Por favor ingresa los apellidos';
+    if (!studentData.edad || isNaN(edadNum)) errors.edad = 'Edad inválida';
+    if (edadNum < 5 || edadNum > 12) errors.edad = 'La edad debe estar entre 5 y 12 años';
+    if (!studentData.genero) errors.genero = 'Selecciona un género';
+    if (!studentData.curso.trim()) errors.curso = 'Ingresa el curso/grado';
+    if (!studentData.institucion.trim()) errors.institucion = 'Ingresa la institución';
+    
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const formatTime = (seconds: number): string => {
@@ -138,8 +176,256 @@ const ProCalculo6: React.FC = () => {
   };
 
   const subtests: Subtest[] = [
-    // ... (todos los subtests existentes se mantienen exactamente igual)
-    // Copia y pega aquí TODOS los subtests de tu versión original sin cambios
+    {
+      name: "Enumeración",
+      maxScore: 12,
+      items: [
+        { 
+          question: "¿Cuántos animales hay en la imagen?", 
+          answer: "5", 
+          points: 4,
+          type: "escrito",
+          image: '/img/5_animales.png'
+        },
+        { 
+          question: "¿Cuántos animales hay en la imagen?", 
+          answer: "8", 
+          points: 4,
+          type: "escrito",
+          image: '/img/8_animales.png'
+        },
+        { 
+          question: "¿Cuántos animales hay en la imagen?", 
+          answer: "10", 
+          points: 4,
+          type: "escrito",
+          image: '/img/10_animales.png'
+        }
+      ]
+    },
+    {
+      name: "Contar para atrás",
+      maxScore: 2,
+      items: [
+        { 
+          question: "Escribe los números del 10 al 0 en orden descendente, separados por comas", 
+          answer: "10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Contar10_0.jpg'
+        }
+      ]
+    },
+    {
+      name: "Escritura de números",
+      maxScore: 6,
+      items: [
+        { 
+          question: "Escribe el número 'siete'", 
+          answer: "7", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Escribe_7.jpg'
+        },
+        { 
+          question: "Escribe el número 'veinte'", 
+          answer: "20", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Escribe_20.jpg'
+        },
+        { 
+          question: "Escribe el número 'trescientos cinco'", 
+          answer: "305", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Escribe_305.jpg'
+        }
+      ]
+    },
+    {
+      name: "Cálculo mental oral",
+      maxScore: 12,
+      items: [
+        { 
+          question: "10 + 10", 
+          answer: "20", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Sumar10_10.jpg'
+        },
+        { 
+          question: "1 + 15", 
+          answer: "16", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Sumar1_15.jpg'
+        },
+        { 
+          question: "2 + 7", 
+          answer: "9", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Sumar2_7.jpg'
+        },
+        { 
+          question: "10 - 3", 
+          answer: "7", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Restar10_3.jpg'
+        },
+        { 
+          question: "18 - 6", 
+          answer: "12", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Restar18_6.jpg'
+        },
+        { 
+          question: "7 - 4", 
+          answer: "3", 
+          points: 2,
+          type: "escrito",
+          image: '/img/Restar7_4.jpg'
+        }
+      ]
+    },
+    {
+      name: "Lectura de números",
+      maxScore: 8,
+      items: [
+        { 
+          question: "Lee y escribe con palabras minúsculas el número: 57", 
+          answer: "cincuenta y siete", 
+          points: 2,
+          type: "escrito",
+          image: '/img/cincuenta_siete.jpg'
+        },
+        { 
+          question: "Lee y escribe con palabras minúsculas el número: 15", 
+          answer: "quince", 
+          points: 2,
+          type: "escrito",
+          image: '/img/quince.jpg'
+        },
+        { 
+          question: "Lee y escribe con palabras minúsculas el número: 138", 
+          answer: "ciento treinta y ocho", 
+          points: 2,
+          type: "escrito",
+          image: '/img/ciento_treinta_ocho.jpg'
+        },
+        { 
+          question: "Lee y escribe con palabras minúsculas el número: 9", 
+          answer: "nueve", 
+          points: 2,
+          type: "escrito",
+          image: '/img/nueve.jpg'
+        }
+      ]
+    },
+    {
+      name: "Estimación",
+      maxScore: 6,
+      items: [
+        { 
+          question: "¿2 nubes en el cielo es poco o mucho?", 
+          answer: "poco", 
+          points: 2,
+          type: "escrito",
+          image: '/img/2_nubes.png'
+        },
+        { 
+          question: "¿2 niños jugando en el recreo es poco o mucho?", 
+          answer: "poco", 
+          points: 2,
+          type: "escrito",
+          image: '/img/2_niños.png'
+        },
+        { 
+          question: "¿60 chicos en un cumpleaños es poco o mucho?", 
+          answer: "mucho", 
+          points: 2,
+          type: "escrito",
+          image: '/img/60_cumpleaños.png'
+        }
+      ]
+    },
+    {
+      name: "Resolución de problemas",
+      maxScore: 4,
+      items: [
+        { 
+          question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?", 
+          answer: "10", 
+          points: 2,
+          type: "escrito",
+          image: '/img/10_pelotas.png'
+        },
+        { 
+          question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
+          answer: "5", 
+          points: 2,
+          type: "escrito",
+          image: '/img/5_pelotas.png'
+        }
+      ]
+    },
+    {
+      name: "Adaptación",
+      maxScore: 8,
+      items: [
+        { 
+          question: "¿Cuánto crees que cuesta una bicicleta?", 
+          answer: "150", 
+          points: 2,
+          type: "escrito",
+          image: '/img/bicicleta.png'
+        },
+        { 
+          question: "¿Cuánto crees que cuesta una radio?", 
+          answer: "90", 
+          points: 2,
+          type: "escrito",
+          image: '/img/radio.png'
+        },
+        { 
+          question: "¿Cuánto crees que cuesta una pelota de cuero?", 
+          answer: "50", 
+          points: 2,
+          type: "escrito",
+          image: '/img/pelota.png'
+        },
+        { 
+          question: "¿Cuánto crees que cuesta una gaseosa?", 
+          answer: "1.50", 
+          points: 2,
+          type: "escrito",
+          image: '/img/gaseosa.png'
+        }
+      ]
+    },
+    {
+      name: "Escribir en cifra",
+      maxScore: 2,
+      items: [
+        { 
+          question: "Escribe el número 'quince'", 
+          answer: "15", 
+          points: 1,
+          type: "escrito",
+          image: '/img/cifra_quince.jpg'
+        },
+        { 
+          question: "Escribe el número 'veinticinco'", 
+          answer: "25", 
+          points: 1,
+          type: "escrito",
+          image: '/img/cifra_veinticinco.jpg'
+        }
+      ]
+    }
   ];
 
   const handleAnswer = (selectedAnswer: string | number) => {
@@ -193,42 +479,14 @@ const ProCalculo6: React.FC = () => {
     }
   };
 
-  const finishTest = async () => {
+  const finishTest = () => {
+    setShowResult(true);
+    setTimerActive(false);
     const totalScore = score.reduce((a, b) => a + b, 0);
-    
-    try {
-      const response = await fetch('/procalculo-api/guardar-estudiante', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          estudiante_id: studentId,
-          test_tipo: "ProCálculo6",
-          puntuacion_total: totalScore,
-          detalles: {
-            subtests: subtests.map((subtest, i) => ({
-              nombre: subtest.name,
-              puntuacion: score[i],
-              max_puntuacion: subtest.maxScore
-            })),
-            tiempo_utilizado: (20 * 60) - timeLeft
-          }
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al guardar resultados');
-      }
-
-      setShowResult(true);
-      if (totalScore > 30) {
-        launchConfetti();
-      }
-    } catch (error) {
-      console.error('Error al guardar resultados:', error);
-      alert('Ocurrió un error al guardar los resultados. Los datos se han perdido.');
-    } finally {
-      setTimerActive(false);
+    if (totalScore > 30) {
+      launchConfetti();
     }
+    saveTestResults();
   };
 
   const handleMiniGameComplete = (success: boolean) => {
@@ -272,7 +530,6 @@ const ProCalculo6: React.FC = () => {
     setTimerActive(false);
     setTimeUp(false);
     setShowStudentForm(true);
-    setStudentId(null);
   };
 
   const getResultMessage = () => {
