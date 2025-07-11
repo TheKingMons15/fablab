@@ -391,21 +391,21 @@ const ProCalculo7: React.FC = () => {
           answer: "654", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/comparacion_654.png'
         },
         { 
           question: "¿Cuál es mayor: 97 o 352? (Escribe el número mayor)", 
           answer: "352", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/comparacion_97.png'
         },
         { 
           question: "¿Cuál es mayor: 96 o 69? (Escribe el número mayor)", 
           answer: "96", 
           points: 2,
           type: "escrito",
-          image: ''
+          image: '/img/comparacion_96.png'
         }
       ]
     },
@@ -418,14 +418,14 @@ const ProCalculo7: React.FC = () => {
           answer: "0", 
           points: 6,
           type: "escrito",
-          image: ''
+          image: '/img/Determinacion_0.png'
         },
         { 
           question: "Escribe el número mayor en: 1234, 1993, 3000, 8520", 
           answer: "8520", 
           points: 6,
           type: "escrito",
-          image: ''
+          image: '/img/Determinacion_8520.png'
         }
       ]
     },
@@ -438,21 +438,21 @@ const ProCalculo7: React.FC = () => {
           answer: "138,139,140,141,142", 
           points: 1,
           type: "escrito",
-          image: ''
+          image: '/img/Escribir_en_cifra_137.png'
         },
         { 
           question: "Escribe los 5 números antes de 362 (separados por comas)", 
           answer: "361,360,359,358,357", 
           points: 1,
           type: "escrito",
-          image: ''
+          image: '/img/Escribir_en_cifra_362.2.png'
         },
         { 
           question: "Escribe los 5 números después de 362 (separados por comas)", 
           answer: "363,364,365,366,367", 
           points: 1,
           type: "escrito",
-          image: ''
+          image: '/img/Escribir_en_cifra_362.png'
         }
       ]
     }
