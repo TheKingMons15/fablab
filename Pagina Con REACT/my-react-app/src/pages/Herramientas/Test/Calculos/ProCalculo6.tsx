@@ -81,30 +81,59 @@ const ProCalculo6: React.FC = () => {
     };
   }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm, showMiniGame]);
 
-  const saveTestResults = async () => {
-    if (!studentId) return;
+ const saveTestResults = async () => {
+  if (!studentId) {
+    console.error('No hay ID de estudiante');
+    return;
+  }
+
+  try {
+    // Calcular puntuación total verificando cada subtest
+    const totalScore = subtests.reduce((total, subtest, index) => {
+      const subtestScore = Math.min(score[index], subtest.maxScore);
+      console.log(`${subtest.name}: ${subtestScore}/${subtest.maxScore}`);
+      return total + subtestScore;
+    }, 0);
+
+    console.log('Puntuación total calculada:', totalScore);
     
-    try {
-      const response = await fetch('/procalculo-api/guardar-resultados', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          studentId,
-          score,
-          timeSpent: 20 * 60 - timeLeft,
-          completed: !timeUp
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Error al guardar resultados');
+    const timeSpent = 20 * 60 - timeLeft;
+    
+    const testData = {
+      estudiante_id: parseInt(studentId),
+      test_tipo: "ProCálculo6",
+      puntuacion_total: totalScore,
+      detalles: {
+        subtests: subtests.map((subtest, index) => ({
+          nombre: subtest.name,
+          puntuacion: score[index],
+          max_puntuacion: subtest.maxScore
+        })),
+        tiempo_utilizado: timeSpent,
+        completado: !timeUp
       }
+    };
 
-      console.log('Resultados guardados exitosamente');
-    } catch (error) {
-      console.error('Error al guardar resultados:', error);
+    console.log('Datos a enviar:', JSON.stringify(testData, null, 2));
+
+    const response = await fetch('/procalculo-api/guardar-resultado', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(testData)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Error al guardar resultados');
     }
-  };
+
+    const result = await response.json();
+    console.log('Resultados guardados:', result);
+    
+  } catch (error) {
+    console.error('Error en saveTestResults:', error);
+  }
+};
 
   const saveStudentData = async () => {
     if (!validateForm()) return;
@@ -429,28 +458,36 @@ const ProCalculo6: React.FC = () => {
   ];
 
   const handleAnswer = (selectedAnswer: string | number) => {
-    if (showFeedback || timeUp) return;
-    
-    const currentQuestion = subtests[currentSubtest].items[currentItem];
-    const isCorrect = normalizeText(selectedAnswer.toString()) === 
-                     normalizeText(currentQuestion.answer.toString());
-    
-    setCorrectAnswer(isCorrect);
-    setShowFeedback(true);
-    
-    if (isCorrect) {
-      const newScore = [...score];
+  if (showFeedback || timeUp) return;
+  
+  const currentQuestion = subtests[currentSubtest].items[currentItem];
+  const isCorrect = normalizeText(selectedAnswer.toString()) === 
+                   normalizeText(currentQuestion.answer.toString());
+  
+  setCorrectAnswer(isCorrect);
+  setShowFeedback(true);
+  
+  if (isCorrect) {
+    setScore(prevScore => {
+      const newScore = [...prevScore];
+      // Suma los puntos al subtest actual
       newScore[currentSubtest] += currentQuestion.points;
-      setScore(newScore);
-      setAnimation('correct');
-    } else {
-      setAnimation('wrong');
-    }
-    
-    setTimeout(() => {
-      moveToNextItem();
-    }, 2000);
-  };
+      
+      // Debug: Mostrar puntuación actualizada
+      console.log(`Puntuación actualizada para ${subtests[currentSubtest].name}:`, 
+        newScore[currentSubtest], '/', subtests[currentSubtest].maxScore);
+      
+      return newScore;
+    });
+    setAnimation('correct');
+  } else {
+    setAnimation('wrong');
+  }
+  
+  setTimeout(() => {
+    moveToNextItem();
+  }, 2000);
+};
 
   const moveToNextItem = () => {
     setShowFeedback(false);
