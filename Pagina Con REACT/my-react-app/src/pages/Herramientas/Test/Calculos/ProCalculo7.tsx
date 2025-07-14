@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars, FaFilePdf } from 'react-icons/fa';
+import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars, FaFilePdf, FaFileWord } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
+import html2pdf from 'html2pdf.js';
+import { saveAs } from 'file-saver';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 import SnakeGame from '../../Minijuego/SnakeGame';
 
@@ -123,338 +125,110 @@ const ProCalculo7: React.FC = () => {
       name: "Enumeración",
       maxScore: 12,
       items: [
-        { 
-          question: "¿Cuántos globos hay en la imagen?", 
-          answer: "13", 
-          points: 4,
-          type: "escrito",
-          image: '/img/13_globos.png'
-        },
-        { 
-          question: "¿Cuántos paletas hay en la imagen?", 
-          answer: "8", 
-          points: 4,
-          type: "escrito",
-          image: '/img/8_paletas.png'
-        },
-        { 
-          question: "¿Cuántos autos hay en la imagen?", 
-          answer: "10", 
-          points: 4,
-          type: "escrito",
-          image: '/img/10_carros.png'
-        }
+        { question: "¿Cuántos globos hay en la imagen?", answer: "13", points: 4, type: "escrito", image: '/img/13_globos.png' },
+        { question: "¿Cuántos paletas hay en la imagen?", answer: "8", points: 4, type: "escrito", image: '/img/8_paletas.png' },
+        { question: "¿Cuántos autos hay en la imagen?", answer: "10", points: 4, type: "escrito", image: '/img/10_carros.png' }
       ]
     },
     {
       name: "Contar para atrás",
       maxScore: 2,
       items: [
-        { 
-          question: "Escribe los números contando hacia atrás desde 15 hasta 0 (separados por comas)", 
-          answer: "15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Contar15_0.png'
-        }
+        { question: "Escribe los números contando hacia atrás desde 15 hasta 0 (separados por comas)", answer: "15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", points: 2, type: "escrito", image: '/img/Contar15_0.png' }
       ]
     },
     {
       name: "Escritura de números",
       maxScore: 8,
       items: [
-        { 
-          question: "Escribe el número 'treinta y ocho'", 
-          answer: "38", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Escritura de números_38.png'
-        },
-        { 
-          question: "Escribe el número 'ciento sesenta y nueve'", 
-          answer: "169", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Escritura de números_169.png'
-        },
-        { 
-          question: "Escribe el número 'noventa y siete'", 
-          answer: "97", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Escritura de números_97.png'
-        },
-        { 
-          question: "Escribe el número 'mil doscientos'", 
-          answer: "1200", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Escritura de números_1200.png'
-        }
+        { question: "Escribe el número 'treinta y ocho'", answer: "38", points: 2, type: "escrito", image: '/img/Escritura de números_38.png' },
+        { question: "Escribe el número 'ciento sesenta y nueve'", answer: "169", points: 2, type: "escrito", image: '/img/Escritura de números_169.png' },
+        { question: "Escribe el número 'noventa y siete'", answer: "97", points: 2, type: "escrito", image: '/img/Escritura de números_97.png' },
+        { question: "Escribe el número 'mil doscientos'", answer: "1200", points: 2, type: "escrito", image: '/img/Escritura de números_1200.png' }
       ]
     },
     {
       name: "Cálculo mental oral",
       maxScore: 12,
       items: [
-        { 
-          question: "10 + 10", 
-          answer: "20", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Sumar10_10.jpg'
-        },
-        { 
-          question: "1 + 15", 
-          answer: "16", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Sumar1_15.jpg'
-        },
-        { 
-          question: "12 + 7", 
-          answer: "19", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Sumar12_7.png'
-        },
-        { 
-          question: "10 - 3", 
-          answer: "7", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Restar10_3.jpg'
-        },
-        { 
-          question: "18 - 6", 
-          answer: "12", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Restar18_6.jpg'
-        },
-        { 
-          question: "25 - 12", 
-          answer: "13", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Restar25_12.png.'
-        }
+        { question: "10 + 10", answer: "20", points: 2, type: "escrito", image: '/img/Sumar10_10.jpg' },
+        { question: "1 + 15", answer: "16", points: 2, type: "escrito", image: '/img/Sumar1_15.jpg' },
+        { question: "12 + 7", answer: "19", points: 2, type: "escrito", image: '/img/Sumar12_7.png' },
+        { question: "10 - 3", answer: "7", points: 2, type: "escrito", image: '/img/Restar10_3.jpg' },
+        { question: "18 - 6", answer: "12", points: 2, type: "escrito", image: '/img/Restar18_6.jpg' },
+        { question: "25 - 12", answer: "13", points: 2, type: "escrito", image: '/img/Restar25_12.png' }
       ]
     },
     {
       name: "Lectura de números",
       maxScore: 8,
       items: [
-        { 
-          question: "Lee y escribe con palabras minúsculas el número: 57", 
-          answer: "cincuenta y siete", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Lectura de números cincuenta_siete.jpg'
-        },
-        { 
-          question: "Lee y escribe con palabras minúsculas el número: 15", 
-          answer: "quince", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Lectura de números quince.jpg'
-        },
-        { 
-          question: "Lee y escribe con palabras minúsculas el número: 138", 
-          answer: "ciento treinta y ocho", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Lectura de números ciento_treinta_ocho.jpg'
-        },
-        { 
-          question: "Lee y escribe con palabras minúsculas el número: 9", 
-          answer: "nueve", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Lectura de números nueve.jpg'
-        }
+        { question: "Lee y escribe con palabras minúsculas el número: 57", answer: "cincuenta y siete", points: 2, type: "escrito", image: '/img/Lectura de números cincuenta_siete.jpg' },
+        { question: "Lee y escribe con palabras minúsculas el número: 15", answer: "quince", points: 2, type: "escrito", image: '/img/Lectura de números quince.jpg' },
+        { question: "Lee y escribe con palabras minúsculas el número: 138", answer: "ciento treinta y ocho", points: 2, type: "escrito", image: '/img/Lectura de números ciento_treinta_ocho.jpg' },
+        { question: "Lee y escribe con palabras minúsculas el número: 9", answer: "nueve", points: 2, type: "escrito", image: '/img/Lectura de números nueve.jpg' }
       ]
     },
     {
       name: "Posicionar en escala",
       maxScore: 6,
       items: [
-        { 
-          question: "¿Dónde colocarías el número 56 en una escala del 0 al 100? (elige 1, 2 o 3)", 
-          answer: "2", 
-          points: 2,
-          type: "escrito",
-          image: '/img/escala_56.png'
-        },
-        { 
-          question: "¿Dónde colocarías el número 80 en una escala del 0 al 100? (elige 1, 2 o 3)", 
-          answer: "3", 
-          points: 2,
-          type: "escrito",
-          image: '/img/escala_80.png'
-        },
-        { 
-          question: "¿Dónde colocarías el número 62 en una escala del 0 al 100? (elige 1, 2 o 3)", 
-          answer: "2", 
-          points: 2,
-          type: "escrito",
-          image: '/img/escala_62.png'
-        },
-        { 
-          question: "¿Dónde colocarías el número 10 en una escala del 0 al 100?", 
-          answer: "1", 
-          points: 2,
-          type: "escrito",
-          image: '/img/escala_10.png'
-        }
+        { question: "¿Dónde colocarías el número 56 en una escala del 0 al 100? (elige 1, 2 o 3)", answer: "2", points: 2, type: "escrito", image: '/img/escala_56.png' },
+        { question: "¿Dónde colocarías el número 80 en una escala del 0 al 100? (elige 1, 2 o 3)", answer: "3", points: 2, type: "escrito", image: '/img/escala_80.png' },
+        { question: "¿Dónde colocarías el número 62 en una escala del 0 al 100? (elige 1, 2 o 3)", answer: "2", points: 2, type: "escrito", image: '/img/escala_62.png' },
+        { question: "¿Dónde colocarías el número 10 en una escala del 0 al 100?", answer: "1", points: 2, type: "escrito", image: '/img/escala_10.png' }
       ]
     },
     {
       name: "Estimación perceptiva",
       maxScore: 4,
       items: [
-        { 
-          question: "¿Cuántas pelotas y vasos hayen total? Escribe: número de pelotas y número de vasos totales", 
-          answer: "16", 
-          points: 4,
-          type: "escrito",
-          image: '/img/Estimación perceptiva_16.png'
-        }
+        { question: "¿Cuántas pelotas y vasos hayen total? Escribe: número de pelotas y número de vasos totales", answer: "16", points: 4, type: "escrito", image: '/img/Estimación perceptiva_16.png' }
       ]
     },
     {
       name: "Estimación en contexto",
       maxScore: 6,
       items: [
-        { 
-          question: "¿12 nubes en el cielo es poco o mucho? (Escribe 'poco' o 'mucho')", 
-          answer: "mucho", 
-          points: 2,
-          type: "escrito",
-          image: '/img/12_nubes.png'
-        },
-        { 
-          question: "¿2 niños jugando en el recreo es poco o mucho? (Escribe 'poco' o 'mucho')", 
-          answer: "poco", 
-          points: 2,
-          type: "escrito",
-          image: '/img/2_niños.png'
-        },
-        { 
-          question: "¿60 niños en un cumpleaños es poco o mucho? (Escribe 'poco' o 'mucho')", 
-          answer: "mucho", 
-          points: 2,
-          type: "escrito",
-          image: '/img/60_cumpleaños.png'
-        }
+        { question: "¿12 nubes en el cielo es poco o mucho? (Escribe 'poco' o 'mucho')", answer: "mucho", points: 2, type: "escrito", image: '/img/12_nubes.png' },
+        { question: "¿2 niños jugando en el recreo es poco o mucho? (Escribe 'poco' o 'mucho')", answer: "poco", points: 2, type: "escrito", image: '/img/2_niños.png' },
+        { question: "¿60 niños en un cumpleaños es poco o mucho? (Escribe 'poco' o 'mucho')", answer: "mucho", points: 2, type: "escrito", image: '/img/60_cumpleaños.png' }
       ]
     },
     {
       name: "Resolución de problemas",
       maxScore: 8,
       items: [
-        { 
-          question: "12 - 5", 
-          answer: "7", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Restar12_5.png'
-        },
-        { 
-          question: "16 - 4", 
-          answer: "12", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Restar16_4.png'
-        },
-        { 
-          question: "6 + 7", 
-          answer: "13", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Sumar6_7.png'
-        },
-        { 
-          question: "4 + (4+3) + (7-2)", 
-          answer: "16", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Sumar4_0.png'
-        }
+        { question: "12 - 5", answer: "7", points: 2, type: "escrito", image: '/img/Restar12_5.png' },
+        { question: "16 - 4", answer: "12", points: 2, type: "escrito", image: '/img/Restar16_4.png' },
+        { question: "6 + 7", answer: "13", points: 2, type: "escrito", image: '/img/Sumar6_7.png' },
+        { question: "4 + (4+3) + (7-2)", answer: "16", points: 2, type: "escrito", image: '/img/Sumar4_0.png' }
       ]
     },
     {
       name: "Comparación de números",
       maxScore: 6,
       items: [
-        { 
-          question: "¿Cuál es mayor: 654 o 546? (Escribe el número mayor)", 
-          answer: "654", 
-          points: 2,
-          type: "escrito",
-          image: '/img/comparacion_654.png'
-        },
-        { 
-          question: "¿Cuál es mayor: 97 o 352? (Escribe el número mayor)", 
-          answer: "352", 
-          points: 2,
-          type: "escrito",
-          image: '/img/comparacion_97.png'
-        },
-        { 
-          question: "¿Cuál es mayor: 96 o 69? (Escribe el número mayor)", 
-          answer: "96", 
-          points: 2,
-          type: "escrito",
-          image: '/img/comparacion_96.png'
-        }
+        { question: "¿Cuál es mayor: 654 o 546? (Escribe el número mayor)", answer: "654", points: 2, type: "escrito", image: '/img/comparacion_654.png' },
+        { question: "¿Cuál es mayor: 97 o 352? (Escribe el número mayor)", answer: "352", points: 2, type: "escrito", image: '/img/comparacion_97.png' },
+        { question: "¿Cuál es mayor: 96 o 69? (Escribe el número mayor)", answer: "96", points: 2, type: "escrito", image: '/img/comparacion_96.png' }
       ]
     },
     {
       name: "Determinación de cantidad",
       maxScore: 12,
       items: [
-        { 
-          question: "Escribe el número menor en: 5, 8520, 000, 12, 49, 50, 97", 
-          answer: "0", 
-          points: 6,
-          type: "escrito",
-          image: '/img/Determinacion_0.png'
-        },
-        { 
-          question: "Escribe el número mayor en: 1234, 1993, 3000, 8520", 
-          answer: "8520", 
-          points: 6,
-          type: "escrito",
-          image: '/img/Determinacion_8520.png'
-        }
+        { question: "Escribe el número menor en: 5, 8520, 000, 12, 49, 50, 97", answer: "0", points: 6, type: "escrito", image: '/img/Determinacion_0.png' },
+        { question: "Escribe el número mayor en: 1234, 1993, 3000, 8520", answer: "8520", points: 6, type: "escrito", image: '/img/Determinacion_8520.png' }
       ]
     },
     {
       name: "Escribir en cifra",
       maxScore: 3,
       items: [
-        { 
-          question: "Escribe los 5 números que siguen después de 137 (separados por comas)", 
-          answer: "138,139,140,141,142", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Escribir_en_cifra_137.png'
-        },
-        { 
-          question: "Escribe los 5 números antes de 362 (separados por comas)", 
-          answer: "361,360,359,358,357", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Escribir_en_cifra_362.2.png'
-        },
-        { 
-          question: "Escribe los 5 números después de 362 (separados por comas)", 
-          answer: "363,364,365,366,367", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Escribir_en_cifra_362.png'
-        }
+        { question: "Escribe los 5 números que siguen después de 137 (separados por comas)", answer: "138,139,140,141,142", points: 1, type: "escrito", image: '/img/Escribir_en_cifra_137.png' },
+        { question: "Escribe los 5 números antes de 362 (separados por comas)", answer: "361,360,359,358,357", points: 1, type: "escrito", image: '/img/Escribir_en_cifra_362.2.png' },
+        { question: "Escribe los 5 números después de 362 (separados por comas)", answer: "363,364,365,366,367", points: 1, type: "escrito", image: '/img/Escribir_en_cifra_362.png' }
       ]
     }
   ];
@@ -863,7 +637,7 @@ const ProCalculo7: React.FC = () => {
                 <li key={index} className={styles.subtestItem}>
                   <div className={styles.subtestSummary}>
                     <span>{subtest.name}:</span>
-                    <span>{score[index]} / {subtest.maxScore}</span>
+                    <span className={styles.centeredScore}>{score[index]} / {subtest.maxScore}</span>
                     <button
                       className={styles.toggleDetailsButton}
                       onClick={() => {
@@ -904,10 +678,10 @@ const ProCalculo7: React.FC = () => {
               Elegir otra prueba
             </button>
             <button
-              className={styles.pdfButton}
-              onClick={() => generatePDF()}
+              className={styles.downloadButton}
+              onClick={generateDocuments}
             >
-              <FaFilePdf /> Generar PDF
+              <FaFilePdf /> <FaFileWord /> Descargar PDF y Word
             </button>
           </div>
         </div>
@@ -915,88 +689,68 @@ const ProCalculo7: React.FC = () => {
     </section>
   );
 
-  const generatePDF = () => {
-  const latexLines = [];
+  const generateDocuments = () => {
+    // Generar contenido HTML para PDF y Word
+    const content = `
+      <h1>Resultados del Test - Pro-Cálculo 7 años</h1>
+      <h2>Datos del Estudiante</h2>
+      <ul>
+        <li><strong>Nombres:</strong> ${studentData.nombres}</li>
+        <li><strong>Apellidos:</strong> ${studentData.apellidos}</li>
+        <li><strong>Edad:</strong> ${studentData.edad} años</li>
+        <li><strong>Género:</strong> ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : 'No especificado'}</li>
+        <li><strong>Curso/Grado:</strong> ${studentData.curso}</li>
+        <li><strong>Institución Educativa:</strong> ${studentData.institucion}</li>
+      </ul>
+      <h2>Resultados del Test</h2>
+      <p><strong>Puntuación Total:</strong> ${score.reduce((a, b) => a + b, 0)} / 87 puntos</p>
+      <h3>Detalles por Subtest</h3>
+      <ul>
+        ${subtests.map((subtest, index) => `
+          <li>
+            <strong>${subtest.name}:</strong> ${score[index]} / ${subtest.maxScore}
+            <ul>
+              ${subtest.items.map(item => `
+                <li>
+                  <strong>Pregunta:</strong> ${item.question}<br>
+                  <strong>Respuesta esperada:</strong> ${item.answer}<br>
+                  <strong>Puntos obtenidos:</strong> ${score[index] >= item.points ? item.points : 0} / ${item.points}
+                </li>
+              `).join('')}
+            </ul>
+          </li>
+        `).join('')}
+      </ul>
+    `;
 
-  // Encabezado del documento
-  latexLines.push(
-    `\\documentclass[a4paper,12pt]{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage[spanish]{babel}
-\\usepackage{geometry}
-\\geometry{a4paper, margin=1in}
-\\usepackage{amsmath}
-\\usepackage{booktabs}
-\\usepackage{longtable}
-\\usepackage{enumitem}
-\\usepackage{fancyhdr}
-\\pagestyle{fancy}
-\\fancyhf{}
-\\fancyhead[L]{Informe de Resultados - Pro-Cálculo 7 años}
-\\fancyhead[R]{Fecha: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota', hour12: true, hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}}
-\\fancyfoot[C]{\\thepage}
-\\begin{document}`
-  );
+    // Generar y descargar PDF
+    const element = document.createElement('div');
+    element.innerHTML = content;
+    html2pdf()
+      .from(element)
+      .set({
+        margin: [10, 10, 10, 10],
+        filename: `ProCalculo7_Results_${studentData.nombres}_${studentData.apellidos}.pdf`,
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      })
+      .save();
 
-  // Datos del estudiante
-  latexLines.push(
-    `\\section*{Datos del Estudiante}
-\\begin{itemize}
-  \\item Nombres: ${studentData.nombres}
-  \\item Apellidos: ${studentData.apellidos}
-  \\item Edad: ${studentData.edad} años
-  \\item Género: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : 'No especificado'}
-  \\item Curso/Grado: ${studentData.curso}
-  \\item Institución Educativa: ${studentData.institucion}
-\\end{itemize}`
-  );
+    // Generar y descargar Word
+    const wordContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <title>Resultados del Test - Pro-Cálculo 7 años</title>
+      </head>
+      <body>${content}</body>
+      </html>
+    `;
+    const blob = new Blob([wordContent], { type: 'application/msword' });
+    saveAs(blob, `ProCalculo7_Results_${studentData.nombres}_${studentData.apellidos}.doc`);
+  };
 
-  // Resultados del test
-  latexLines.push(
-    `\\section*{Resultados del Test}
-\\textbf{Puntuación Total:} ${score.reduce((a, b) => a + b, 0)} / 87 puntos\\\\
-
-\\subsection*{Detalles por Subtest}
-\\begin{longtable}{p{4cm} p{3cm} p{5cm}}
-\\toprule
-\\textbf{Subtest} & \\textbf{Puntuación} & \\textbf{Detalles} \\\\
-\\midrule
-\\endhead`
-  );
-
-  // Detalles por subtest
-  subtests.forEach((subtest, index) => {
-    latexLines.push(
-      `${subtest.name} & ${score[index]} / ${subtest.maxScore} & \\begin{itemize}[leftmargin=*]`
-    );
-    subtest.items.forEach(item => {
-      latexLines.push(
-        `\\item Pregunta: ${item.question} \\\\ Respuesta esperada: ${item.answer} \\\\ Puntos obtenidos: ${score[index] >= item.points ? item.points : 0} / ${item.points}`
-      );
-    });
-    latexLines.push(`\\end{itemize} \\\\ \\midrule`);
-  });
-
-  // Cierre del documento
-  latexLines.push(
-    `\\bottomrule
-\\end{longtable}
-
-\\end{document}`
-  );
-
-  // Unir todas las líneas en un solo string
-  const latexContent = latexLines.join('\n');
-
-  // Crear y descargar el archivo
-  const blob = new Blob([latexContent], { type: 'text/x-tex' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `ProCalculo7_Results_${studentData.nombres}_${studentData.apellidos}.tex`;
-  link.click();
-  URL.revokeObjectURL(url);
-};
   const renderTestInProgress = () => (
     <>
       <section className={styles.testHeader}>
