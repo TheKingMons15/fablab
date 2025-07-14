@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
+import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars, FaFilePdf } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
@@ -47,6 +47,7 @@ const ProCalculo7: React.FC = () => {
   const [showStudentForm, setShowStudentForm] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDetails, setShowDetails] = useState<number[]>([]);
 
   const minigameSubtests = [3, 6, 9];
 
@@ -559,6 +560,7 @@ const ProCalculo7: React.FC = () => {
     setTimerActive(false);
     setTimeUp(false);
     setShowStudentForm(true);
+    setShowDetails([]);
   };
 
   const getResultMessage = () => {
@@ -855,11 +857,37 @@ const ProCalculo7: React.FC = () => {
           </p>
           
           <div className={styles.subtestScores}>
-            <h3>Puntuación por subtest:</h3>
-            <ul>
+            <h3>Resultados por subtest:</h3>
+            <ul className={styles.subtestList}>
               {subtests.map((subtest, index) => (
-                <li key={index}>
-                  {subtest.name}: {score[index]} / {subtest.maxScore}
+                <li key={index} className={styles.subtestItem}>
+                  <div className={styles.subtestSummary}>
+                    <span>{subtest.name}:</span>
+                    <span>{score[index]} / {subtest.maxScore}</span>
+                    <button
+                      className={styles.toggleDetailsButton}
+                      onClick={() => {
+                        setShowDetails(prev =>
+                          prev.includes(index)
+                            ? prev.filter(i => i !== index)
+                            : [...prev, index]
+                        );
+                      }}
+                    >
+                      {showDetails.includes(index) ? 'Ocultar detalles' : 'Mostrar detalles'}
+                    </button>
+                  </div>
+                  {showDetails.includes(index) && (
+                    <ul className={styles.detailsList}>
+                      {subtest.items.map((item, itemIndex) => (
+                        <li key={itemIndex} className={styles.questionResult}>
+                          <strong>Pregunta:</strong> {item.question}<br />
+                          <strong>Respuesta esperada:</strong> {item.answer}<br />
+                          <strong>Puntos obtenidos:</strong> {score[index] >= item.points ? item.points : 0} / {item.points}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
             </ul>
@@ -875,12 +903,100 @@ const ProCalculo7: React.FC = () => {
             >
               Elegir otra prueba
             </button>
+            <button
+              className={styles.pdfButton}
+              onClick={() => generatePDF()}
+            >
+              <FaFilePdf /> Generar PDF
+            </button>
           </div>
         </div>
       </div>
     </section>
   );
 
+  const generatePDF = () => {
+  const latexLines = [];
+
+  // Encabezado del documento
+  latexLines.push(
+    `\\documentclass[a4paper,12pt]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[spanish]{babel}
+\\usepackage{geometry}
+\\geometry{a4paper, margin=1in}
+\\usepackage{amsmath}
+\\usepackage{booktabs}
+\\usepackage{longtable}
+\\usepackage{enumitem}
+\\usepackage{fancyhdr}
+\\pagestyle{fancy}
+\\fancyhf{}
+\\fancyhead[L]{Informe de Resultados - Pro-Cálculo 7 años}
+\\fancyhead[R]{Fecha: ${new Date().toLocaleString('es-ES', { timeZone: 'America/Bogota', hour12: true, hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' })}}
+\\fancyfoot[C]{\\thepage}
+\\begin{document}`
+  );
+
+  // Datos del estudiante
+  latexLines.push(
+    `\\section*{Datos del Estudiante}
+\\begin{itemize}
+  \\item Nombres: ${studentData.nombres}
+  \\item Apellidos: ${studentData.apellidos}
+  \\item Edad: ${studentData.edad} años
+  \\item Género: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : 'No especificado'}
+  \\item Curso/Grado: ${studentData.curso}
+  \\item Institución Educativa: ${studentData.institucion}
+\\end{itemize}`
+  );
+
+  // Resultados del test
+  latexLines.push(
+    `\\section*{Resultados del Test}
+\\textbf{Puntuación Total:} ${score.reduce((a, b) => a + b, 0)} / 87 puntos\\\\
+
+\\subsection*{Detalles por Subtest}
+\\begin{longtable}{p{4cm} p{3cm} p{5cm}}
+\\toprule
+\\textbf{Subtest} & \\textbf{Puntuación} & \\textbf{Detalles} \\\\
+\\midrule
+\\endhead`
+  );
+
+  // Detalles por subtest
+  subtests.forEach((subtest, index) => {
+    latexLines.push(
+      `${subtest.name} & ${score[index]} / ${subtest.maxScore} & \\begin{itemize}[leftmargin=*]`
+    );
+    subtest.items.forEach(item => {
+      latexLines.push(
+        `\\item Pregunta: ${item.question} \\\\ Respuesta esperada: ${item.answer} \\\\ Puntos obtenidos: ${score[index] >= item.points ? item.points : 0} / ${item.points}`
+      );
+    });
+    latexLines.push(`\\end{itemize} \\\\ \\midrule`);
+  });
+
+  // Cierre del documento
+  latexLines.push(
+    `\\bottomrule
+\\end{longtable}
+
+\\end{document}`
+  );
+
+  // Unir todas las líneas en un solo string
+  const latexContent = latexLines.join('\n');
+
+  // Crear y descargar el archivo
+  const blob = new Blob([latexContent], { type: 'text/x-tex' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `ProCalculo7_Results_${studentData.nombres}_${studentData.apellidos}.tex`;
+  link.click();
+  URL.revokeObjectURL(url);
+};
   const renderTestInProgress = () => (
     <>
       <section className={styles.testHeader}>
@@ -910,15 +1026,15 @@ const ProCalculo7: React.FC = () => {
         
         <div className={styles.questionInfo}>
           <div className={styles.questionCounter}>
-            Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
+            Subtest ${currentSubtest + 1} de ${subtests.length} - Ítem ${currentItem + 1} de ${subtests[currentSubtest].items.length}
           </div>
           <div className={styles.timer}>
-            <FaClock /> Tiempo restante: {formatTime(timeLeft)}
+            <FaClock /> Tiempo restante: ${formatTime(timeLeft)}
           </div>
         </div>
         
         <div className={styles.questionCard}>
-          {renderQuestion()}
+          ${renderQuestion()}
         </div>
       </section>
     </>
