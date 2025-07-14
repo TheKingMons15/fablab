@@ -1740,3 +1740,456 @@ body {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
+
+
+/* Estilos para el formulario de autenticación mejorado */
+.authContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  padding: 2rem;
+}
+
+.authCard {
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-top: 5px solid #006633;
+}
+
+.authCard::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 102, 51, 0.05) 0%, transparent 70%);
+  transform: scale(0);
+  transition: transform 0.6s ease;
+}
+
+.authCard:hover::before {
+  transform: scale(1);
+}
+
+.authHeader {
+  margin-bottom: 2.5rem;
+}
+
+.authIcon {
+  color: #006633;
+  margin-bottom: 1.5rem;
+  animation: iconBounce 2s ease-in-out infinite;
+}
+
+.authHeader h2 {
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+}
+
+.authHeader p {
+  color: #7f8c8d;
+  line-height: 1.7;
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.inputGroup {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.inputGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.authInput {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 2px solid rgba(0, 102, 51, 0.2);
+  border-radius: 50px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.authInput:focus {
+  border-color: #006633;
+  box-shadow: 0 0 0 3px rgba(0, 102, 51, 0.2);
+  outline: none;
+}
+
+.authInput::placeholder {
+  color: #bdc3c7;
+}
+
+.passwordInputContainer {
+  position: relative;
+}
+
+.togglePasswordButton {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.5rem;
+}
+
+.togglePasswordButton:hover {
+  color: #006633;
+}
+
+.authButton {
+  padding: 1rem;
+  background: linear-gradient(145deg, #006633, #004d26);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 1.1rem;
+  box-shadow: 
+    0 4px 15px rgba(0, 102, 51, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.authButton:hover {
+  background: linear-gradient(145deg, #005528, #003d1e);
+  transform: translateY(-3px);
+  box-shadow: 
+    0 6px 20px rgba(0, 102, 51, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.authButton:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.errorMessage {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  border-left: 4px solid #e74c3c;
+  font-size: 0.95rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mejoras para el formulario en móviles */
+@media (max-width: 576px) {
+  .authCard {
+    padding: 1.5rem;
+  }
+  
+  .inputGroup label {
+    font-size: 0.9rem;
+  }
+  
+  .authInput {
+    padding: 0.8rem 1rem;
+  }
+  
+  .togglePasswordButton {
+    right: 10px;
+    padding: 0.3rem;
+  }
+}
+
+/* Estilos para la sección de reportes */
+.reportesSection {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.reportesHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.logoutButton {
+  padding: 0.7rem 1.5rem;
+  background: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.logoutButton:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+}
+
+.reportesTableContainer {
+  width: 100%;
+  overflow-x: auto;
+  margin-bottom: 3rem;
+  border-radius: 15px;
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  background: linear-gradient(145deg, #ffffff, #f8f9fa);
+  padding: 1.5rem;
+}
+
+.reportesTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.reportesTable th {
+  background: linear-gradient(145deg, #006633, #004d26);
+  color: white;
+  padding: 1.2rem 1.5rem;
+  text-align: left;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.reportesTable th:first-child {
+  border-top-left-radius: 10px;
+}
+
+.reportesTable th:last-child {
+  border-top-right-radius: 10px;
+}
+
+.reportesTable td {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid rgba(0, 102, 51, 0.1);
+  color: #2c3e50;
+  background: rgba(255, 255, 255, 0.7);
+  transition: all 0.3s ease;
+}
+
+.reportesTable tr:hover td {
+  background: rgba(0, 102, 51, 0.03);
+  transform: translateX(5px);
+}
+
+.reportesTable tr:last-child td {
+  border-bottom: none;
+}
+
+.scoreBar {
+  height: 25px;
+  background: linear-gradient(90deg, #006633, #009955);
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  min-width: 50px;
+  transition: width 0.6s ease;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.nivelBadge {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+  text-align: center;
+  min-width: 100px;
+}
+
+.avanzado {
+  background: linear-gradient(145deg, #006633, #004d26);
+  color: white;
+}
+
+.intermedio {
+  background: linear-gradient(145deg, #009955, #007744);
+  color: white;
+}
+
+.basico {
+  background: linear-gradient(145deg, #FFCE00, #e6b800);
+  color: #2c3e50;
+}
+
+.detailsButton {
+  padding: 0.6rem 1.2rem;
+  background: transparent;
+  border: 2px solid #006633;
+  color: #006633;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.detailsButton:hover {
+  background: #006633;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 102, 51, 0.3);
+}
+
+.reportesActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.exportButton {
+  padding: 0.8rem 1.8rem;
+  background: linear-gradient(145deg, #006633, #004d26);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 15px rgba(0, 102, 51, 0.3);
+}
+
+.exportButton:hover {
+  background: linear-gradient(145deg, #005528, #003d1e);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 102, 51, 0.4);
+}
+
+.filterButton {
+  padding: 0.8rem 1.8rem;
+  background: transparent;
+  border: 2px solid #006633;
+  color: #006633;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filterButton:hover {
+  background: rgba(0, 102, 51, 0.1);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 102, 51, 0.2);
+}
+
+/* Responsive para reportes */
+@media (max-width: 992px) {
+  .reportesHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .reportesActions {
+    justify-content: flex-start;
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .reportesTable th,
+  .reportesTable td {
+    padding: 1rem;
+  }
+  
+  .reportesActions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .exportButton,
+  .filterButton {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .nivelBadge {
+    min-width: 80px;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .detailsButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}

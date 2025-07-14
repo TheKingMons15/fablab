@@ -1185,10 +1185,6 @@
 
 /* Estilos específicos para la sección de escritura */
 .writtenAnswerContainer {
-  background: linear-gradient(135deg, #f0fff8 0%, #e8f4fd 100%);
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid rgba(0, 102, 51, 0.1);
   margin-top: 2rem;
   width: 100%;
   max-width: 600px;

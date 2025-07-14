@@ -1,5 +1,5 @@
 import React, { JSX, useState } from 'react';
-import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaClock, FaSmile, FaGraduationCap, FaChartLine, FaLock } from 'react-icons/fa';
+import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaClock, FaSmile, FaGraduationCap, FaChartLine, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import styles from './Test.module.css';
 
 // Interface definitions
@@ -35,17 +35,19 @@ const Test: React.FC = () => {
   // State management
   const [activeTab, setActiveTab] = useState<'indicaciones' | 'pruebas' | 'reportes'>('indicaciones');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
 
-  // Lista de correos autorizados
-  const authorizedEmails = [
-    'admin@procalculo.com',
-    'profesor@escuela.com',
-    'director@educacion.com'
+  // Lista de usuarios autorizados (email y contraseña)
+  const authorizedUsers = [
+    { email: 'admin@procalculo.com', password: 'Admin123' },
+    { email: 'director@educacion.com', password: 'Director123' },
   ];
 
-  // Datos de ejemplo para reportes
+  // Datos de ejemplo para reportes 
   const reportes: Reporte[] = [
     {
       id: 1,
@@ -134,11 +136,27 @@ const Test: React.FC = () => {
 
   // Función para verificar acceso
   const checkAccess = () => {
+    if (!email || !password) {
+      setError('Por favor ingrese email y contraseña');
+      return;
+    }
+
     setLoading(true);
+    setError('');
+    
     // Simulación de verificación asíncrona
     setTimeout(() => {
-      const authorized = authorizedEmails.includes(email.toLowerCase().trim());
-      setIsAuthorized(authorized);
+      const user = authorizedUsers.find(
+        user => user.email === email.toLowerCase().trim() && 
+               user.password === password
+      );
+      
+      if (user) {
+        setIsAuthorized(true);
+        setError('');
+      } else {
+        setError('Credenciales incorrectas. Intente nuevamente.');
+      }
       setLoading(false);
     }, 1000);
   };
@@ -147,6 +165,7 @@ const Test: React.FC = () => {
   const logout = () => {
     setIsAuthorized(false);
     setEmail('');
+    setPassword('');
     setActiveTab('indicaciones');
   };
 
@@ -348,27 +367,68 @@ const Test: React.FC = () => {
               <div className={styles.authHeader}>
                 <FaLock size={32} className={styles.authIcon} />
                 <h2>Acceso restringido</h2>
-                <p>Ingrese su correo electrónico autorizado para ver los reportes</p>
+                <p>Ingrese sus credenciales autorizadas para ver los reportes</p>
+                {error && <div className={styles.errorMessage}>{error}</div>}
               </div>
               
               <div className={styles.authForm}>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="correo@autorizado.com"
-                  className={styles.authInput}
-                />
+                <div className={styles.inputGroup}>
+                  <label htmlFor="email">Correo electrónico</label>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setError('');
+                    }}
+                    placeholder="correo@autorizado.com"
+                    className={styles.authInput}
+                    disabled={loading}
+                    autoComplete="email"
+                  />
+                </div>
+                
+                <div className={styles.inputGroup}>
+                  <label htmlFor="password">Contraseña</label>
+                  <div className={styles.passwordInputContainer}>
+                    <input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setError('');
+                      }}
+                      placeholder="Ingrese su contraseña"
+                      className={styles.authInput}
+                      disabled={loading}
+                      autoComplete="current-password"
+                    />
+                    <button 
+                      type="button" 
+                      className={styles.togglePasswordButton}
+                      onClick={() => setShowPassword(!showPassword)}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                </div>
+                
                 <button
                   onClick={checkAccess}
                   disabled={loading}
                   className={styles.authButton}
                 >
-                  {loading ? 'Verificando...' : 'Acceder'}
+                  {loading ? (
+                    <>
+                      <span className={styles.spinner}></span>
+                      Verificando...
+                    </>
+                  ) : 'Acceder'}
                 </button>
               </div>
-              
-              {loading && <div className={styles.loadingSpinner}></div>}
             </div>
           </div>
         </section>
