@@ -1,5 +1,5 @@
 import React, { JSX, useState } from 'react';
-import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaClock, FaSmile, FaGraduationCap } from 'react-icons/fa';
+import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaClock, FaSmile, FaGraduationCap, FaChartLine, FaLock } from 'react-icons/fa';
 import styles from './Test.module.css';
 
 // Interface definitions
@@ -22,9 +22,56 @@ interface PruebasNinos {
   preguntas: number;
 }
 
+interface Reporte {
+  id: number;
+  estudiante: string;
+  prueba: string;
+  fecha: string;
+  puntaje: number;
+  nivel: string;
+}
+
 const Test: React.FC = () => {
   // State management
-  const [activeTab, setActiveTab] = useState<'indicaciones' | 'pruebas'>('indicaciones');
+  const [activeTab, setActiveTab] = useState<'indicaciones' | 'pruebas' | 'reportes'>('indicaciones');
+  const [email, setEmail] = useState('');
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  // Lista de correos autorizados
+  const authorizedEmails = [
+    'admin@procalculo.com',
+    'profesor@escuela.com',
+    'director@educacion.com'
+  ];
+
+  // Datos de ejemplo para reportes
+  const reportes: Reporte[] = [
+    {
+      id: 1,
+      estudiante: 'Juan Pérez',
+      prueba: 'Pro-Cálculo para 6 años',
+      fecha: '2023-05-15',
+      puntaje: 85,
+      nivel: 'Avanzado'
+    },
+    {
+      id: 2,
+      estudiante: 'María Gómez',
+      prueba: 'Pro-Cálculo para 7 años',
+      fecha: '2023-05-16',
+      puntaje: 72,
+      nivel: 'Intermedio'
+    },
+    {
+      id: 3,
+      estudiante: 'Carlos Ruiz',
+      prueba: 'Pro-Cálculo para 8 años',
+      fecha: '2023-05-17',
+      puntaje: 90,
+      nivel: 'Avanzado'
+    },
+  ];
 
   // Data for tests
   const pruebasNinos: PruebasNinos[] = [
@@ -69,21 +116,39 @@ const Test: React.FC = () => {
       title: "Aprendizaje Adaptativo",
       description: "Dificultad que se ajusta al ritmo del niño",
       icon: <FaLightbulb className={styles.featureIcon} />,
-      color: "#006633" // Verde primario
+      color: "#006633"
     },
     {
       title: "Retroalimentación Inmediata",
       description: "Explicaciones claras para cada respuesta",
       icon: <FaStar className={styles.featureIcon} />,
-      color: "#009955" // Verde secundario
+      color: "#009955"
     },
     {
       title: "Diseño Motivacional",
       description: "Sistema de recompensas y logros",
       icon: <FaSmile className={styles.featureIcon} />,
-      color: "#FFCE00" // Amarillo acento
+      color: "#FFCE00"
     }
   ];
+
+  // Función para verificar acceso
+  const checkAccess = () => {
+    setLoading(true);
+    // Simulación de verificación asíncrona
+    setTimeout(() => {
+      const authorized = authorizedEmails.includes(email.toLowerCase().trim());
+      setIsAuthorized(authorized);
+      setLoading(false);
+    }, 1000);
+  };
+
+  // Función para cerrar sesión
+  const logout = () => {
+    setIsAuthorized(false);
+    setEmail('');
+    setActiveTab('indicaciones');
+  };
 
   // Header Section Component
   const HeaderSection = () => (
@@ -120,6 +185,15 @@ const Test: React.FC = () => {
         <span className={styles.tabContent}>
           <FaBrain className={styles.tabIcon} />
           Pruebas para niños
+        </span>
+      </button>
+      <button
+        className={`${styles.tab} ${activeTab === 'reportes' ? styles.activeTab : ''}`}
+        onClick={() => setActiveTab('reportes')}
+      >
+        <span className={styles.tabContent}>
+          <FaChartLine className={styles.tabIcon} />
+          Reportes
         </span>
       </button>
     </nav>
@@ -264,6 +338,113 @@ const Test: React.FC = () => {
     </section>
   );
 
+  // Reportes Section Component
+  const ReportesSection = () => {
+    if (!isAuthorized) {
+      return (
+        <section className={styles.reportesSection}>
+          <div className={styles.authContainer}>
+            <div className={styles.authCard}>
+              <div className={styles.authHeader}>
+                <FaLock size={32} className={styles.authIcon} />
+                <h2>Acceso restringido</h2>
+                <p>Ingrese su correo electrónico autorizado para ver los reportes</p>
+              </div>
+              
+              <div className={styles.authForm}>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="correo@autorizado.com"
+                  className={styles.authInput}
+                />
+                <button
+                  onClick={checkAccess}
+                  disabled={loading}
+                  className={styles.authButton}
+                >
+                  {loading ? 'Verificando...' : 'Acceder'}
+                </button>
+              </div>
+              
+              {loading && <div className={styles.loadingSpinner}></div>}
+            </div>
+          </div>
+        </section>
+      );
+    }
+
+    return (
+      <section className={styles.reportesSection}>
+        <div className={styles.reportesHeader}>
+          <div>
+            <h2 className={styles.sectionTitle}>
+              <span className={styles.titleHighlight}>📊</span> Reportes de Resultados
+            </h2>
+            <p className={styles.sectionSubtitle}>
+              Visualiza el desempeño de los estudiantes en las pruebas
+            </p>
+          </div>
+          <button onClick={logout} className={styles.logoutButton}>
+            Cerrar sesión
+          </button>
+        </div>
+        
+        <div className={styles.reportesTableContainer}>
+          <table className={styles.reportesTable}>
+            <thead>
+              <tr>
+                <th>Estudiante</th>
+                <th>Prueba</th>
+                <th>Fecha</th>
+                <th>Puntaje</th>
+                <th>Nivel</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {reportes.map((reporte) => (
+                <tr key={reporte.id}>
+                  <td>{reporte.estudiante}</td>
+                  <td>{reporte.prueba}</td>
+                  <td>{reporte.fecha}</td>
+                  <td>
+                    <div className={styles.scoreBar} style={{ width: `${reporte.puntaje}%` }}>
+                      {reporte.puntaje}%
+                    </div>
+                  </td>
+                  <td>
+                    <span className={`${styles.nivelBadge} ${
+                      reporte.nivel === 'Avanzado' ? styles.avanzado :
+                      reporte.nivel === 'Intermedio' ? styles.intermedio : styles.basico
+                    }`}>
+                      {reporte.nivel}
+                    </span>
+                  </td>
+                  <td>
+                    <button className={styles.detailsButton}>
+                      Ver detalles <FaArrowRight />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        <div className={styles.reportesActions}>
+          <button className={styles.exportButton}>
+            Exportar a Excel
+          </button>
+          <button className={styles.filterButton}>
+            Filtrar resultados
+          </button>
+        </div>
+      </section>
+    );
+  };
+
   // Main Component Rendering
   return (
     <main className={styles.mediaContainer} style={{ width: '100vw', overflowX: 'hidden' }}>
@@ -273,6 +454,7 @@ const Test: React.FC = () => {
       <div className={styles.contentContainer} style={{ maxWidth: '100%', padding: '1rem', boxSizing: 'border-box' }}>
         {activeTab === 'indicaciones' && <IndicacionesSection />}
         {activeTab === 'pruebas' && <PruebasSection />}
+        {activeTab === 'reportes' && <ReportesSection />}
       </div>
     </main>
   );

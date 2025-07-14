@@ -6,16 +6,15 @@
   --color-secondary-green: #009955;
   --color-accent-yellow: #FFCE00;
   --color-white: #ffffff;
-  --color-light-gray: #f8f9fa;
+  --color-light-gray: #f0f8ff; /* Cambiado de #f8f9fa */
   --color-text-dark: #333333;
   --color-text-medium: #666666;
   --color-success: #28a745;
   --color-error: #dc3545;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
-  --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  --bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --color-light-blue: #e8f4fd; /* Nuevo */
+  --color-soft-green: #f0fff4; /* Nuevo */
+  --color-warm-yellow: #fff8e1; /* Nuevo */
+  --color-gradient-bg: linear-gradient(135deg, #f0fff8 0%, #e8f4fd 50%, #fff8e1 100%); /* Nuevo */
 }
 
 /* Reset y estilos base */
@@ -32,7 +31,7 @@
   align-items: center;
   min-height: 100vh;
   width: 100vw;
-  background: linear-gradient(135deg, #f0fff8 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff8 100%);
   padding: 10rem;
   position: relative;
   overflow: hidden;
@@ -104,6 +103,7 @@
   max-width: 900px;
   margin: 0 auto;
   background-color: var(--color-white);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff8 100%);
   border-radius: 28px;
   box-shadow: var(--shadow-lg);
   padding: 3rem;
@@ -162,6 +162,11 @@
 
 /* Encabezado */
 .testHeader {
+  background: linear-gradient(135deg, rgba(240, 255, 248, 0.5) 0%, rgba(232, 244, 253, 0.5) 100%);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 2.5rem;
+  border: 1px solid rgba(0, 102, 51, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -295,6 +300,11 @@
 
 /* Barra de progreso mejorada */
 .progressContainer {
+  background: linear-gradient(135deg, #f0fff8 0%, #e8f4fd 100%);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(0, 102, 51, 0.1);
   width: 100%;
   margin-bottom: 2rem;
   position: relative;
@@ -342,6 +352,11 @@
 }
 
 .questionInfo {
+  background: linear-gradient(135deg, #f0fff8 0%, #e8f4fd 100%);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(0, 102, 51, 0.1);
   display: flex;
   justify-content: space-between;
   margin-bottom: 1.5rem;
@@ -368,7 +383,7 @@
 
 /* Pregunta con efecto 3D */
 .questionCard {
-  background-color: var(--color-white);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff8 50%, #e8f4fd 100%);
   border-radius: 20px;
   padding: 2.5rem;
   margin-bottom: 2rem;
@@ -428,8 +443,8 @@
 }
 
 .optionButton {
-  background-color: var(--color-white);
-  border: 2px solid rgba(0, 102, 51, 0.15);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff8 100%);
+  border: 2px solid rgba(0, 102, 51, 0.2);
   border-radius: 14px;
   padding: 1.5rem 1.2rem;
   cursor: pointer;
@@ -448,12 +463,14 @@
 }
 
 .optionButton:hover {
+  background: linear-gradient(135deg, #f0fff8 0%, #e8f4fd 100%);
   transform: translateY(-5px);
   box-shadow: var(--shadow-md);
   border-color: var(--color-primary-green);
 }
 
 .optionButton.selected {
+  background: linear-gradient(135deg, #f0fff8 0%, #e8f4fd 100%);
   border-color: var(--color-secondary-green);
   background-color: rgba(0, 153, 85, 0.05);
   animation: selectedPulse 1s infinite alternate;
@@ -544,12 +561,14 @@
 }
 
 .correctFeedback {
+  background: linear-gradient(135deg, #f0fff4 0%, #e8f5e8 100%);
   background-color: rgba(0, 153, 85, 0.1);
   color: var(--color-secondary-green);
   border: 1px solid rgba(0, 153, 85, 0.2);
 }
 
 .incorrectFeedback {
+  background: linear-gradient(135deg, #fff8e1 0%, #ffeaa7 100%);
   background-color: rgba(255, 206, 0, 0.1);
   color: var(--color-text-dark);
   border: 1px solid rgba(255, 206, 0, 0.2);
@@ -612,7 +631,7 @@
 }
 
 .scoreCard {
-  background: var(--color-light-gray);
+  background: linear-gradient(135deg, #f0fff8 0%, #e8f4fd 50%, #fff8e1 100%);
   border-radius: 20px;
   padding: 2.5rem;
   margin-bottom: 2rem;
@@ -768,7 +787,7 @@
 }
 
 .resultItem {
-  background: var(--color-white);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff8 100%);
   border-radius: 12px;
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
@@ -784,11 +803,13 @@
 .resultItem.correctItem {
   border-left-color: var(--color-success);
   background-color: rgba(40, 167, 69, 0.05);
+  background: linear-gradient(135deg, #f0fff4 0%, #e8f5e8 100%);
 }
 
 .resultItem.incorrectItem {
   border-left-color: var(--color-error);
   background-color: rgba(220, 53, 69, 0.05);
+  background: linear-gradient(135deg, #fff8e1 0%, #ffeaa7 100%);
 }
 
 .resultQuestion {
@@ -919,6 +940,7 @@
 
 /* MINIJUEGO mejorado */
 .gameOverlay {
+  background: linear-gradient(135deg, rgba(240, 255, 248, 0.95) 0%, rgba(232, 244, 253, 0.95) 50%, rgba(255, 248, 225, 0.95) 100%);
   position: fixed;
   top: 0;
   left: 0;
@@ -935,6 +957,7 @@
 }
 
 .gameModal {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff8 100%);
   background-color: white;
   border-radius: 15px;
   padding: 30px;
@@ -1034,6 +1057,7 @@
   margin-top: 2rem;
   padding: 1.5rem;
   background-color: rgba(0, 102, 51, 0.05);
+  background: linear-gradient(135deg, #f0fff8 0%, #e8f4fd 100%);
   border-radius: 12px;
   text-align: center;
   border: 1px solid rgba(0, 102, 51, 0.1);
@@ -1096,6 +1120,10 @@
 
 /* Ajustes para los botones del conteo */
 .countingControls {
+  background: linear-gradient(135deg, #f0fff8 0%, #fff8e1 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 102, 51, 0.1);
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -1157,6 +1185,10 @@
 
 /* Estilos específicos para la sección de escritura */
 .writtenAnswerContainer {
+  background: linear-gradient(135deg, #f0fff8 0%, #e8f4fd 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 102, 51, 0.1);
   margin-top: 2rem;
   width: 100%;
   max-width: 600px;
@@ -1179,6 +1211,7 @@
   font-size: 1.1rem;
   transition: var(--transition);
   background-color: var(--color-white);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff8 100%);
   box-shadow: var(--shadow-sm);
 }
 
@@ -1225,6 +1258,7 @@
   }
   
   .resultContainer {
+    background: linear-gradient(135deg, #ffffff 0%, #f0fff8 100%);
     padding: 1.5rem;
   }
   
@@ -1287,7 +1321,7 @@
 }
 
 .studentFormCard {
-  background-color: var(--color-white);
+  background: linear-gradient(135deg, #ffffff 0%, #f0fff8 100%);
   border-radius: 24px;
   padding: 2.5rem;
   box-shadow: var(--shadow-lg);
