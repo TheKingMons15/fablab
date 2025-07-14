@@ -1,5 +1,5 @@
-import React, { JSX, useState } from 'react';
-import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaClock, FaSmile, FaGraduationCap, FaChartLine, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import React, { JSX } from 'react';
+import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaClock, FaSmile, FaGraduationCap, FaChartLine } from 'react-icons/fa';
 import styles from './Test.module.css';
 
 // Interface definitions
@@ -22,58 +22,9 @@ interface PruebasNinos {
   preguntas: number;
 }
 
-interface Reporte {
-  id: number;
-  estudiante: string;
-  prueba: string;
-  fecha: string;
-  puntaje: number;
-  nivel: string;
-}
-
 const Test: React.FC = () => {
   // State management
-  const [activeTab, setActiveTab] = useState<'indicaciones' | 'pruebas' | 'reportes'>('indicaciones');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isAuthorized, setIsAuthorized] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-
-  // Lista de usuarios autorizados (email y contraseña)
-  const authorizedUsers = [
-    { email: 'admin@procalculo.com', password: 'Admin123' },
-    { email: 'director@educacion.com', password: 'Director123' },
-  ];
-
-  // Datos de ejemplo para reportes 
-  const reportes: Reporte[] = [
-    {
-      id: 1,
-      estudiante: 'Juan Pérez',
-      prueba: 'Pro-Cálculo para 6 años',
-      fecha: '2023-05-15',
-      puntaje: 85,
-      nivel: 'Avanzado'
-    },
-    {
-      id: 2,
-      estudiante: 'María Gómez',
-      prueba: 'Pro-Cálculo para 7 años',
-      fecha: '2023-05-16',
-      puntaje: 72,
-      nivel: 'Intermedio'
-    },
-    {
-      id: 3,
-      estudiante: 'Carlos Ruiz',
-      prueba: 'Pro-Cálculo para 8 años',
-      fecha: '2023-05-17',
-      puntaje: 90,
-      nivel: 'Avanzado'
-    },
-  ];
+  const [activeTab, setActiveTab] = React.useState<'indicaciones' | 'pruebas' | 'reportes'>('indicaciones');
 
   // Data for tests
   const pruebasNinos: PruebasNinos[] = [
@@ -134,43 +85,8 @@ const Test: React.FC = () => {
     }
   ];
 
-  // Función para verificar acceso
-  const checkAccess = () => {
-    if (!email || !password) {
-      setError('Por favor ingrese email y contraseña');
-      return;
-    }
-
-    setLoading(true);
-    setError('');
-    
-    // Simulación de verificación asíncrona
-    setTimeout(() => {
-      const user = authorizedUsers.find(
-        user => user.email === email.toLowerCase().trim() && 
-               user.password === password
-      );
-      
-      if (user) {
-        setIsAuthorized(true);
-        setError('');
-      } else {
-        setError('Credenciales incorrectas. Intente nuevamente.');
-      }
-      setLoading(false);
-    }, 1000);
-  };
-
-  // Función para cerrar sesión
-  const logout = () => {
-    setIsAuthorized(false);
-    setEmail('');
-    setPassword('');
-    setActiveTab('indicaciones');
-  };
-
   // Header Section Component
-  const HeaderSection = () => (
+  const HeaderSection = React.memo(() => (
     <section className={styles.titleSection} style={{ width: '100%' }}>
       <div className={styles.logoContainer}>
         <img 
@@ -183,10 +99,10 @@ const Test: React.FC = () => {
         Transformando el aprendizaje matemático en una aventura
       </p>
     </section>
-  );
+  ));
 
   // Navigation Tabs Component
-  const NavigationTabs = () => (
+  const NavigationTabs = React.memo(() => (
     <nav className={styles.navTabs}>
       <button
         className={`${styles.tab} ${activeTab === 'indicaciones' ? styles.activeTab : ''}`}
@@ -216,10 +132,10 @@ const Test: React.FC = () => {
         </span>
       </button>
     </nav>
-  );
+  ));
 
   // Indicaciones Section Component
-  const IndicacionesSection = () => (
+  const IndicacionesSection = React.memo(() => (
     <section className={styles.indicacionesSection}>
       <div className={styles.heroBanner}>
         <h2 className={styles.sectionTitle}>
@@ -299,10 +215,10 @@ const Test: React.FC = () => {
         </button>
       </div>
     </section>
-  );
+  ));
 
   // Pruebas Section Component
-  const PruebasSection = () => (
+  const PruebasSection = React.memo(() => (
     <section className={styles.pruebasSection}>
       <div className={styles.sectionHeader}>
         <h2 className={styles.sectionTitle}>
@@ -355,155 +271,29 @@ const Test: React.FC = () => {
         ))}
       </div>
     </section>
-  );
+  ));
 
-  // Reportes Section Component
-  const ReportesSection = () => {
-    if (!isAuthorized) {
-      return (
-        <section className={styles.reportesSection}>
-          <div className={styles.authContainer}>
-            <div className={styles.authCard}>
-              <div className={styles.authHeader}>
-                <FaLock size={32} className={styles.authIcon} />
-                <h2>Acceso restringido</h2>
-                <p>Ingrese sus credenciales autorizadas para ver los reportes</p>
-                {error && <div className={styles.errorMessage}>{error}</div>}
-              </div>
-              
-              <div className={styles.authForm}>
-                <div className={styles.inputGroup}>
-                  <label htmlFor="email">Correo electrónico</label>
-                  <input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setError('');
-                    }}
-                    placeholder="correo@autorizado.com"
-                    className={styles.authInput}
-                    disabled={loading}
-                    autoComplete="email"
-                  />
-                </div>
-                
-                <div className={styles.inputGroup}>
-                  <label htmlFor="password">Contraseña</label>
-                  <div className={styles.passwordInputContainer}>
-                    <input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        setError('');
-                      }}
-                      placeholder="Ingrese su contraseña"
-                      className={styles.authInput}
-                      disabled={loading}
-                      autoComplete="current-password"
-                    />
-                    <button 
-                      type="button" 
-                      className={styles.togglePasswordButton}
-                      onClick={() => setShowPassword(!showPassword)}
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <FaEyeSlash /> : <FaEye />}
-                    </button>
-                  </div>
-                </div>
-                
-                <button
-                  onClick={checkAccess}
-                  disabled={loading}
-                  className={styles.authButton}
-                >
-                  {loading ? (
-                    <>
-                      <span className={styles.spinner}></span>
-                      Verificando...
-                    </>
-                  ) : 'Acceder'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-      );
-    }
+  // Reports Section Component - ahora vacío para tu implementación
+  const ReportsSection = React.memo(() => (
+    <section className={styles.reportsSection}>
+      <div className={styles.sectionHeader}>
+        <h2 className={styles.sectionTitle}>
+          <span className={styles.titleHighlight}>📊</span> Reportes
+        </h2>
+        <p className={styles.sectionSubtitle}>
+          Aquí puedes ver y gestionar los reportes generados
+        </p>
+      </div>
 
-    return (
-      <section className={styles.reportesSection}>
-        <div className={styles.reportesHeader}>
-          <div>
-            <h2 className={styles.sectionTitle}>
-              <span className={styles.titleHighlight}>📊</span> Reportes de Resultados
-            </h2>
-            <p className={styles.sectionSubtitle}>
-              Visualiza el desempeño de los estudiantes en las pruebas
-            </p>
-          </div>
-          <button onClick={logout} className={styles.logoutButton}>
-            Cerrar sesión
-          </button>
+      <div className={styles.reportsContent}>
+        {/* Espacio reservado para tu implementación de base de datos */}
+        <div className={styles.databasePlaceholder}>
+          <p>Conecta tu base de datos aquí para mostrar los reportes</p>
+          {/* Puedes reemplazar este contenido con tu implementación real */}
         </div>
-        
-        <div className={styles.reportesTableContainer}>
-          <table className={styles.reportesTable}>
-            <thead>
-              <tr>
-                <th>Estudiante</th>
-                <th>Prueba</th>
-                <th>Fecha</th>
-                <th>Puntaje</th>
-                <th>Nivel</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {reportes.map((reporte) => (
-                <tr key={reporte.id}>
-                  <td>{reporte.estudiante}</td>
-                  <td>{reporte.prueba}</td>
-                  <td>{reporte.fecha}</td>
-                  <td>
-                    <div className={styles.scoreBar} style={{ width: `${reporte.puntaje}%` }}>
-                      {reporte.puntaje}%
-                    </div>
-                  </td>
-                  <td>
-                    <span className={`${styles.nivelBadge} ${
-                      reporte.nivel === 'Avanzado' ? styles.avanzado :
-                      reporte.nivel === 'Intermedio' ? styles.intermedio : styles.basico
-                    }`}>
-                      {reporte.nivel}
-                    </span>
-                  </td>
-                  <td>
-                    <button className={styles.detailsButton}>
-                      Ver detalles <FaArrowRight />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        
-        <div className={styles.reportesActions}>
-          <button className={styles.exportButton}>
-            Exportar a Excel
-          </button>
-          <button className={styles.filterButton}>
-            Filtrar resultados
-          </button>
-        </div>
-      </section>
-    );
-  };
+      </div>
+    </section>
+  ));
 
   // Main Component Rendering
   return (
@@ -514,7 +304,7 @@ const Test: React.FC = () => {
       <div className={styles.contentContainer} style={{ maxWidth: '100%', padding: '1rem', boxSizing: 'border-box' }}>
         {activeTab === 'indicaciones' && <IndicacionesSection />}
         {activeTab === 'pruebas' && <PruebasSection />}
-        {activeTab === 'reportes' && <ReportesSection />}
+        {activeTab === 'reportes' && <ReportsSection />}
       </div>
     </main>
   );
