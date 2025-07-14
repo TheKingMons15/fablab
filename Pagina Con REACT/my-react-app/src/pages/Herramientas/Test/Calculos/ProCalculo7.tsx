@@ -780,15 +780,15 @@ const ProCalculo7: React.FC = () => {
         
         <div className={styles.questionInfo}>
           <div className={styles.questionCounter}>
-            Subtest ${currentSubtest + 1} de ${subtests.length} - Ítem ${currentItem + 1} de ${subtests[currentSubtest].items.length}
+            Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
           </div>
           <div className={styles.timer}>
-            <FaClock /> Tiempo restante: ${formatTime(timeLeft)}
+            <FaClock /> Tiempo restante: {formatTime(timeLeft)}
           </div>
         </div>
         
         <div className={styles.questionCard}>
-          ${renderQuestion()}
+          {renderQuestion()}
         </div>
       </section>
     </>
