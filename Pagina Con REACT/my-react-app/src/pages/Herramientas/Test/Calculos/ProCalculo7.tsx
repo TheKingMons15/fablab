@@ -47,6 +47,8 @@ const ProCalculo7: React.FC = () => {
   const [showStudentForm, setShowStudentForm] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showStartButton, setShowStartButton] = useState(false);
+  const [showFinishButton, setShowFinishButton] = useState(false);
 
   const minigameSubtests = [3, 6, 9];
 
@@ -96,13 +98,18 @@ const ProCalculo7: React.FC = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setShowStudentForm(false);
-      setTimerActive(true);
+      setShowStartButton(true);
     } catch (error) {
       console.error('Error al guardar datos:', error);
       alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const startTest = () => {
+    setShowStartButton(false);
+    setTimerActive(true);
   };
 
   const formatTime = (seconds: number): string => {
@@ -502,7 +509,7 @@ const ProCalculo7: React.FC = () => {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        finishTest();
+        setShowFinishButton(true);
       }
     } else {
       setCurrentItem(currentItem + 1);
@@ -510,6 +517,7 @@ const ProCalculo7: React.FC = () => {
   };
 
   const finishTest = () => {
+    setShowFinishButton(false);
     setShowResult(true);
     setTimerActive(false);
     const totalScore = score.reduce((a, b) => a + b, 0);
@@ -530,7 +538,7 @@ const ProCalculo7: React.FC = () => {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        finishTest();
+        setShowFinishButton(true);
       }
     }, 1000);
   };
@@ -559,6 +567,8 @@ const ProCalculo7: React.FC = () => {
     setTimerActive(false);
     setTimeUp(false);
     setShowStudentForm(true);
+    setShowStartButton(false);
+    setShowFinishButton(false);
   };
 
   const getResultMessage = () => {
@@ -722,9 +732,40 @@ const ProCalculo7: React.FC = () => {
             onClick={saveStudentData}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Cargando...' : 'Comenzar Test'}
+            {isSubmitting ? 'Cargando...' : 'Continuar'}
           </button>
         </div>
+      </div>
+    </div>
+  );
+
+  const renderStartButton = () => (
+    <div className={styles.startTestContainer}>
+      <div className={styles.startTestCard}>
+        <h2>¡Estás listo para comenzar!</h2>
+        <p>El test comenzará cuando presiones el botón "INICIAR TEST"</p>
+        <p>Tienes 25 minutos para completar todas las preguntas.</p>
+        <button 
+          className={styles.startTestButtonLarge}
+          onClick={startTest}
+        >
+          INICIAR TEST
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderFinishButton = () => (
+    <div className={styles.finishTestContainer}>
+      <div className={styles.finishTestCard}>
+        <h2>¡Has completado todas las preguntas!</h2>
+        <p>Presiona el botón "FINALIZAR TEST" para ver tus resultados.</p>
+        <button 
+          className={styles.finishTestButton}
+          onClick={finishTest}
+        >
+          FINALIZAR TEST
+        </button>
       </div>
     </div>
   );
@@ -931,8 +972,12 @@ const ProCalculo7: React.FC = () => {
         
         {showStudentForm ? (
           renderStudentForm()
+        ) : showStartButton ? (
+          renderStartButton()
         ) : showMiniGame ? (
           renderMiniGame()
+        ) : showFinishButton ? (
+          renderFinishButton()
         ) : showResult ? (
           renderResults()
         ) : (
