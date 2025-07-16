@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
+import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars, FaDownload } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
+import html2pdf from 'html2pdf.js';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 import SnakeGame from '../../Minijuego/SnakeGame';
-import jsPDF from 'jspdf';
 
 interface QuestionItem {
   question: string;
@@ -21,6 +21,15 @@ interface Subtest {
   items: QuestionItem[];
 }
 
+interface AnswerHistory {
+  subtestIndex: number;
+  itemIndex: number;
+  question: string;
+  userAnswer: string;
+  correctAnswer: string;
+  pointsEarned: number;
+}
+
 const ProCalculo7: React.FC = () => {
   const navigate = useNavigate();
   const [currentSubtest, setCurrentSubtest] = useState(0);
@@ -30,7 +39,7 @@ const ProCalculo7: React.FC = () => {
   const [showFeedback, setShowFeedback] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
   const [animation, setAnimation] = useState('');
-  const [writtenAnswer, setWrittenAnswer] = useState('');
+  const [writtenAnswers, setWrittenAnswers] = useState<Record<string, string>>({});
   const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
   const [showMiniGame, setShowMiniGame] = useState(false);
   const [miniGameType, setMiniGameType] = useState<'egg' | 'snake'>('egg');
@@ -49,6 +58,7 @@ const ProCalculo7: React.FC = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testStartTime, setTestStartTime] = useState<string>('');
+  const [answerHistory, setAnswerHistory] = useState<AnswerHistory[]>([]);
 
   const minigameSubtests = [3, 6, 9];
 
@@ -97,19 +107,20 @@ const ProCalculo7: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const saveStudentData = async () => {
+  const saveStudentData = () => {
     if (!validateForm()) return;
     
     setIsSubmitting(true);
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setShowStudentForm(false);
-      setTimerActive(true);
+      setTimeout(() => {
+        setShowStudentForm(false);
+        setTimerActive(true);
+        setIsSubmitting(false);
+      }, 1000);
     } catch (error) {
       console.error('Error al guardar datos:', error);
       alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
-    } finally {
       setIsSubmitting(false);
     }
   };
@@ -224,7 +235,7 @@ const ProCalculo7: React.FC = () => {
       name: "Determinación de cantidad",
       maxScore: 12,
       items: [
-        { question: "Escribe el número menor en: 5, 8520, 000, 12, 49, 50, 97", answer: "0", points: 6, type: "escrito", image: '/img/Test_7 Determinación_0.png' },
+        { question: "Escribe el número menor en: 5, 8520, 0, 12, 49, 50, 97", answer: "0", points: 6, type: "escrito", image: '/img/Test_7 Determinación_0.png' },
         { question: "Escribe el número mayor en: 1234, 1993, 3000, 8520", answer: "8520", points: 6, type: "escrito", image: '/img/Test_7 Determinación_8520.png' }
       ]
     },
@@ -244,7 +255,8 @@ const ProCalculo7: React.FC = () => {
     
     const currentQuestion = subtests[currentSubtest].items[currentItem];
     const isCorrect = normalizeText(selectedAnswer.toString()) === normalizeText(currentQuestion.answer.toString());
-    
+    const pointsEarned = isCorrect ? currentQuestion.points : 0;
+
     setCorrectAnswer(isCorrect);
     setShowFeedback(true);
     
@@ -257,6 +269,18 @@ const ProCalculo7: React.FC = () => {
       setAnimation('wrong');
     }
     
+    setAnswerHistory(prev => [
+      ...prev,
+      {
+        subtestIndex: currentSubtest,
+        itemIndex: currentItem,
+        question: currentQuestion.question,
+        userAnswer: selectedAnswer.toString(),
+        correctAnswer: currentQuestion.answer.toString(),
+        pointsEarned
+      }
+    ]);
+    
     setTimeout(() => {
       moveToNextItem();
     }, 2000);
@@ -266,7 +290,6 @@ const ProCalculo7: React.FC = () => {
     setShowFeedback(false);
     setCorrectAnswer(null);
     setAnimation('');
-    setWrittenAnswer('');
     setWrittenAnswerConfirmed(false);
     
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
@@ -331,7 +354,7 @@ const ProCalculo7: React.FC = () => {
     setShowFeedback(false);
     setCorrectAnswer(null);
     setAnimation('');
-    setWrittenAnswer('');
+    setWrittenAnswers({});
     setWrittenAnswerConfirmed(false);
     setShowMiniGame(false);
     setMiniGameType('egg');
@@ -340,6 +363,7 @@ const ProCalculo7: React.FC = () => {
     setTimeUp(false);
     setShowStudentForm(true);
     setTestStartTime('');
+    setAnswerHistory([]);
   };
 
   const getResultMessage = () => {
@@ -357,8 +381,8 @@ const ProCalculo7: React.FC = () => {
   };
 
   const handleConfirmAnswer = () => {
-    if (writtenAnswer.trim()) {
-      handleAnswer(writtenAnswer.trim());
+    if (writtenAnswers[`${currentSubtest}-${currentItem}`]) {
+      handleAnswer(writtenAnswers[`${currentSubtest}-${currentItem}`]);
       setWrittenAnswerConfirmed(false);
     }
   };
@@ -368,7 +392,7 @@ const ProCalculo7: React.FC = () => {
   };
 
   const handleSubmitAnswer = () => {
-    if (writtenAnswer.trim() && !showFeedback && !timeUp) {
+    if (writtenAnswers[`${currentSubtest}-${currentItem}`] && !showFeedback && !timeUp) {
       setWrittenAnswerConfirmed(true);
     }
   };
@@ -390,222 +414,73 @@ const ProCalculo7: React.FC = () => {
   };
 
   const generatePDF = () => {
-    const doc = new jsPDF();
-    let yPos = 10;
+    const totalScore = score.reduce((a, b) => a + b, 0);
+    const content = `
+      <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 20mm;
+            width: 100%;
+            box-sizing: border-box;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            text-align: center;
+          }
+          h1 { margin: 10mm 0; }
+          h2 { margin: 5mm 0; border-bottom: 1px solid #000; padding-bottom: 5mm; }
+          p { margin: 2mm 0; }
+          strong { margin-right: 10mm; }
+          .section-break {
+            page-break-before: always;
+            margin-top: 20mm;
+          }
+          .answer-section { margin-left: 20mm; text-align: left; }
+          .content-wrapper { width: 100%; max-width: 210mm; margin: 0 auto; }
+        </style>
+      </head>
+      <body>
+        <div class="content-wrapper">
+          <h1>RESULTADO DEL TEST – 7</h1>
+          <h2>Datos del estudiante</h2>
+          <p><strong>Nombre:</strong> ${studentData.nombres}</p>
+          <p><strong>Apellido:</strong> ${studentData.apellidos}</p>
+          <p><strong>Edad:</strong> ${studentData.edad}</p>
+          <p><strong>Genero:</strong> ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : ''}</p>
+          <p><strong>Curso/Grado:</strong> ${studentData.curso}</p>
+          <p><strong>Institución:</strong> ${studentData.institucion}</p>
+          <p><strong>Fecha y hora:</strong> ${testStartTime}</p>
+          <h2>PUNTUACIÓN TOTAL: ${totalScore}/87 Puntos</h2>
+          <h2>Detalles del Test:</h2>
+          ${subtests.map((subtest, subtestIndex) => `
+            <div class="${subtestIndex > 0 ? 'section-break' : ''}">
+              <h2>${subtest.name}: ${score[subtestIndex]} / ${subtest.maxScore}</h2>
+              ${answerHistory
+                .filter(a => a.subtestIndex === subtestIndex)
+                .map(a => `
+                  <div class="answer-section">
+                    <p><strong>Pregunta:</strong> ${a.question}</p>
+                    <p><strong>Respuesta esperada:</strong> ${a.correctAnswer}</p>
+                    <p><strong>Respuesta proporcionada:</strong> ${a.userAnswer || 'No proporcionada'}</p>
+                    <p><strong>Puntos obtenidos:</strong> ${a.pointsEarned} / ${subtests[a.subtestIndex].items[a.itemIndex].points}</p>
+                  </div>
+                `).join('')}
+            </div>
+          `).join('')}
+        </div>
+      </body>
+      </html>
+    `;
 
-    // Página 1: Encabezado y datos del estudiante
-    doc.setFontSize(20);
-    doc.text('RESULTADO DEL TEST - 7', 105, yPos, { align: 'center' });
-    yPos += 15;
+    const pdfOptions = {
+      margin: [20, 20, 20, 20],
+      filename: `Resultado_Test_7_${studentData.nombres}_${studentData.apellidos}.pdf`,
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
 
-    doc.setFontSize(14);
-    doc.text('Datos del estudiante', 10, yPos);
-    yPos += 10;
-    doc.setFontSize(12);
-    doc.text(`Nombre: ${studentData.nombres}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Apellido: ${studentData.apellidos}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Edad: ${studentData.edad}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Genero: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : ''}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Curso/Grado: ${studentData.curso}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Institución: ${studentData.institucion}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Fecha y hora de inicio: ${testStartTime}`, 10, yPos); // Uso de testStartTime
-    yPos += 10;
-
-    doc.text('PUNTUACIÓN TOTAL', 10, yPos);
-    yPos += 5;
-    doc.text(`Puntuación total: ${score.reduce((a, b) => a + b, 0)}/87 Puntos`, 10, yPos);
-    yPos += 10;
-
-    doc.text('Detalles del Test:', 10, yPos);
-    yPos += 10;
-
-    // Enumeración (Página 1)
-    doc.text('Enumeración: 0 / 12', 10, yPos);
-    yPos += 5;
-    subtests[0].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    // Contar para atrás (Página 2)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0', 10, yPos);
-    yPos += 10;
-
-    // Escritura de números (Página 3)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('ESCRITURA DE NÚMEROS: 0 / 8', 10, yPos);
-    yPos += 10;
-
-    // Cálculo mental oral (Página 4)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Cálculo mental oral: 0 / 12', 10, yPos);
-    yPos += 5;
-    subtests[3].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    // Lectura de números (Página 5)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Lectura de números: 0 / 8', 10, yPos);
-    yPos += 10;
-
-    // Posicionar en escala (Página 6)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Posicionar en escala: 0 / 6', 10, yPos);
-    yPos += 10;
-
-    // Estimación perceptiva (Página 7)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('¿Cuántas pelotas y vasos hay en total? Escribe: número de pelotas y número de vasos totales', 10, yPos);
-    yPos += 5;
-    doc.text(`Respuesta esperada: 16`, 10, yPos);
-    yPos += 5;
-    doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Puntos obtenidos: 0 / 4`, 10, yPos);
-    yPos += 10;
-
-    // Estimación en contexto (Página 8)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Estimación en contexto: 0 / 6', 10, yPos);
-    yPos += 5;
-    subtests[6].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    // Resolución de problemas (Página 9)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Resolución de problemas: 0 / 8', 10, yPos);
-    yPos += 5;
-    subtests[8].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    // Comparación de números (Página 10)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    subtests[9].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    // Determinación de cantidad (Página 11)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Determinación de cantidad: 0 / 12', 10, yPos);
-    yPos += 10;
-
-    // Escribir en cifra (Página 12)
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('0 / 3', 10, yPos);
-    yPos += 5;
-    subtests[11].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    doc.save('Resultado_Test_7_Sebas_Paucar.pdf');
+    html2pdf().set(pdfOptions).from(content).save();
   };
 
   const renderStudentForm = () => (
@@ -731,6 +606,7 @@ const ProCalculo7: React.FC = () => {
 
   const renderInputField = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
+    const answerKey = `${currentSubtest}-${currentItem}`;
     
     return (
       <div className={styles.writtenAnswerContainer}>
@@ -749,13 +625,13 @@ const ProCalculo7: React.FC = () => {
             type="text"
             className={styles.textInput}
             placeholder="Escribe tu respuesta aquí..."
-            value={writtenAnswer}
+            value={writtenAnswers[answerKey] || ''}
             onChange={(e) => {
-              setWrittenAnswer(e.target.value);
+              setWrittenAnswers(prev => ({ ...prev, [answerKey]: e.target.value }));
               setWrittenAnswerConfirmed(false);
             }}
             onKeyPress={(e) => {
-              if (e.key === 'Enter' && writtenAnswer.trim() && !showFeedback) {
+              if (e.key === 'Enter' && writtenAnswers[answerKey] && !showFeedback) {
                 handleSubmitAnswer();
               }
             }}
@@ -764,7 +640,7 @@ const ProCalculo7: React.FC = () => {
           <button 
             className={styles.submitButton}
             onClick={handleSubmitAnswer}
-            disabled={!writtenAnswer.trim() || timeUp || showFeedback}
+            disabled={!writtenAnswers[answerKey] || timeUp || showFeedback}
           >
             Enviar respuesta
           </button>
@@ -772,7 +648,7 @@ const ProCalculo7: React.FC = () => {
 
         {writtenAnswerConfirmed && !showFeedback && (
           <div className={styles.confirmationButtons}>
-            <p>Tu respuesta: <strong>"{writtenAnswer}"</strong></p>
+            <p>Tu respuesta: <strong>"{writtenAnswers[answerKey]}"</strong></p>
             <p>¿Estás seguro de tu respuesta?</p>
             <div className={styles.confirmationButtonGroup}>
               <button 
@@ -876,10 +752,10 @@ const ProCalculo7: React.FC = () => {
               Elegir otra prueba
             </button>
             <button 
-              className={styles.downloadButton} 
+              className={styles.restartButton}
               onClick={generatePDF}
             >
-              Descargar PDF
+              <FaDownload /> Descargar PDF
             </button>
           </div>
         </div>
@@ -916,15 +792,15 @@ const ProCalculo7: React.FC = () => {
         
         <div className={styles.questionInfo}>
           <div className={styles.questionCounter}>
-            Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
+            Subtest ${currentSubtest + 1} de ${subtests.length} - Ítem ${currentItem + 1} de ${subtests[currentSubtest].items.length}
           </div>
           <div className={styles.timer}>
-            <FaClock /> Tiempo restante: {formatTime(timeLeft)}
+            <FaClock /> Tiempo restante: ${formatTime(timeLeft)}
           </div>
         </div>
         
         <div className={styles.questionCard}>
-          {renderQuestion()}
+          ${renderQuestion()}
         </div>
       </section>
     </>
@@ -935,7 +811,7 @@ const ProCalculo7: React.FC = () => {
       <main className={styles.testContainer}>
         <div className={styles.cloudBackground}></div>
         
-        {showStudentForm ? (
+        ${showStudentForm ? (
           renderStudentForm()
         ) : showMiniGame ? (
           renderMiniGame()

@@ -201,6 +201,10 @@ const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComplete }) =
     );
   };
 
+  const handleExitGame = () => {
+    onComplete(false);
+  };
+
   return (
     <div className={styles.gameContainer}>
       <div className={styles.header}>
@@ -240,6 +244,13 @@ const RompeCabezasHuevos: React.FC<RompeCabezasHuevosProps> = ({ onComplete }) =
           disabled={showMatch.show}
         >
           🔄 Nuevo Juego
+        </button>
+        <button 
+          className={styles.resetButton}
+          onClick={handleExitGame}
+          disabled={showMatch.show}
+        >
+          🚪 Salir del Minijuego
         </button>
       </div>
       
