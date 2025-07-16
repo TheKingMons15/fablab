@@ -426,7 +426,7 @@ const ProCalculo7: React.FC = () => {
             box-sizing: border-box;
             word-break: break-word;
             overflow-wrap: break-word;
-            text-align: center;
+            text-align: left;
           }
           h1 { margin: 10mm 0; }
           h2 { margin: 5mm 0; border-bottom: 1px solid #000; padding-bottom: 5mm; }
