@@ -39,7 +39,6 @@ const ProCalculo6: React.FC = () => {
   const [timerActive, setTimerActive] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
   const [_, forceUpdate] = React.useReducer(x => x + 1, 0);
-  const [studentId, setStudentId] = useState<string | null>(null);
 
   // Estados del formulario
   const [studentData, setStudentData] = useState({
@@ -73,7 +72,7 @@ const ProCalculo6: React.FC = () => {
       if (totalScore > 30) {
         launchConfetti();
       }
-      saveTestResults();
+      saveTestData();
     }
     
     return () => {
@@ -81,42 +80,27 @@ const ProCalculo6: React.FC = () => {
     };
   }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm, showMiniGame]);
 
- const saveTestResults = async () => {
-  if (!studentId) {
-    console.error('No hay ID de estudiante');
-    return;
-  }
-
+  const saveTestData = async (isStartingTest = false) => {
+  if (isStartingTest && !validateForm()) return;
+  
+  setIsSubmitting(true);
+  
   try {
-    // Calcular puntuación total verificando cada subtest
-    const totalScore = subtests.reduce((total, subtest, index) => {
-      const subtestScore = Math.min(score[index], subtest.maxScore);
-      console.log(`${subtest.name}: ${subtestScore}/${subtest.maxScore}`);
-      return total + subtestScore;
-    }, 0);
+    const totalScore = isStartingTest ? 0 : score.reduce((a, b) => a + b, 0);
 
-    console.log('Puntuación total calculada:', totalScore);
-    
-    const timeSpent = 20 * 60 - timeLeft;
-    
     const testData = {
-      estudiante_id: parseInt(studentId),
+      nombres: studentData.nombres,
+      apellidos: studentData.apellidos,
+      edad: parseInt(studentData.edad),
+      genero: studentData.genero,
+      curso: studentData.curso,
+      institucion: studentData.institucion,
       test_tipo: "ProCálculo6",
       puntuacion_total: totalScore,
-      detalles: {
-        subtests: subtests.map((subtest, index) => ({
-          nombre: subtest.name,
-          puntuacion: score[index],
-          max_puntuacion: subtest.maxScore
-        })),
-        tiempo_utilizado: timeSpent,
-        completado: !timeUp
-      }
+      // No incluimos los detalles ya que no los necesitas
     };
 
-    console.log('Datos a enviar:', JSON.stringify(testData, null, 2));
-
-    const response = await fetch('/procalculo-api/guardar-resultado', {
+    const response = await fetch('https://fablab.upec.edu.ec/procalculo-api/guardar-test', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(testData)
@@ -124,57 +108,32 @@ const ProCalculo6: React.FC = () => {
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.message || 'Error al guardar resultados');
+      throw new Error(errorData.message || 'Error al guardar datos');
     }
 
     const result = await response.json();
-    console.log('Resultados guardados:', result);
+    console.log('Datos guardados:', result);
+    
+    if (isStartingTest) {
+      setShowStudentForm(false);
+      setTimerActive(true);
+      forceUpdate();
+    } else {
+      setShowResult(true);
+      if (totalScore > 30) {
+        launchConfetti();
+      }
+    }
     
   } catch (error) {
-    console.error('Error en saveTestResults:', error);
+    console.error('Error al guardar datos:', error);
+    alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
+  } finally {
+    setIsSubmitting(false);
   }
 };
 
-  const saveStudentData = async () => {
-    if (!validateForm()) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      const response = await fetch('/procalculo-api/guardar-estudiante', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nombres: studentData.nombres,
-          apellidos: studentData.apellidos,
-          edad: parseInt(studentData.edad),
-          genero: studentData.genero,
-          curso: studentData.curso,
-          institucion: studentData.institucion
-        }),
-      });
 
-      if (!response.ok) {
-        throw new Error('Error en la respuesta del servidor');
-      }
-
-      const data = await response.json();
-      setStudentId(data.id);
-      
-      await new Promise(resolve => setTimeout(resolve, 50));
-      
-      setShowStudentForm(false);
-      setTimerActive(true);
-      
-      forceUpdate();
-      
-    } catch (error) {
-      console.error('Error al guardar datos:', error);
-      alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
@@ -458,36 +417,30 @@ const ProCalculo6: React.FC = () => {
   ];
 
   const handleAnswer = (selectedAnswer: string | number) => {
-  if (showFeedback || timeUp) return;
-  
-  const currentQuestion = subtests[currentSubtest].items[currentItem];
-  const isCorrect = normalizeText(selectedAnswer.toString()) === 
-                   normalizeText(currentQuestion.answer.toString());
-  
-  setCorrectAnswer(isCorrect);
-  setShowFeedback(true);
-  
-  if (isCorrect) {
-    setScore(prevScore => {
-      const newScore = [...prevScore];
-      // Suma los puntos al subtest actual
-      newScore[currentSubtest] += currentQuestion.points;
-      
-      // Debug: Mostrar puntuación actualizada
-      console.log(`Puntuación actualizada para ${subtests[currentSubtest].name}:`, 
-        newScore[currentSubtest], '/', subtests[currentSubtest].maxScore);
-      
-      return newScore;
-    });
-    setAnimation('correct');
-  } else {
-    setAnimation('wrong');
-  }
-  
-  setTimeout(() => {
-    moveToNextItem();
-  }, 2000);
-};
+    if (showFeedback || timeUp) return;
+    
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    const isCorrect = normalizeText(selectedAnswer.toString()) === 
+                     normalizeText(currentQuestion.answer.toString());
+    
+    setCorrectAnswer(isCorrect);
+    setShowFeedback(true);
+    
+    if (isCorrect) {
+      setScore(prevScore => {
+        const newScore = [...prevScore];
+        newScore[currentSubtest] += currentQuestion.points;
+        return newScore;
+      });
+      setAnimation('correct');
+    } else {
+      setAnimation('wrong');
+    }
+    
+    setTimeout(() => {
+      moveToNextItem();
+    }, 2000);
+  };
 
   const moveToNextItem = () => {
     setShowFeedback(false);
@@ -523,7 +476,7 @@ const ProCalculo6: React.FC = () => {
     if (totalScore > 30) {
       launchConfetti();
     }
-    saveTestResults();
+    saveTestData();
   };
 
   const handleMiniGameComplete = (success: boolean) => {
@@ -727,7 +680,7 @@ const ProCalculo6: React.FC = () => {
         <div className={styles.formActions}>
           <button 
             className={styles.startTestButton}
-            onClick={saveStudentData}
+            onClick={() => saveTestData(true)}
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Cargando...' : 'Comenzar Test'}
