@@ -214,21 +214,21 @@ const ProCalculo6: React.FC = () => {
           answer: "5", 
           points: 4,
           type: "escrito",
-          image: '/img/5_animales.png'
+          image: '/img/Test_6 Enumeración_5.png'
         },
         { 
           question: "¿Cuántos animales hay en la imagen?", 
           answer: "8", 
           points: 4,
           type: "escrito",
-          image: '/img/8_animales.png'
+          image: '/img/Test_6 Enumeración_8.png'
         },
         { 
           question: "¿Cuántos animales hay en la imagen?", 
           answer: "10", 
           points: 4,
           type: "escrito",
-          image: '/img/10_animales.png'
+          image: '/img/Test_6 Enumeración_10.png'
         }
       ]
     },
@@ -241,7 +241,7 @@ const ProCalculo6: React.FC = () => {
           answer: "10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0", 
           points: 2,
           type: "escrito",
-          image: '/img/Contar10_0.jpg'
+          image: '/img/Test_6 Contar para atrás.png'
         }
       ]
     },
@@ -254,21 +254,21 @@ const ProCalculo6: React.FC = () => {
           answer: "7", 
           points: 2,
           type: "escrito",
-          image: '/img/Escribe_7.jpg'
+          image: '/img/Test_6 Escritura_7.png'
         },
         { 
           question: "Escribe el número 'veinte'", 
           answer: "20", 
           points: 2,
           type: "escrito",
-          image: '/img/Escribe_20.jpg'
+          image: '/img/Test_6 Escritura_20.png'
         },
         { 
           question: "Escribe el número 'trescientos cinco'", 
           answer: "305", 
           points: 2,
           type: "escrito",
-          image: '/img/Escribe_305.jpg'
+          image: '/img/Test_6 Escritura_305.png'
         }
       ]
     },
@@ -281,42 +281,42 @@ const ProCalculo6: React.FC = () => {
           answer: "20", 
           points: 2,
           type: "escrito",
-          image: '/img/Sumar10_10.jpg'
+          image: '/img/Test_6 Calculo_20.png'
         },
         { 
           question: "1 + 15", 
           answer: "16", 
           points: 2,
           type: "escrito",
-          image: '/img/Sumar1_15.jpg'
+          image: '/img/Test_6 Calculo_16.png'
         },
         { 
           question: "2 + 7", 
           answer: "9", 
           points: 2,
           type: "escrito",
-          image: '/img/Sumar2_7.jpg'
+          image: '/img/Test_6 Calculo_9.png'
         },
         { 
           question: "10 - 3", 
           answer: "7", 
           points: 2,
           type: "escrito",
-          image: '/img/Restar10_3.jpg'
+          image: '/img/Test_6 Calculo_7.png'
         },
         { 
           question: "18 - 6", 
           answer: "12", 
           points: 2,
           type: "escrito",
-          image: '/img/Restar18_6.jpg'
+          image: '/img/Test_6 Calculo_12.png'
         },
         { 
           question: "7 - 4", 
           answer: "3", 
           points: 2,
           type: "escrito",
-          image: '/img/Restar7_4.jpg'
+          image: '/img/Test_6 Calculo_3.png'
         }
       ]
     },
@@ -329,28 +329,28 @@ const ProCalculo6: React.FC = () => {
           answer: "cincuenta y siete", 
           points: 2,
           type: "escrito",
-          image: '/img/cincuenta_siete.jpg'
+          image: '/img/Test_6 Lectura_57.png'
         },
         { 
           question: "Lee y escribe con palabras minúsculas el número: 15", 
           answer: "quince", 
           points: 2,
           type: "escrito",
-          image: '/img/quince.jpg'
+          image: '/img/Test_6 Lectura_15.png'
         },
         { 
           question: "Lee y escribe con palabras minúsculas el número: 138", 
           answer: "ciento treinta y ocho", 
           points: 2,
           type: "escrito",
-          image: '/img/ciento_treinta_ocho.jpg'
+          image: '/img/Test_6 Lectura_138.png'
         },
         { 
           question: "Lee y escribe con palabras minúsculas el número: 9", 
           answer: "nueve", 
           points: 2,
           type: "escrito",
-          image: '/img/nueve.jpg'
+          image: '/img/Test_6 Lectura_9.png'
         }
       ]
     },
@@ -363,21 +363,21 @@ const ProCalculo6: React.FC = () => {
           answer: "poco", 
           points: 2,
           type: "escrito",
-          image: '/img/2_nubes.png'
+          image: '/img/Test_6 Estimación_nubes.png'
         },
         { 
           question: "¿2 niños jugando en el recreo es poco o mucho?", 
           answer: "poco", 
           points: 2,
           type: "escrito",
-          image: '/img/2_niños.png'
+          image: '/img/Test_6 Estimación_niños.png'
         },
         { 
           question: "¿60 chicos en un cumpleaños es poco o mucho?", 
           answer: "mucho", 
           points: 2,
           type: "escrito",
-          image: '/img/60_cumpleaños.png'
+          image: '/img/Test_6 Estimación_cumpleaños.png'
         }
       ]
     },
@@ -390,14 +390,14 @@ const ProCalculo6: React.FC = () => {
           answer: "10", 
           points: 2,
           type: "escrito",
-          image: '/img/10_pelotas.png'
+          image: '/img/Test_6 Resolución_10.png'
         },
         { 
           question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
           answer: "5", 
           points: 2,
           type: "escrito",
-          image: '/img/5_pelotas.png'
+          image: '/img/Test_6 Resolución_5.png'
         }
       ]
     },
@@ -410,28 +410,28 @@ const ProCalculo6: React.FC = () => {
           answer: "150", 
           points: 2,
           type: "escrito",
-          image: '/img/bicicleta.png'
+          image: '/img/Test_6 Adaptación_150.png'
         },
         { 
           question: "¿Cuánto crees que cuesta una radio?", 
           answer: "90", 
           points: 2,
           type: "escrito",
-          image: '/img/radio.png'
+          image: '/img/Test_6 Adaptación_90.png'
         },
         { 
           question: "¿Cuánto crees que cuesta una pelota de cuero?", 
           answer: "50", 
           points: 2,
           type: "escrito",
-          image: '/img/pelota.png'
+          image: '/img/Test_6 Adaptación_50.png'
         },
         { 
           question: "¿Cuánto crees que cuesta una gaseosa?", 
           answer: "1.50", 
           points: 2,
           type: "escrito",
-          image: '/img/gaseosa.png'
+          image: '/img/Test_6 Adaptación_1.50.png'
         }
       ]
     },
@@ -444,14 +444,14 @@ const ProCalculo6: React.FC = () => {
           answer: "15", 
           points: 1,
           type: "escrito",
-          image: '/img/cifra_quince.jpg'
+          image: '/img/Test_6 Escribir_15.png'
         },
         { 
           question: "Escribe el número 'veinticinco'", 
           answer: "25", 
           points: 1,
           type: "escrito",
-          image: '/img/cifra_veinticinco.jpg'
+          image: '/img/Test_6 Escribir_25.png'
         }
       ]
     }
