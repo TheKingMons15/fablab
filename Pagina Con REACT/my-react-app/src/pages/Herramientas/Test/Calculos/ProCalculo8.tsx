@@ -142,233 +142,59 @@ const ProCalculo8: React.FC = () => {
       name: "Contar para adelante",
       maxScore: 16,
       items: [
-        { 
-          question: "Escribe los números del 1 al 13 separados solo por comas. Ejemplo (1,2,...)", 
-          answer: "1,2,3,4,5,6,7,8,9,10,11,12,13", 
-          points: 4,
-          type: "escrito",
-          image: '/img/Test_8 Contar_13A.png'
-        },
-        { 
-          question: "Escribe los números del 1 al 8 separados solo por comas. Ejemplo (1,2,...)", 
-          answer: "1,2,3,4,5,6,7,8", 
-          points: 4,
-          type: "escrito",
-          image: '/img/Test_8 Contar_8.png'
-        },
-        { 
-          question: "Escribe los números del 1 al 10 una vez más separados solo por comas. Ejemplo (1,2,...)", 
-          answer: "1,2,3,4,5,6,7,8,9,10", 
-          points: 4,
-          type: "escrito",
-          image: '/img/Test_8 Contar_10.png'
-        },
-        { 
-          question: "Escribe los números del 1 al 18 por última vez separados solo por comas. Ejemplo (1,2,...)", 
-          answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18", 
-          points: 4,
-          type: "escrito",
-          image: '/img/Test_8 Contar_18.png'
-        }
+        { question: "Escribe los números del 1 al 13 separados solo por comas. Ejemplo (1,2,...)", answer: "1,2,3,4,5,6,7,8,9,10,11,12,13", points: 4, type: "escrito", image: '/img/Test_8 Contar_13A.png' },
+        { question: "Escribe los números del 1 al 8 separados solo por comas. Ejemplo (1,2,...)", answer: "1,2,3,4,5,6,7,8", points: 4, type: "escrito", image: '/img/Test_8 Contar_8.png' },
+        { question: "Escribe los números del 1 al 10 una vez más separados solo por comas. Ejemplo (1,2,...)", answer: "1,2,3,4,5,6,7,8,9,10", points: 4, type: "escrito", image: '/img/Test_8 Contar_10.png' },
+        { question: "Escribe los números del 1 al 18 por última vez separados solo por comas. Ejemplo (1,2,...)", answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18", points: 4, type: "escrito", image: '/img/Test_8 Contar_18.png' }
       ]
     },
     {
       name: "Contar para atrás",
       maxScore: 2,
       items: [
-        { 
-          question: "Escribe los números contando hacia atrás desde 23 hasta 0 separados solo por comas. Ejemplo (23,22,...)", 
-          answer: "23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Contar para atrás.png'
-        }
+        { question: "Escribe los números contando hacia atrás desde 23 hasta 0 separados solo por comas. Ejemplo (23,22,...)", answer: "23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", points: 2, type: "escrito", image: '/img/Test_8 Contar para atrás.png' }
       ]
     },
     {
       name: "Escritura de números",
       maxScore: 12,
       items: [
-        { 
-          question: "Escribe el número 'ciento sesenta y nueve'", 
-          answer: "169", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escritura_169.png'
-        },
-        { 
-          question: "Escribe el número 'treinta y ocho'", 
-          answer: "38", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escritura_38.png'
-        },
-        { 
-          question: "Escribe el número 'mil doscientos'", 
-          answer: "1200", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escritura_1200.png'
-        },
-        { 
-          question: "Escribe el número 'trescientos cinco'", 
-          answer: "305", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escritura_305.png'
-        },
-        { 
-          question: "Escribe el número 'catorce'", 
-          answer: "14", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escritura_14.png'
-        },
-        { 
-          question: "Escribe el número 'seis mil doscientos ochenta y cinco'", 
-          answer: "6285", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escritura_6285.png'
-        }
+        { question: "Escribe el número 'ciento sesenta y nueve'", answer: "169", points: 2, type: "escrito", image: '/img/Test_8 Escritura_169.png' },
+        { question: "Escribe el número 'treinta y ocho'", answer: "38", points: 2, type: "escrito", image: '/img/Test_8 Escritura_38.png' },
+        { question: "Escribe el número 'mil doscientos'", answer: "1200", points: 2, type: "escrito", image: '/img/Test_8 Escritura_1200.png' },
+        { question: "Escribe el número 'trescientos cinco'", answer: "305", points: 2, type: "escrito", image: '/img/Test_8 Escritura_305.png' },
+        { question: "Escribe el número 'catorce'", answer: "14", points: 2, type: "escrito", image: '/img/Test_8 Escritura_14.png' },
+        { question: "Escribe el número 'seis mil doscientos ochenta y cinco'", answer: "6285", points: 2, type: "escrito", image: '/img/Test_8 Escritura_6285.png' }
       ]
     },
     {
       name: "Cálculo mental",
       maxScore: 24,
       items: [
-        { 
-          question: "5 + 8", 
-          answer: "13", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_13.png'
-        },
-        { 
-          question: "12 + 6", 
-          answer: "18", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_18.png'
-        },
-        { 
-          question: "4 + 13", 
-          answer: "17", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_17.png'
-        },
-        { 
-          question: "9 + 7", 
-          answer: "16", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_16.png'
-        },
-        { 
-          question: "15 + 12", 
-          answer: "27", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_27.png'
-        },
-        { 
-          question: "13 + 19", 
-          answer: "32", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_32.png'
-        },
-        { 
-          question: "17 - 5", 
-          answer: "12", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_12.png'
-        },
-        { 
-          question: "14 - 6", 
-          answer: "8", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_8.png'
-        },
-        { 
-          question: "24 - 17", 
-          answer: "7", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_7.png'
-        },
-        { 
-          question: "19 - 6", 
-          answer: "13", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_13B.png'
-        },
-        { 
-          question: "15 - 9", 
-          answer: "6", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_6.png'
-        },
-        { 
-          question: "25 - 12", 
-          answer: "13", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Cálculo_13C.png'
-        }
+        { question: "5 + 8", answer: "13", points: 2, type: "escrito", image: '/img/Test_8 Cálculo_13.png'},
+        { question: "12 + 6", answer: "18", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_18.png" },
+        { question: "4 + 13", answer: "17", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_17.png" },
+        { question: "9 + 7", answer: "16", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_16.png" },
+        { question: "15 + 12", answer: "27", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_27.png" },
+        { question: "13 + 19", answer: "32", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_32.png" },
+        { question: "17 - 5", answer: "12", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_12.png" },
+        { question: "14 - 6", answer: "8", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_8.png" },
+        { question: "24 - 17", answer: "7", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_7.png" },
+        { question: "19 - 6", answer: "13", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_13B.png" },
+        { question: "15 - 9", answer: "6", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_6.png" },
+        { question: "25 - 12", answer: "13", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_13C.png" }
       ]
     },
     {
       name: "Lectura de números",
       maxScore: 12,
       items: [
-        { 
-          question: "Escribe con palabras el número: 305", 
-          answer: "trescientos cinco", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_305.png'
-        },
-        { 
-          question: "Escribe con palabras el número: 57", 
-          answer: "cincuenta y siete", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_57.png'
-        },
-        { 
-          question: "Escribe con palabras el número: 6485", 
-          answer: "seis mil cuatrocientos ochenta y cinco", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_6485.png'
-        },
-        { 
-          question: "Escribe con palabras el número: 138", 
-          answer: "ciento treinta y ocho", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_138.png'
-        },
-        { 
-          question: "Escribe con palabras el número: 15", 
-          answer: "quince", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_15.png'
-        },
-        { 
-          question: "Escribe con palabras el número: 1900", 
-          answer: "mil novecientos", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_1900.png'
-        }
+        { question: "Escribe con palabras el número: 305", answer: "trescientos cinco", points: 2, type: "escrito", image: "/img/Test_8 Lectura_305.png" },
+        { question: "Escribe con palabras el número: 57", answer: "cincuenta y siete", points: 2, type: "escrito", image: "/img/Test_8 Lectura_57.png" },
+        { question: "Escribe con palabras el número: 6485", answer: "seis mil cuatrocientos ochenta y cinco", points: 2, type: "escrito", image: "/img/Test_8 Lectura_6485.png" },
+        { question: "Escribe con palabras el número: 138", answer: "ciento treinta y ocho", points: 2, type: "escrito", image: "/img/Test_8 Lectura_138.png" },
+        { question: "Escribe con palabras el número: 15", answer: "quince", points: 2, type: "escrito", image: "/img/Test_8 Lectura_15.png" },
+        { question: "Escribe con palabras el número: 1900", answer: "mil novecientos", points: 2, type: "escrito", image: "/img/Test_8 Lectura_1900.png" }
       ]
     },
     {
