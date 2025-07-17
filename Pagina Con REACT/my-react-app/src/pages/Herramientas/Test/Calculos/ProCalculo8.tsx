@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
+import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars, FaPlay, FaFlagCheckered } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 import SnakeGame from '../../Minijuego/SnakeGame';
+import jsPDF from 'jspdf';
 
 interface QuestionItem {
   question: string;
@@ -50,30 +51,36 @@ const ProCalculo8: React.FC = () => {
   const [showStudentForm, setShowStudentForm] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [testStartTime, setTestStartTime] = useState<string>('');
+  const [testStarted, setTestStarted] = useState(false);
+  const [showFinishScreen, setShowFinishScreen] = useState(false);
 
   const minigameSubtests = [3, 6, 9, 12];
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
-    if (!showStudentForm && timerActive && timeLeft > 0 && !showMiniGame) {
+    if (testStarted && timerActive && timeLeft > 0 && !showMiniGame && !showFinishScreen) {
       timer = setTimeout(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
     } else if (timeLeft === 0 && !showResult && !timeUp) {
       setTimerActive(false);
       setTimeUp(true);
-      setShowResult(true);
-      const totalScore = score.reduce((a, b) => a + b, 0);
-      if (totalScore > 80) {
-        launchConfetti();
-      }
+      setShowFinishScreen(true);
     }
     
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm, showMiniGame]);
+  }, [timeLeft, timerActive, showResult, timeUp, showMiniGame, showFinishScreen, testStarted]);
+
+  useEffect(() => {
+    if (testStarted && timerActive) {
+      const now = new Date();
+      setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
+    }
+  }, [testStarted, timerActive]);
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
@@ -99,13 +106,23 @@ const ProCalculo8: React.FC = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setShowStudentForm(false);
-      setTimerActive(true);
     } catch (error) {
       console.error('Error al guardar datos:', error);
       alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const startTest = () => {
+    setTestStarted(true);
+    setTimerActive(true);
+    const now = new Date();
+    setTestStartTime(now.toLocaleString('es-ES', { 
+      dateStyle: 'long', 
+      timeStyle: 'short', 
+      timeZone: 'America/Guayaquil' 
+    }));
   };
 
   const formatTime = (seconds: number): string => {
@@ -782,15 +799,20 @@ const ProCalculo8: React.FC = () => {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        setShowResult(true);
-        setTimerActive(false);
-        const totalScore = score.reduce((a, b) => a + b, 0);
-        if (totalScore > 80) {
-          launchConfetti();
-        }
+        setShowFinishScreen(true);
       }
     } else {
       setCurrentItem(currentItem + 1);
+    }
+  };
+
+  const finishTest = () => {
+    setShowFinishScreen(false);
+    setShowResult(true);
+    setTimerActive(false);
+    const totalScore = score.reduce((a, b) => a + b, 0);
+    if (totalScore > 80) {
+      launchConfetti();
     }
   };
 
@@ -806,12 +828,7 @@ const ProCalculo8: React.FC = () => {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        setShowResult(true);
-        setTimerActive(false);
-        const totalScore = score.reduce((a, b) => a + b, 0);
-        if (totalScore > 80) {
-          launchConfetti();
-        }
+        setShowFinishScreen(true);
       }
     }, 1000);
   };
@@ -842,6 +859,9 @@ const ProCalculo8: React.FC = () => {
     setTimerActive(false);
     setTimeUp(false);
     setShowStudentForm(true);
+    setTestStartTime('');
+    setTestStarted(false);
+    setShowFinishScreen(false);
   };
 
   const getResultMessage = () => {
@@ -889,6 +909,326 @@ const ProCalculo8: React.FC = () => {
         return newErrors;
       });
     }
+  };
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    let yPos = 10;
+
+    doc.setFontSize(20);
+    doc.text('RESULTADO DEL TEST - 8', 105, yPos, { align: 'center' });
+    yPos += 15;
+
+    doc.setFontSize(14);
+    doc.text('Datos del estudiante', 10, yPos);
+    yPos += 10;
+    doc.setFontSize(12);
+    doc.text(`Nombre: ${studentData.nombres}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Apellido: ${studentData.apellidos}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Edad: ${studentData.edad}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Genero: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : ''}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Curso/Grado: ${studentData.curso}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Institución: ${studentData.institucion}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Fecha y hora de inicio: ${testStartTime}`, 10, yPos);
+    yPos += 10;
+
+    doc.text('PUNTUACIÓN TOTAL', 10, yPos);
+    yPos += 5;
+    doc.text(`Puntuación total: ${score.reduce((a, b) => a + b, 0)}/166 Puntos`, 10, yPos);
+    yPos += 10;
+
+    doc.text('Detalles del Test:', 10, yPos);
+    yPos += 10;
+
+    doc.text('Contar para adelante: 0 / 16', 10, yPos);
+    yPos += 5;
+    subtests[0].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Contar para atrás: 0 / 2', 10, yPos);
+    yPos += 5;
+    doc.text(`Respuesta esperada: 23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0`, 10, yPos);
+    yPos += 5;
+    doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Puntos obtenidos: 0 / 2`, 10, yPos);
+    yPos += 10;
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Escritura de números: 0 / 12', 10, yPos);
+    yPos += 5;
+    subtests[2].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Cálculo mental: 0 / 24', 10, yPos);
+    yPos += 5;
+    subtests[3].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Lectura de números: 0 / 12', 10, yPos);
+    yPos += 5;
+    subtests[4].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Posicionar un número en una escala: 0 / 10', 10, yPos);
+    yPos += 5;
+    subtests[5].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Estimación perceptiva de cantidad: 0 / 4', 10, yPos);
+    yPos += 5;
+    subtests[6].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Estimación de cantidades en contexto: 0 / 10', 10, yPos);
+    yPos += 5;
+    subtests[7].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Resolución de problemas aritméticos: 0 / 8', 10, yPos);
+    yPos += 5;
+    subtests[8].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Comparación de dos números: 0 / 16', 10, yPos);
+    yPos += 5;
+    subtests[9].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Determinación de cantidad: 0 / 21', 10, yPos);
+    yPos += 5;
+    subtests[10].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Escribir en cifra: 0 / 3', 10, yPos);
+    yPos += 5;
+    subtests[11].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Escritura correcta del número: 0 / 5', 10, yPos);
+    yPos += 5;
+    subtests[12].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    if (yPos > 250) {
+      doc.addPage();
+      yPos = 10;
+    }
+    doc.text('Lectura alfabética de números y escritura en cifras: 0 / 7', 10, yPos);
+    yPos += 5;
+    subtests[13].items.forEach((item) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+      yPos += 5;
+      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
+      yPos += 5;
+    });
+
+    doc.save('Resultado_Test_8_Sebas_Paucar.pdf');
   };
 
   const renderStudentForm = () => (
@@ -1176,10 +1516,50 @@ const ProCalculo8: React.FC = () => {
             >
               Elegir otra prueba
             </button>
+            <button 
+              className={styles.downloadButton} 
+              onClick={generatePDF}
+            >
+              Descargar PDF
+            </button>
           </div>
         </div>
       </div>
     </section>
+  );
+
+  const renderStartTestScreen = () => (
+    <div className={styles.startTestContainer}>
+      <div className={styles.startTestCard}>
+        <h2>¡Todo listo para comenzar!</h2>
+        <p>El test tiene una duración máxima de 30 minutos.</p>
+        <p>Por favor, asegúrate de estar en un lugar tranquilo y sin distracciones.</p>
+        
+        <button 
+          className={styles.startTestButton}
+          onClick={startTest}
+        >
+          <FaPlay /> Iniciar Test
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderFinishScreen = () => (
+    <div className={styles.finishTestContainer}>
+      <div className={styles.finishTestCard}>
+        <h2>¡Has completado todas las preguntas!</h2>
+        <p>Tiempo restante: {formatTime(timeLeft)}</p>
+        <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
+        
+        <button 
+          className={styles.finishTestButton}
+          onClick={finishTest}
+        >
+          <FaFlagCheckered /> Finalizar Test
+        </button>
+      </div>
+    </div>
   );
 
   const renderTestInProgress = () => (
@@ -1239,6 +1619,10 @@ const ProCalculo8: React.FC = () => {
           renderMiniGame()
         ) : showResult ? (
           renderResults()
+        ) : showFinishScreen ? (
+          renderFinishScreen()
+        ) : !testStarted ? (
+          renderStartTestScreen()
         ) : (
           renderTestInProgress()
         )}
