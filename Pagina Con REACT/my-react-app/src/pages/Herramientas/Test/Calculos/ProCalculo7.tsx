@@ -50,30 +50,27 @@ const ProCalculo7: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testStartTime, setTestStartTime] = useState<string>('');
   const [testStarted, setTestStarted] = useState(false);
+  const [showFinishScreen, setShowFinishScreen] = useState(false);
 
   const minigameSubtests = [3, 6, 9];
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
-    if (testStarted && timerActive && timeLeft > 0 && !showMiniGame) {
+    if (testStarted && timerActive && timeLeft > 0 && !showMiniGame && !showFinishScreen) {
       timer = setTimeout(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
     } else if (timeLeft === 0 && !showResult && !timeUp) {
       setTimerActive(false);
       setTimeUp(true);
-      setShowResult(true);
-      const totalScore = score.reduce((a, b) => a + b, 0);
-      if (totalScore > 50) {
-        launchConfetti();
-      }
+      setShowFinishScreen(true);
     }
     
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, timerActive, showResult, timeUp, score, showMiniGame, testStarted]);
+  }, [timeLeft, timerActive, showResult, timeUp, showMiniGame, showFinishScreen, testStarted]);
 
   useEffect(() => {
     if (testStarted && timerActive) {
@@ -293,7 +290,7 @@ const ProCalculo7: React.FC = () => {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        finishTest();
+        setShowFinishScreen(true);
       }
     } else {
       setCurrentItem(currentItem + 1);
@@ -301,6 +298,7 @@ const ProCalculo7: React.FC = () => {
   };
 
   const finishTest = () => {
+    setShowFinishScreen(false);
     setShowResult(true);
     setTimerActive(false);
     const totalScore = score.reduce((a, b) => a + b, 0);
@@ -321,7 +319,7 @@ const ProCalculo7: React.FC = () => {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        finishTest();
+        setShowFinishScreen(true);
       }
     }, 1000);
   };
@@ -352,6 +350,7 @@ const ProCalculo7: React.FC = () => {
     setShowStudentForm(true);
     setTestStartTime('');
     setTestStarted(false);
+    setShowFinishScreen(false);
   };
 
   const getResultMessage = () => {
@@ -903,6 +902,23 @@ const ProCalculo7: React.FC = () => {
     </div>
   );
 
+  const renderFinishScreen = () => (
+    <div className={styles.finishTestContainer}>
+      <div className={styles.finishTestCard}>
+        <h2>¡Has completado todas las preguntas!</h2>
+        <p>Tiempo restante: {formatTime(timeLeft)}</p>
+        <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
+        
+        <button 
+          className={styles.finishTestButton}
+          onClick={finishTest}
+        >
+          <FaFlagCheckered /> Finalizar Test
+        </button>
+      </div>
+    </div>
+  );
+
   const renderTestInProgress = () => (
     <>
       <section className={styles.testHeader}>
@@ -942,17 +958,6 @@ const ProCalculo7: React.FC = () => {
         <div className={styles.questionCard}>
           {renderQuestion()}
         </div>
-
-        {currentSubtest === subtests.length - 1 && currentItem === subtests[currentSubtest].items.length - 1 && (
-          <div className={styles.finishTestButtonContainer}>
-            <button 
-              className={styles.finishTestButton}
-              onClick={finishTest}
-            >
-              <FaFlagCheckered /> Finalizar Test
-            </button>
-          </div>
-        )}
       </section>
     </>
   );
@@ -968,6 +973,8 @@ const ProCalculo7: React.FC = () => {
           renderMiniGame()
         ) : showResult ? (
           renderResults()
+        ) : showFinishScreen ? (
+          renderFinishScreen()
         ) : !testStarted ? (
           renderStartTestScreen()
         ) : (

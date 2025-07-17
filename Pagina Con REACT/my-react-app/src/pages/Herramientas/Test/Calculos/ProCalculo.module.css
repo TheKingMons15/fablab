@@ -1615,3 +1615,173 @@
 .downloadButton:hover {
   background: darken(var(--color-success), 10%);
 }
+
+
+/*BOTONES INICIAR Y FINALIZAR*/
+
+/* Estilos para los botones principales del test */
+.startTestButton {
+  background: linear-gradient(135deg, var(--color-primary-green), var(--color-secondary-green));
+  color: var(--color-white);
+  border: none;
+  padding: 1.2rem 2.5rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  margin: 2rem auto 0;
+  position: relative;
+  overflow: hidden;
+  min-width: 250px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.startTestButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 7px 14px rgba(0, 102, 51, 0.2),
+    0 3px 6px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, var(--color-secondary-green), var(--color-primary-green));
+}
+
+.startTestButton:active {
+  transform: translateY(1px);
+}
+
+.startTestButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: all 0.5s ease;
+}
+
+.startTestButton:hover::before {
+  left: 100%;
+}
+
+.finishTestButton {
+  background: linear-gradient(135deg, var(--color-accent-yellow), #ffb700);
+  color: var(--color-primary-green);
+  border: none;
+  padding: 1rem 2.2rem;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 1px 3px rgba(0, 0, 0, 0.08);
+  margin: 2rem auto 0;
+  position: relative;
+  overflow: hidden;
+  min-width: 220px;
+  border: 2px solid rgba(0, 102, 51, 0.2);
+}
+
+.finishTestButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 7px 14px rgba(255, 206, 0, 0.2),
+    0 3px 6px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #ffb700, var(--color-accent-yellow));
+  color: var(--color-primary-green);
+}
+
+.finishTestButton:active {
+  transform: translateY(1px);
+}
+
+.finishTestButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0) 50%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.finishTestButton:hover::after {
+  transform: translateX(100%);
+}
+
+.buttonIcon {
+  font-size: 1.2em;
+  transition: transform 0.3s ease;
+}
+
+.startTestButton:hover .buttonIcon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.finishTestButton:hover .buttonIcon {
+  transform: scale(1.1);
+}
+
+/* Efecto de pulso para el botón de inicio */
+@keyframes pulseStart {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 153, 85, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(0, 153, 85, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 153, 85, 0);
+  }
+}
+
+.startTestButton {
+  animation: pulseStart 2s infinite;
+}
+
+/* Efecto de brillo para el botón de finalizar */
+@keyframes shineFinish {
+  0% {
+    background-position: -100px;
+  }
+  100% {
+    background-position: 200px;
+  }
+}
+
+.finishTestButton {
+  background-size: 200% auto;
+  background-image: linear-gradient(
+    to right,
+    var(--color-accent-yellow) 0%,
+    #ffdb58 50%,
+    var(--color-accent-yellow) 100%
+  );
+  animation: shineFinish 3s infinite linear;
+}
