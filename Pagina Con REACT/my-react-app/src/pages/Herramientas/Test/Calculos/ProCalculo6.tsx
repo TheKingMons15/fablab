@@ -638,7 +638,7 @@ const ProCalculo6: React.FC = () => {
 
   const getResultMessage = () => {
     const totalScore = calculateTotalScore();
-    const percentage = (totalScore / 60) * 100;
+    const percentage = (totalScore / 60) * 100; // Esta variable SÍ se usa
     
     if (timeUp) {
       return "¡Tiempo terminado! ⏰";
@@ -648,7 +648,8 @@ const ProCalculo6: React.FC = () => {
     if (percentage >= 60) return "¡Muy bien hecho! 🌟";
     if (percentage >= 40) return "¡Buen intento! 👍";
     return "¡Sigue practicando! 💪";
-  };
+};
+
 
   const handleConfirmAnswer = () => {
     if (writtenAnswer.trim()) {
@@ -907,7 +908,6 @@ const ProCalculo6: React.FC = () => {
 
   const renderResults = () => {
     const totalScore = calculateTotalScore();
-    const percentage = (totalScore / 60) * 100;
     
     return (
       <section className={styles.resultSection}>
@@ -967,7 +967,7 @@ const ProCalculo6: React.FC = () => {
         </div>
       </section>
     );
-  };
+};
 
   const renderTestInProgress = () => (
     <>
