@@ -13,6 +13,7 @@ interface QuestionItem {
   type: 'escrito' | 'opciones';
   options?: string[];
   image?: string;
+  isNumeric?: boolean;
 }
 
 interface Subtest {
@@ -57,14 +58,15 @@ const ProCalculo6: React.FC = () => {
   // Array que define en qué subtests mostrar minijuegos
   const minigameSubtests = [3, 6];
 
-  // Función para normalizar respuestas
-  const normalizeAnswer = (answer: string | number): string | number => {
+  // Función para normalizar respuestas - MEJORADA
+  const normalizeAnswer = (answer: string | number, isNumericQuestion: boolean = false): string | number => {
     if (typeof answer === 'number') return answer;
     
     // Manejar números escritos con comas como decimales
     const commaToDot = answer.toString().replace(',', '.');
     if (!isNaN(Number(commaToDot))) {
-      return Number(commaToDot);
+      const num = Number(commaToDot);
+      return isNumericQuestion ? Math.round(num) : num;
     }
     
     // Convertir números escritos en texto a minúsculas sin acentos
@@ -73,10 +75,10 @@ const ProCalculo6: React.FC = () => {
       .trim();
   };
 
-  // Función para comparar respuestas
-  const compareAnswers = (userAnswer: string | number, correctAnswer: string | number): boolean => {
-    const normalizedUser = normalizeAnswer(userAnswer);
-    const normalizedCorrect = normalizeAnswer(correctAnswer);
+  // Función para comparar respuestas - MEJORADA
+  const compareAnswers = (userAnswer: string | number, correctAnswer: string | number, isNumericQuestion: boolean = false): boolean => {
+    const normalizedUser = normalizeAnswer(userAnswer, isNumericQuestion);
+    const normalizedCorrect = normalizeAnswer(correctAnswer, isNumericQuestion);
     
     // Comparación numérica con tolerancia para decimales
     if (typeof normalizedCorrect === 'number') {
@@ -86,7 +88,12 @@ const ProCalculo6: React.FC = () => {
       
       if (isNaN(userNum)) return false;
       
-      // Tolerancia para números decimales
+      // Para preguntas numéricas, comparación exacta sin tolerancia
+      if (isNumericQuestion) {
+        return userNum === normalizedCorrect;
+      }
+      
+      // Tolerancia para números decimales en otras preguntas
       return Math.abs(userNum - normalizedCorrect) < 0.1;
     }
     
@@ -113,12 +120,16 @@ const ProCalculo6: React.FC = () => {
     };
   }, [timeLeft, timerActive, showResult, timeUp, showStudentForm, showMiniGame]);
 
-  // Función para calcular el puntaje total
+  // Función para calcular el puntaje total - MEJORADA con logs de diagnóstico
   const calculateTotalScore = (): number => {
-    return subtests.reduce((total, subtest, index) => {
+    let total = 0;
+    subtests.forEach((subtest, index) => {
       const subtestScore = Math.min(score[index], subtest.maxScore);
-      return total + subtestScore;
-    }, 0);
+      console.log(`Subtest ${index} (${subtest.name}): ${score[index]} / ${subtest.maxScore}`);
+      total += subtestScore;
+    });
+    console.log('Total calculado:', total);
+    return total;
   };
 
   const finishTest = async () => {
@@ -140,6 +151,8 @@ const ProCalculo6: React.FC = () => {
         puntuacion_total: totalScore,
       };
 
+      console.log('Enviando datos al servidor:', testData);
+
       const response = await fetch('https://fablab.upec.edu.ec/procalculo-api/guardar-test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -151,6 +164,7 @@ const ProCalculo6: React.FC = () => {
       }
 
       const result = await response.json();
+      console.log('Respuesta del servidor:', result);
       setTestId(result.id);
       setShowResult(true);
       
@@ -211,21 +225,24 @@ const ProCalculo6: React.FC = () => {
           answer: "5", 
           points: 4,
           type: "escrito",
-          image: '/img/Test_6 Enumeración_5.png'
+          image: '/img/Test_6 Enumeración_5.png',
+          isNumeric: true
         },
         { 
           question: "¿Cuántos animales hay en la imagen?", 
           answer: "8", 
           points: 4,
           type: "escrito",
-          image: '/img/Test_6 Enumeración_8.png'
+          image: '/img/Test_6 Enumeración_8.png',
+          isNumeric: true
         },
         { 
           question: "¿Cuántos animales hay en la imagen?", 
           answer: "10", 
           points: 4,
           type: "escrito",
-          image: '/img/Test_6 Enumeración_10.png'
+          image: '/img/Test_6 Enumeración_10.png',
+          isNumeric: true
         }
       ]
     },
@@ -251,21 +268,24 @@ const ProCalculo6: React.FC = () => {
           answer: "7", 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Escritura_7.png'
+          image: '/img/Test_6 Escritura_7.png',
+          isNumeric: true
         },
         { 
           question: "Escribe el número 'veinte'", 
           answer: "20", 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Escritura_20.png'
+          image: '/img/Test_6 Escritura_20.png',
+          isNumeric: true
         },
         { 
           question: "Escribe el número 'trescientos cinco'", 
           answer: "305", 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Escritura_305.png'
+          image: '/img/Test_6 Escritura_305.png',
+          isNumeric: true
         }
       ]
     },
@@ -278,42 +298,48 @@ const ProCalculo6: React.FC = () => {
           answer: 20, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Calculo_20.png'
+          image: '/img/Test_6 Calculo_20.png',
+          isNumeric: true
         },
         { 
           question: "1 + 15", 
           answer: 16, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Calculo_16.png'
+          image: '/img/Test_6 Calculo_16.png',
+          isNumeric: true
         },
         { 
           question: "2 + 7", 
           answer: 9, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Calculo_9.png'
+          image: '/img/Test_6 Calculo_9.png',
+          isNumeric: true
         },
         { 
           question: "10 - 3", 
           answer: 7, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Calculo_7.png'
+          image: '/img/Test_6 Calculo_7.png',
+          isNumeric: true
         },
         { 
           question: "18 - 6", 
           answer: 12, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Calculo_12.png'
+          image: '/img/Test_6 Calculo_12.png',
+          isNumeric: true
         },
         { 
           question: "7 - 4", 
           answer: 3, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Calculo_3.png'
+          image: '/img/Test_6 Calculo_3.png',
+          isNumeric: true
         }
       ]
     },
@@ -387,14 +413,16 @@ const ProCalculo6: React.FC = () => {
           answer: 10, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Resolución_10.png'
+          image: '/img/Test_6 Resolución_10.png',
+          isNumeric: true
         },
         { 
           question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
           answer: 5, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Resolución_5.png'
+          image: '/img/Test_6 Resolución_5.png',
+          isNumeric: true
         }
       ]
     },
@@ -407,28 +435,32 @@ const ProCalculo6: React.FC = () => {
           answer: 150, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Adaptación_150.png'
+          image: '/img/Test_6 Adaptación_150.png',
+          isNumeric: true
         },
         { 
           question: "¿Cuánto crees que cuesta una radio?", 
           answer: 90, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Adaptación_90.png'
+          image: '/img/Test_6 Adaptación_90.png',
+          isNumeric: true
         },
         { 
           question: "¿Cuánto crees que cuesta una pelota de cuero?", 
           answer: 50, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Adaptación_50.png'
+          image: '/img/Test_6 Adaptación_50.png',
+          isNumeric: true
         },
         { 
           question: "¿Cuánto crees que cuesta una gaseosa?", 
           answer: 1.50, 
           points: 2,
           type: "escrito",
-          image: '/img/Test_6 Adaptación_1.50.png'
+          image: '/img/Test_6 Adaptación_1.50.png',
+          isNumeric: true
         }
       ]
     },
@@ -441,14 +473,16 @@ const ProCalculo6: React.FC = () => {
           answer: 15, 
           points: 1,
           type: "escrito",
-          image: '/img/Test_6 Escribir_15.png'
+          image: '/img/Test_6 Escribir_15.png',
+          isNumeric: true
         },
         { 
           question: "Escribe el número 'veinticinco'", 
           answer: 25, 
           points: 1,
           type: "escrito",
-          image: '/img/Test_6 Escribir_25.png'
+          image: '/img/Test_6 Escribir_25.png',
+          isNumeric: true
         }
       ]
     }
@@ -458,7 +492,8 @@ const ProCalculo6: React.FC = () => {
     if (showFeedback || timeUp) return;
     
     const currentQuestion = subtests[currentSubtest].items[currentItem];
-    const isCorrect = compareAnswers(selectedAnswer, currentQuestion.answer);
+    const isNumericQuestion = currentQuestion.isNumeric || false;
+    const isCorrect = compareAnswers(selectedAnswer, currentQuestion.answer, isNumericQuestion);
     
     setCorrectAnswer(isCorrect);
     setShowFeedback(true);
@@ -467,6 +502,7 @@ const ProCalculo6: React.FC = () => {
       setScore(prevScore => {
         const newScore = [...prevScore];
         newScore[currentSubtest] += currentQuestion.points;
+        console.log(`Pregunta correcta! Puntos añadidos: ${currentQuestion.points}. Subtest ${currentSubtest} ahora tiene: ${newScore[currentSubtest]}`);
         return newScore;
       });
       setAnimation('correct');
