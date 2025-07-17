@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
+import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars, FaPlay, FaFlagCheckered } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
@@ -49,13 +49,14 @@ const ProCalculo7: React.FC = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testStartTime, setTestStartTime] = useState<string>('');
+  const [testStarted, setTestStarted] = useState(false);
 
   const minigameSubtests = [3, 6, 9];
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
-    if (!showStudentForm && timerActive && timeLeft > 0 && !showMiniGame) {
+    if (testStarted && timerActive && timeLeft > 0 && !showMiniGame) {
       timer = setTimeout(() => {
         setTimeLeft(prev => prev - 1);
       }, 1000);
@@ -72,14 +73,14 @@ const ProCalculo7: React.FC = () => {
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm, showMiniGame]);
+  }, [timeLeft, timerActive, showResult, timeUp, score, showMiniGame, testStarted]);
 
   useEffect(() => {
-    if (!showStudentForm && timerActive) {
+    if (testStarted && timerActive) {
       const now = new Date();
       setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
     }
-  }, [showStudentForm, timerActive]);
+  }, [testStarted, timerActive]);
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
@@ -105,13 +106,23 @@ const ProCalculo7: React.FC = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
       setShowStudentForm(false);
-      setTimerActive(true);
     } catch (error) {
       console.error('Error al guardar datos:', error);
       alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const startTest = () => {
+    setTestStarted(true);
+    setTimerActive(true);
+    const now = new Date();
+    setTestStartTime(now.toLocaleString('es-ES', { 
+      dateStyle: 'long', 
+      timeStyle: 'short', 
+      timeZone: 'America/Guayaquil' 
+    }));
   };
 
   const formatTime = (seconds: number): string => {
@@ -340,6 +351,7 @@ const ProCalculo7: React.FC = () => {
     setTimeUp(false);
     setShowStudentForm(true);
     setTestStartTime('');
+    setTestStarted(false);
   };
 
   const getResultMessage = () => {
@@ -393,7 +405,6 @@ const ProCalculo7: React.FC = () => {
     const doc = new jsPDF();
     let yPos = 10;
 
-    // Página 1: Encabezado y datos del estudiante
     doc.setFontSize(20);
     doc.text('RESULTADO DEL TEST - 7', 105, yPos, { align: 'center' });
     yPos += 15;
@@ -414,7 +425,7 @@ const ProCalculo7: React.FC = () => {
     yPos += 5;
     doc.text(`Institución: ${studentData.institucion}`, 10, yPos);
     yPos += 5;
-    doc.text(`Fecha y hora de inicio: ${testStartTime}`, 10, yPos); // Uso de testStartTime
+    doc.text(`Fecha y hora de inicio: ${testStartTime}`, 10, yPos);
     yPos += 10;
 
     doc.text('PUNTUACIÓN TOTAL', 10, yPos);
@@ -425,7 +436,6 @@ const ProCalculo7: React.FC = () => {
     doc.text('Detalles del Test:', 10, yPos);
     yPos += 10;
 
-    // Enumeración (Página 1)
     doc.text('Enumeración: 0 / 12', 10, yPos);
     yPos += 5;
     subtests[0].items.forEach((item) => {
@@ -443,7 +453,6 @@ const ProCalculo7: React.FC = () => {
       yPos += 5;
     });
 
-    // Contar para atrás (Página 2)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -451,7 +460,6 @@ const ProCalculo7: React.FC = () => {
     doc.text('15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0', 10, yPos);
     yPos += 10;
 
-    // Escritura de números (Página 3)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -459,7 +467,6 @@ const ProCalculo7: React.FC = () => {
     doc.text('ESCRITURA DE NÚMEROS: 0 / 8', 10, yPos);
     yPos += 10;
 
-    // Cálculo mental oral (Página 4)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -481,7 +488,6 @@ const ProCalculo7: React.FC = () => {
       yPos += 5;
     });
 
-    // Lectura de números (Página 5)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -489,7 +495,6 @@ const ProCalculo7: React.FC = () => {
     doc.text('Lectura de números: 0 / 8', 10, yPos);
     yPos += 10;
 
-    // Posicionar en escala (Página 6)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -497,7 +502,6 @@ const ProCalculo7: React.FC = () => {
     doc.text('Posicionar en escala: 0 / 6', 10, yPos);
     yPos += 10;
 
-    // Estimación perceptiva (Página 7)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -511,7 +515,6 @@ const ProCalculo7: React.FC = () => {
     doc.text(`Puntos obtenidos: 0 / 4`, 10, yPos);
     yPos += 10;
 
-    // Estimación en contexto (Página 8)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -533,7 +536,6 @@ const ProCalculo7: React.FC = () => {
       yPos += 5;
     });
 
-    // Resolución de problemas (Página 9)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -555,7 +557,6 @@ const ProCalculo7: React.FC = () => {
       yPos += 5;
     });
 
-    // Comparación de números (Página 10)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -575,7 +576,6 @@ const ProCalculo7: React.FC = () => {
       yPos += 5;
     });
 
-    // Determinación de cantidad (Página 11)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -583,7 +583,6 @@ const ProCalculo7: React.FC = () => {
     doc.text('Determinación de cantidad: 0 / 12', 10, yPos);
     yPos += 10;
 
-    // Escribir en cifra (Página 12)
     if (yPos > 250) {
       doc.addPage();
       yPos = 10;
@@ -887,6 +886,23 @@ const ProCalculo7: React.FC = () => {
     </section>
   );
 
+  const renderStartTestScreen = () => (
+    <div className={styles.startTestContainer}>
+      <div className={styles.startTestCard}>
+        <h2>¡Todo listo para comenzar!</h2>
+        <p>El test tiene una duración máxima de 25 minutos.</p>
+        <p>Por favor, asegúrate de estar en un lugar tranquilo y sin distracciones.</p>
+        
+        <button 
+          className={styles.startTestButton}
+          onClick={startTest}
+        >
+          <FaPlay /> Iniciar Test
+        </button>
+      </div>
+    </div>
+  );
+
   const renderTestInProgress = () => (
     <>
       <section className={styles.testHeader}>
@@ -926,6 +942,17 @@ const ProCalculo7: React.FC = () => {
         <div className={styles.questionCard}>
           {renderQuestion()}
         </div>
+
+        {currentSubtest === subtests.length - 1 && currentItem === subtests[currentSubtest].items.length - 1 && (
+          <div className={styles.finishTestButtonContainer}>
+            <button 
+              className={styles.finishTestButton}
+              onClick={finishTest}
+            >
+              <FaFlagCheckered /> Finalizar Test
+            </button>
+          </div>
+        )}
       </section>
     </>
   );
@@ -941,6 +968,8 @@ const ProCalculo7: React.FC = () => {
           renderMiniGame()
         ) : showResult ? (
           renderResults()
+        ) : !testStarted ? (
+          renderStartTestScreen()
         ) : (
           renderTestInProgress()
         )}

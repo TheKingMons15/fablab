@@ -1,5 +1,5 @@
-import React, { JSX } from 'react';
-import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaClock, FaSmile, FaGraduationCap, FaChartLine } from 'react-icons/fa';
+import React, { JSX, useEffect, useState } from 'react';
+import { FaBrain, FaRegEye, FaLightbulb, FaStar, FaPlay, FaArrowRight, FaChild, FaCalculator, FaClock, FaSmile, FaGraduationCap, FaChartLine, FaSearch, FaFilter, FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import styles from './Test.module.css';
 
 // Interface definitions
@@ -22,9 +22,23 @@ interface PruebasNinos {
   preguntas: number;
 }
 
+interface Reporte {
+  id: number;
+  nombres: string;
+  apellidos: string;
+  edad: number;
+  genero: string;
+  curso: string;
+  institucion: string;
+  test_tipo: string;
+  puntuacion_total: number;
+  fecha_registro: string;
+  fecha_test: string;
+}
+
 const Test: React.FC = () => {
   // State management
-  const [activeTab, setActiveTab] = React.useState<'indicaciones' | 'pruebas' | 'reportes'>('indicaciones');
+  const [activeTab, setActiveTab] = useState<'indicaciones' | 'pruebas' | 'reportes'>('indicaciones');
 
   // Data for tests
   const pruebasNinos: PruebasNinos[] = [
@@ -273,27 +287,296 @@ const Test: React.FC = () => {
     </section>
   ));
 
-  // Reports Section Component - ahora vacío para tu implementación
-  const ReportsSection = React.memo(() => (
-    <section className={styles.reportsSection}>
-      <div className={styles.sectionHeader}>
-        <h2 className={styles.sectionTitle}>
-          <span className={styles.titleHighlight}>📊</span> Reportes
-        </h2>
-        <p className={styles.sectionSubtitle}>
-          Aquí puedes ver y gestionar los reportes generados
-        </p>
-      </div>
+  // Reports Section Component - Implementación completa
+  const ReportsSection = React.memo(() => {
+    const [reportes, setReportes] = useState<Reporte[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [filters, setFilters] = useState({
+      search: '',
+      testType: '',
+      gender: '',
+      minAge: '',
+      maxAge: '',
+      sortBy: 'fecha_test',
+      sortOrder: 'desc'
+    });
+    const [stats, setStats] = useState<any[]>([]);
+    const [showFilters, setShowFilters] = useState(false);
 
-      <div className={styles.reportsContent}>
-        {/* Espacio reservado para tu implementación de base de datos */}
-        <div className={styles.databasePlaceholder}>
-          <p>Conecta tu base de datos aquí para mostrar los reportes</p>
-          {/* Puedes reemplazar este contenido con tu implementación real */}
+    const fetchReportes = async () => {
+  try {
+    setLoading(true);
+    const queryParams = new URLSearchParams();
+    
+    if (filters.search) queryParams.append('search', filters.search);
+    if (filters.testType) queryParams.append('testType', filters.testType);
+    if (filters.gender) queryParams.append('gender', filters.gender);
+    if (filters.minAge) queryParams.append('minAge', filters.minAge);
+    if (filters.maxAge) queryParams.append('maxAge', filters.maxAge);
+    if (filters.sortBy) queryParams.append('sortBy', filters.sortBy);
+    if (filters.sortOrder) queryParams.append('sortOrder', filters.sortOrder);
+
+    const response = await fetch(`https://fablab.upec.edu.ec/procalculo-api/reportes?${queryParams}`);
+    
+    if (!response.ok) {
+      throw new Error('Error al obtener los reportes');
+    }
+
+    const data = await response.json();
+    setReportes(data.data);
+    setError(null);
+  } catch (err) {
+    const error = err as Error;
+    setError(error.message || 'Error al cargar los reportes');
+    console.error('Error fetching reportes:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+    const fetchStats = async () => {
+  try {
+    const response = await fetch('https://fablab.upec.edu.ec/procalculo-api/estadisticas');
+    
+    if (!response.ok) {
+      throw new Error('Error al obtener las estadísticas');
+    }
+
+    const data = await response.json();
+    setStats(data.data);
+  } catch (err) {
+    const error = err as Error;
+    console.error('Error fetching stats:', error);
+  }
+};
+
+    useEffect(() => {
+      if (activeTab === 'reportes') {
+        fetchReportes();
+        fetchStats();
+      }
+    }, [activeTab, filters]);
+
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFilters(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    };
+
+    const handleSort = (column: string) => {
+      setFilters(prev => ({
+        ...prev,
+        sortBy: column,
+        sortOrder: prev.sortBy === column ? (prev.sortOrder === 'asc' ? 'desc' : 'asc') : 'desc'
+      }));
+    };
+
+    const renderSortIcon = (column: string) => {
+      if (filters.sortBy !== column) return <FaSort />;
+      return filters.sortOrder === 'asc' ? <FaSortUp /> : <FaSortDown />;
+    };
+
+    const resetFilters = () => {
+      setFilters({
+        search: '',
+        testType: '',
+        gender: '',
+        minAge: '',
+        maxAge: '',
+        sortBy: 'fecha_test',
+        sortOrder: 'desc'
+      });
+    };
+
+    return (
+      <section className={styles.reportsSection}>
+        <div className={styles.sectionHeader}>
+          <h2 className={styles.sectionTitle}>
+            <span className={styles.titleHighlight}>📊</span> Reportes de Resultados
+          </h2>
+          <p className={styles.sectionSubtitle}>
+            Visualiza y filtra los resultados de las pruebas realizadas
+          </p>
         </div>
-      </div>
-    </section>
-  ));
+
+        <div className={styles.reportsControls}>
+          <div className={styles.searchContainer}>
+            <FaSearch className={styles.searchIcon} />
+            <input
+              type="text"
+              name="search"
+              placeholder="Buscar por nombre, apellido o institución..."
+              value={filters.search}
+              onChange={handleFilterChange}
+              className={styles.searchInput}
+            />
+          </div>
+
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={styles.filterButton}
+          >
+            <FaFilter /> {showFilters ? 'Ocultar Filtros' : 'Mostrar Filtros'}
+          </button>
+
+          {showFilters && (
+            <div className={styles.filtersContainer}>
+              <div className={styles.filterGroup}>
+                <label>Tipo de Test:</label>
+                <select
+                  name="testType"
+                  value={filters.testType}
+                  onChange={handleFilterChange}
+                  className={styles.filterSelect}
+                >
+                  <option value="">Todos</option>
+                  <option value="Pro-Cálculo para 6 años">6 años</option>
+                  <option value="Pro-Cálculo para 7 años">7 años</option>
+                  <option value="Pro-Cálculo para 8 años">8 años</option>
+                </select>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <label>Género:</label>
+                <select
+                  name="gender"
+                  value={filters.gender}
+                  onChange={handleFilterChange}
+                  className={styles.filterSelect}
+                >
+                  <option value="">Todos</option>
+                  <option value="M">Masculino</option>
+                  <option value="F">Femenino</option>
+                </select>
+              </div>
+
+              <div className={styles.filterGroup}>
+                <label>Edad:</label>
+                <div className={styles.ageRange}>
+                  <input
+                    type="number"
+                    name="minAge"
+                    placeholder="Mín"
+                    value={filters.minAge}
+                    onChange={handleFilterChange}
+                    className={styles.ageInput}
+                  />
+                  <span>a</span>
+                  <input
+                    type="number"
+                    name="maxAge"
+                    placeholder="Máx"
+                    value={filters.maxAge}
+                    onChange={handleFilterChange}
+                    className={styles.ageInput}
+                  />
+                </div>
+              </div>
+
+              <button onClick={resetFilters} className={styles.resetButton}>
+                Limpiar Filtros
+              </button>
+            </div>
+          )}
+        </div>
+
+        {loading ? (
+          <div className={styles.loadingContainer}>
+            <p>Cargando reportes...</p>
+          </div>
+        ) : error ? (
+          <div className={styles.errorContainer}>
+            <p>{error}</p>
+            <button onClick={fetchReportes} className={styles.retryButton}>
+              Reintentar
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className={styles.statsContainer}>
+              {stats.map((stat, index) => (
+                <div key={index} className={styles.statCard}>
+                  <h3>{stat.test_tipo} ({stat.genero === 'M' ? '♂' : '♀'})</h3>
+                  <p>Total: {stat.total}</p>
+                  <p>Promedio: {Math.round(stat.promedio)}</p>
+                  <p>Mín: {stat.minima}</p>
+                  <p>Máx: {stat.maxima}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className={styles.reportsTableContainer}>
+              <table className={styles.reportsTable}>
+                <thead>
+                  <tr>
+                    <th onClick={() => handleSort('nombres')}>
+                      <div className={styles.sortableHeader}>
+                        Nombre {renderSortIcon('nombres')}
+                      </div>
+                    </th>
+                    <th onClick={() => handleSort('apellidos')}>
+                      <div className={styles.sortableHeader}>
+                        Apellido {renderSortIcon('apellidos')}
+                      </div>
+                    </th>
+                    <th onClick={() => handleSort('edad')}>
+                      <div className={styles.sortableHeader}>
+                        Edad {renderSortIcon('edad')}
+                      </div>
+                    </th>
+                    <th>Género</th>
+                    <th>Curso</th>
+                    <th>Institución</th>
+                    <th onClick={() => handleSort('test_tipo')}>
+                      <div className={styles.sortableHeader}>
+                        Test {renderSortIcon('test_tipo')}
+                      </div>
+                    </th>
+                    <th onClick={() => handleSort('puntuacion_total')}>
+                      <div className={styles.sortableHeader}>
+                        Puntaje {renderSortIcon('puntuacion_total')}
+                      </div>
+                    </th>
+                    <th onClick={() => handleSort('fecha_test')}>
+                      <div className={styles.sortableHeader}>
+                        Fecha {renderSortIcon('fecha_test')}
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {reportes.length > 0 ? (
+                    reportes.map((reporte) => (
+                      <tr key={reporte.id}>
+                        <td>{reporte.nombres}</td>
+                        <td>{reporte.apellidos}</td>
+                        <td>{reporte.edad}</td>
+                        <td>{reporte.genero === 'M' ? '♂' : '♀'}</td>
+                        <td>{reporte.curso}</td>
+                        <td>{reporte.institucion}</td>
+                        <td>{reporte.test_tipo}</td>
+                        <td>{reporte.puntuacion_total}</td>
+                        <td>{new Date(reporte.fecha_test).toLocaleDateString()}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={9} className={styles.noResults}>
+                        No se encontraron resultados con los filtros actuales
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
+      </section>
+    );
+  });
 
   // Main Component Rendering
   return (

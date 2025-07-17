@@ -1284,3 +1284,189 @@ body {
     font-size: 1rem;
   }
 }
+
+
+
+
+/*FILTROS*/
+
+
+/* Estilos para la sección de reportes */
+.reportsSection {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.reportsControls {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+}
+
+.searchContainer {
+  position: relative;
+  flex-grow: 1;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #666;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 3rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.filterButton {
+  background: #006633;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.filtersContainer {
+  width: 100%;
+  background: #f9f9f9;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterSelect {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.ageRange {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ageInput {
+  width: 60px;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.resetButton {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-end;
+}
+
+.loadingContainer,
+.errorContainer {
+  text-align: center;
+  padding: 2rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  margin: 2rem 0;
+}
+
+.errorContainer {
+  background: #ffeeee;
+  color: #cc0000;
+}
+
+.retryButton {
+  background: #006633;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  margin-top: 1rem;
+  cursor: pointer;
+}
+
+.statsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.statCard {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statCard h3 {
+  margin-top: 0;
+  color: #006633;
+}
+
+.reportsTableContainer {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reportsTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reportsTable th,
+.reportsTable td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.reportsTable th {
+  background: #f5f5f5;
+  font-weight: 600;
+  color: #333;
+}
+
+.sortableHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.sortableHeader:hover {
+  color: #006633;
+}
+
+.noResults {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}

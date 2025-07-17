@@ -38,6 +38,7 @@ const ProCalculo6: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(20 * 60);
   const [timerActive, setTimerActive] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
+  const [testId, setTestId] = useState<number | null>(null);
   const [_, forceUpdate] = React.useReducer(x => x + 1, 0);
 
   // Estados del formulario
@@ -52,9 +53,47 @@ const ProCalculo6: React.FC = () => {
   const [showStudentForm, setShowStudentForm] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
 
   // Array que define en qué subtests mostrar minijuegos
   const minigameSubtests = [3, 6];
+
+  // Función mejorada para normalizar respuestas
+  const normalizeAnswer = (answer: string | number): string | number => {
+    if (typeof answer === 'number') return answer;
+    
+    // Manejar números escritos con comas como decimales
+    const commaToDot = answer.toString().replace(',', '.');
+    if (!isNaN(Number(commaToDot))) {
+      return Number(commaToDot);
+    }
+    
+    // Convertir números escritos en texto a minúsculas sin acentos
+    return answer.toString().toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  };
+
+  // Función mejorada para comparar respuestas
+  const compareAnswers = (userAnswer: string | number, correctAnswer: string | number): boolean => {
+    const normalizedUser = normalizeAnswer(userAnswer);
+    const normalizedCorrect = normalizeAnswer(correctAnswer);
+    
+    // Comparación numérica con tolerancia para decimales
+    if (typeof normalizedCorrect === 'number') {
+      const userNum = typeof normalizedUser === 'number' 
+        ? normalizedUser 
+        : Number(normalizedUser);
+      
+      if (isNaN(userNum)) return false;
+      
+      // Tolerancia para números decimales
+      return Math.abs(userNum - normalizedCorrect) < 0.1;
+    }
+    
+    // Comparación de texto exacta
+    return normalizedUser.toString() === normalizedCorrect.toString();
+  };
 
   // Efecto para el temporizador
   useEffect(() => {
@@ -67,73 +106,116 @@ const ProCalculo6: React.FC = () => {
     } else if (timeLeft === 0 && !showResult && !timeUp) {
       setTimerActive(false);
       setTimeUp(true);
-      setShowResult(true);
-      const totalScore = score.reduce((a, b) => a + b, 0);
-      if (totalScore > 30) {
-        launchConfetti();
-      }
-      saveTestData();
+      finishTest();
     }
     
     return () => {
       if (timer) clearTimeout(timer);
     };
-  }, [timeLeft, timerActive, showResult, timeUp, score, showStudentForm, showMiniGame]);
+  }, [timeLeft, timerActive, showResult, timeUp, showStudentForm, showMiniGame]);
 
-  const saveTestData = async (isStartingTest = false) => {
-  if (isStartingTest && !validateForm()) return;
-  
-  setIsSubmitting(true);
-  
-  try {
-    const totalScore = isStartingTest ? 0 : score.reduce((a, b) => a + b, 0);
+  // Función para calcular el puntaje total con validación
+  const calculateTotalScore = (): number => {
+    return subtests.reduce((total, subtest, index) => {
+      const subtestScore = Math.min(score[index], subtest.maxScore);
+      return total + subtestScore;
+    }, 0);
+  };
 
-    const testData = {
-      nombres: studentData.nombres,
-      apellidos: studentData.apellidos,
-      edad: parseInt(studentData.edad),
-      genero: studentData.genero,
-      curso: studentData.curso,
-      institucion: studentData.institucion,
-      test_tipo: "ProCálculo6",
-      puntuacion_total: totalScore,
-      // No incluimos los detalles ya que no los necesitas
-    };
-
-    const response = await fetch('https://fablab.upec.edu.ec/procalculo-api/guardar-test', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(testData)
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Error al guardar datos');
+  // Función para verificar el puntaje guardado en el backend
+  const verifyStoredScore = async (id: number): Promise<boolean> => {
+    try {
+      const response = await fetch(`https://fablab.upec.edu.ec/procalculo-api/verificar-test/${id}`);
+      if (!response.ok) throw new Error('Error al verificar');
+      
+      const data = await response.json();
+      const frontendScore = calculateTotalScore();
+      
+      console.log('Verificación de puntaje:', {
+        frontend: frontendScore,
+        backend: data.puntuacion_total,
+        match: frontendScore === data.puntuacion_total
+      });
+      
+      return frontendScore === data.puntuacion_total;
+    } catch (error) {
+      console.error('Error al verificar puntaje:', error);
+      return false;
     }
+  };
 
-    const result = await response.json();
-    console.log('Datos guardados:', result);
+  // Función mejorada para guardar datos con reintentos y verificación
+  const saveTestDataWithRetry = async (totalScore: number, retries = 3): Promise<boolean> => {
+    setSaveStatus('saving');
+    try {
+      const edadNum = parseInt(studentData.edad) || 0;
+
+      const testData = {
+        nombres: studentData.nombres.trim(),
+        apellidos: studentData.apellidos.trim(),
+        edad: edadNum,
+        genero: studentData.genero,
+        curso: studentData.curso.trim(),
+        institucion: studentData.institucion.trim(),
+        test_tipo: "ProCálculo6",
+        puntuacion_total: totalScore,
+      };
+
+      const response = await fetch('https://fablab.upec.edu.ec/procalculo-api/guardar-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      setTestId(result.id);
+      
+      // Verificar que el puntaje se guardó correctamente
+      const isVerified = await verifyStoredScore(result.id);
+      
+      if (!isVerified && retries > 0) {
+        console.log(`Reintentando guardar (${retries} intentos restantes)...`);
+        return saveTestDataWithRetry(totalScore, retries - 1);
+      }
+      
+      setSaveStatus(isVerified ? 'success' : 'error');
+      return isVerified;
+    } catch (error) {
+      console.error(`Error al guardar datos (${retries} intentos restantes):`, error);
+      if (retries > 0) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        return saveTestDataWithRetry(totalScore, retries - 1);
+      }
+      setSaveStatus('error');
+      return false;
+    }
+  };
+
+  const finishTest = async () => {
+    const totalScore = calculateTotalScore();
     
-    if (isStartingTest) {
-      setShowStudentForm(false);
-      setTimerActive(true);
-      forceUpdate();
-    } else {
+    console.log('Finalizando test con puntaje:', {
+      totalScore,
+      subtestScores: score,
+      subtestMaxScores: subtests.map(s => s.maxScore)
+    });
+    
+    const saveSuccess = await saveTestDataWithRetry(totalScore);
+    
+    if (saveSuccess) {
       setShowResult(true);
       if (totalScore > 30) {
         launchConfetti();
       }
+    } else {
+      alert('Hubo un problema al guardar los resultados. Por favor intente nuevamente.');
+      restartTest();
     }
-    
-  } catch (error) {
-    console.error('Error al guardar datos:', error);
-    alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
-
+  };
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
@@ -148,19 +230,41 @@ const ProCalculo6: React.FC = () => {
     if (!studentData.institucion.trim()) errors.institucion = 'Ingresa la institución';
     
     setFormErrors(errors);
+    
+    if (!errors.edad) {
+      setStudentData(prev => ({
+        ...prev,
+        edad: edadNum.toString()
+      }));
+    }
+    
     return Object.keys(errors).length === 0;
+  };
+
+  const startTest = async () => {
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    try {
+      // Guardar datos iniciales con puntaje 0
+      const success = await saveTestDataWithRetry(0);
+      if (success) {
+        setShowStudentForm(false);
+        setTimerActive(true);
+        forceUpdate();
+      }
+    } catch (error) {
+      console.error('Error al iniciar test:', error);
+      alert('Error al iniciar el test. Por favor intente nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const normalizeText = (text: string): string => {
-    return text.toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .trim();
   };
 
   const subtests: Subtest[] = [
@@ -237,42 +341,42 @@ const ProCalculo6: React.FC = () => {
       items: [
         { 
           question: "10 + 10", 
-          answer: "20", 
+          answer: 20, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Calculo_20.png'
         },
         { 
           question: "1 + 15", 
-          answer: "16", 
+          answer: 16, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Calculo_16.png'
         },
         { 
           question: "2 + 7", 
-          answer: "9", 
+          answer: 9, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Calculo_9.png'
         },
         { 
           question: "10 - 3", 
-          answer: "7", 
+          answer: 7, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Calculo_7.png'
         },
         { 
           question: "18 - 6", 
-          answer: "12", 
+          answer: 12, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Calculo_12.png'
         },
         { 
           question: "7 - 4", 
-          answer: "3", 
+          answer: 3, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Calculo_3.png'
@@ -346,14 +450,14 @@ const ProCalculo6: React.FC = () => {
       items: [
         { 
           question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?", 
-          answer: "10", 
+          answer: 10, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Resolución_10.png'
         },
         { 
           question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
-          answer: "5", 
+          answer: 5, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Resolución_5.png'
@@ -366,28 +470,28 @@ const ProCalculo6: React.FC = () => {
       items: [
         { 
           question: "¿Cuánto crees que cuesta una bicicleta?", 
-          answer: "150", 
+          answer: 150, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Adaptación_150.png'
         },
         { 
           question: "¿Cuánto crees que cuesta una radio?", 
-          answer: "90", 
+          answer: 90, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Adaptación_90.png'
         },
         { 
           question: "¿Cuánto crees que cuesta una pelota de cuero?", 
-          answer: "50", 
+          answer: 50, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Adaptación_50.png'
         },
         { 
           question: "¿Cuánto crees que cuesta una gaseosa?", 
-          answer: "1.50", 
+          answer: 1.50, 
           points: 2,
           type: "escrito",
           image: '/img/Test_6 Adaptación_1.50.png'
@@ -400,14 +504,14 @@ const ProCalculo6: React.FC = () => {
       items: [
         { 
           question: "Escribe el número 'quince'", 
-          answer: "15", 
+          answer: 15, 
           points: 1,
           type: "escrito",
           image: '/img/Test_6 Escribir_15.png'
         },
         { 
           question: "Escribe el número 'veinticinco'", 
-          answer: "25", 
+          answer: 25, 
           points: 1,
           type: "escrito",
           image: '/img/Test_6 Escribir_25.png'
@@ -420,8 +524,18 @@ const ProCalculo6: React.FC = () => {
     if (showFeedback || timeUp) return;
     
     const currentQuestion = subtests[currentSubtest].items[currentItem];
-    const isCorrect = normalizeText(selectedAnswer.toString()) === 
-                     normalizeText(currentQuestion.answer.toString());
+    
+    console.log('Procesando respuesta:', {
+      pregunta: currentQuestion.question,
+      respuestaUsuario: selectedAnswer,
+      respuestaCorrecta: currentQuestion.answer,
+      tipoUsuario: typeof selectedAnswer,
+      tipoCorrecto: typeof currentQuestion.answer
+    });
+    
+    const isCorrect = compareAnswers(selectedAnswer, currentQuestion.answer);
+    
+    console.log('Resultado comparación:', isCorrect);
     
     setCorrectAnswer(isCorrect);
     setShowFeedback(true);
@@ -430,6 +544,14 @@ const ProCalculo6: React.FC = () => {
       setScore(prevScore => {
         const newScore = [...prevScore];
         newScore[currentSubtest] += currentQuestion.points;
+        
+        console.log('Puntos asignados:', {
+          subtest: currentSubtest,
+          puntos: currentQuestion.points,
+          nuevoTotal: newScore[currentSubtest],
+          maximoSubtest: subtests[currentSubtest].maxScore
+        });
+        
         return newScore;
       });
       setAnimation('correct');
@@ -467,16 +589,6 @@ const ProCalculo6: React.FC = () => {
     } else {
       setCurrentItem(currentItem + 1);
     }
-  };
-
-  const finishTest = () => {
-    setShowResult(true);
-    setTimerActive(false);
-    const totalScore = score.reduce((a, b) => a + b, 0);
-    if (totalScore > 30) {
-      launchConfetti();
-    }
-    saveTestData();
   };
 
   const handleMiniGameComplete = (success: boolean) => {
@@ -520,10 +632,12 @@ const ProCalculo6: React.FC = () => {
     setTimerActive(false);
     setTimeUp(false);
     setShowStudentForm(true);
+    setSaveStatus('idle');
+    setTestId(null);
   };
 
   const getResultMessage = () => {
-    const totalScore = score.reduce((a, b) => a + b, 0);
+    const totalScore = calculateTotalScore();
     const percentage = (totalScore / 60) * 100;
     
     if (timeUp) {
@@ -680,7 +794,7 @@ const ProCalculo6: React.FC = () => {
         <div className={styles.formActions}>
           <button 
             className={styles.startTestButton}
-            onClick={() => saveTestData(true)}
+            onClick={startTest}
             disabled={isSubmitting}
           >
             {isSubmitting ? 'Cargando...' : 'Comenzar Test'}
@@ -791,56 +905,69 @@ const ProCalculo6: React.FC = () => {
     </div>
   );
 
-  const renderResults = () => (
-    <section className={styles.resultSection}>
-      <div className={styles.resultContainer}>
-        <h2 className={styles.resultTitle}>
-          {getResultMessage()}
-        </h2>
-        
-        <div className={styles.scoreCard}>
-          <div className={styles.scoreVisual}>
-            <div className={styles.scoreCircle}>
-              <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
-              <span className={styles.scoreTotal}>/60</span>
-            </div>
-            {timeUp && (
-              <div className={styles.timeUpWarning}>
-                ⏰ El tiempo ha terminado
+  const renderResults = () => {
+    const totalScore = calculateTotalScore();
+    const percentage = (totalScore / 60) * 100;
+    
+    return (
+      <section className={styles.resultSection}>
+        <div className={styles.resultContainer}>
+          <h2 className={styles.resultTitle}>
+            {getResultMessage()}
+          </h2>
+          
+          <div className={styles.scoreCard}>
+            <div className={styles.scoreVisual}>
+              <div className={styles.scoreCircle}>
+                <span className={styles.scoreNumber}>{totalScore}</span>
+                <span className={styles.scoreTotal}>/60</span>
               </div>
-            )}
-          </div>
-          
-          <p className={styles.scoreText}>
-            Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 60 puntos
-          </p>
-          
-          <div className={styles.subtestScores}>
-            <h3>Puntuación por subtest:</h3>
-            <ul>
-              {subtests.map((subtest, index) => (
-                <li key={index}>
-                  {subtest.name}: {score[index]} / {subtest.maxScore}
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className={styles.actionsContainer}>
-            <button className={styles.restartButton} onClick={restartTest}>
-              <FaRedo /> Intentar de nuevo
-            </button>
-            <button 
-              className={styles.homeButton} 
-              onClick={() => navigate('/herramientas/test')}
-            >
-              Elegir otra prueba
-            </button>
+              {timeUp && (
+                <div className={styles.timeUpWarning}>
+                  ⏰ El tiempo ha terminado
+                </div>
+              )}
+              {saveStatus === 'error' && (
+                <div className={styles.saveError}>
+                  ⚠ Hubo un problema al guardar los resultados
+                </div>
+              )}
+            </div>
+            
+            <p className={styles.scoreText}>
+              Puntuación total: <span className={styles.scoreHighlight}>{totalScore}</span> de 60 puntos
+              {testId && (
+                <span className={styles.testId}>ID de prueba: {testId}</span>
+              )}
+            </p>
+            
+            <div className={styles.subtestScores}>
+              <h3>Puntuación por subtest:</h3>
+              <ul>
+                {subtests.map((subtest, index) => (
+                  <li key={index}>
+                    {subtest.name}: {score[index]} / {subtest.maxScore}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div className={styles.actionsContainer}>
+              <button className={styles.restartButton} onClick={restartTest}>
+                <FaRedo /> Intentar de nuevo
+              </button>
+              <button 
+                className={styles.homeButton} 
+                onClick={() => navigate('/herramientas/test')}
+              >
+                Elegir otra prueba
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  };
 
   const renderTestInProgress = () => (
     <>
