@@ -122,33 +122,33 @@ const ProCalculo8: React.FC = () => {
 
   const subtests: Subtest[] = [
     {
-      name: "Enumeración",
+      name: "Contar para adelante",
       maxScore: 16,
       items: [
         { 
-          question: "Escribe los números del 1 al 30 separados por comas. Ejemplo (1,2,...)", 
-          answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
+          question: "Escribe los números del 1 al 13 separados solo por comas. Ejemplo (1,2,...)", 
+          answer: "1,2,3,4,5,6,7,8,9,10,11,12,13", 
           points: 4,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Escribe los números del 1 al 30 nuevamente separados por comas. Ejemplo (1,2,...)", 
-          answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
+          question: "Escribe los números del 1 al 8 separados solo por comas. Ejemplo (1,2,...)", 
+          answer: "1,2,3,4,5,6,7,8", 
           points: 4,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Escribe los números del 1 al 30 una vez más separados por comas. Ejemplo (1,2,...)", 
-          answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
+          question: "Escribe los números del 1 al 10 una vez más separados solo por comas. Ejemplo (1,2,...)", 
+          answer: "1,2,3,4,5,6,7,8,9,10", 
           points: 4,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Escribe los números del 1 al 30 una última vez separados por comas. Ejemplo (1,2,...)", 
-          answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30", 
+          question: "Escribe los números del 1 al 18 por última vez separados solo por comas. Ejemplo (1,2,...)", 
+          answer: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18", 
           points: 4,
           type: "escrito",
           image: ''
@@ -160,7 +160,7 @@ const ProCalculo8: React.FC = () => {
       maxScore: 2,
       items: [
         { 
-          question: "Escribe los números contando hacia atrás desde 23 hasta 0 separados por comas. Ejemplo (1,2,...)", 
+          question: "Escribe los números contando hacia atrás desde 23 hasta 0 separados solo por comas. Ejemplo (23,22,...)", 
           answer: "23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0", 
           points: 2,
           type: "escrito",
@@ -468,28 +468,28 @@ const ProCalculo8: React.FC = () => {
       maxScore: 8,
       items: [
         { 
-          question: "Pedro tiene 12 bolitas. Le da 5 bolitas a Ana. ¿Cuántas bolitas le quedan en total?", 
+          question: "Pedro tiene 12 bolitas. Le da 5 bolitas a Ana. ¿Cuántas bolitas le quedan a Pedro en total?", 
           answer: "7", 
           points: 2,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Pedro tiene 16 bolitas. Él tiene 4 bolitas más que Ana. ¿Cuántas bolitas tiene Ana?", 
+          question: "Pedro tiene 16 bolitas. Él tiene 4 bolitas más que Maria. ¿Cuántas bolitas tiene Maria?", 
           answer: "12", 
           points: 2,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Pedro tiene muchas bolitas. Le da 6 bolitas a Ana. Sólo le quedan 7 bolitas. ¿Cuántas bolitas tenía al comienzo?", 
+          question: "Pedro tiene muchas bolitas. Le da 6 bolitas a Deicy. Sólo le quedan 7 bolitas. ¿Cuántas bolitas tenía al comienzo Pedro?", 
           answer: "13", 
           points: 2,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Pedro tiene 4 bolitas. Ana tiene 3 bolitas más que Pedro y Julio tiene 2 bolitas menos que Ana. ¿Cuántas bolitas tienen entre todos?", 
+          question: "Pedro tiene 4 bolitas. Camila tiene 3 bolitas más que Pedro y Julio tiene 2 bolitas menos que Camila. ¿Cuántas bolitas tienen entre todos?", 
           answer: "16", 
           points: 2,
           type: "escrito",
@@ -564,28 +564,28 @@ const ProCalculo8: React.FC = () => {
       maxScore: 21,
       items: [
         { 
-          question: "Escribe la cifra menor de todas: 12, 549755813888, 00000000000000, 12, 49, 50, 97", 
+          question: "Escribe la cifra menor de todas: 12, 549755813888, 100, 12, 49, 50, 97", 
           answer: "12", 
           points: 1,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Escribe la cifra mayor de todas: 1234, 1993, 3000, 7777, 8520, 10000, 12345, 100000, 3000000, 123456, 549755813888", 
+          question: "Escribe la cifra mayor de todas: 1234, 1993, 3000, 7777, 8520, 10000, 3000000, 123456, 549755813888", 
           answer: "549755813888", 
           points: 1,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Escribe las cifras menores de 100: 1234, 1993, 3000, 7777, 8520, 10000, 12345, 100000, 3000000, 123456, 549755813888", 
+          question: "Escribe las cifras menores de 100: 1234, 1993, 3000, 7777, 8520, 10000, 12345, ninguna, todas", 
           answer: "ninguna", 
           points: 5,
           type: "escrito",
           image: ''
         },
         { 
-          question: "Escribe las cifras más grandes que mil: 1234, 1993, 3000, 7777, 8520, 10000, 12345, 100000, 3000000, 123456, 549755813888", 
+          question: "Escribe las cifras más grandes que mil: 1234, 1993, 3000, 7777, 8520, 10000, 12345, 100000, 3000000, ninguna, todas", 
           answer: "todas", 
           points: 11,
           type: "escrito",
@@ -599,8 +599,8 @@ const ProCalculo8: React.FC = () => {
           image: ''
         },
         { 
-          question: "Escribe las cifras más grandes que un millón: 3000000, 549755813888", 
-          answer: "ambas", 
+          question: "Escribe las cifras más grandes que un millón: 3000000, 549755813888, ninguna, todas", 
+          answer: "todas", 
           points: 2,
           type: "escrito",
           image: ''

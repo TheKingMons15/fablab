@@ -416,71 +416,78 @@ const ProCalculo7: React.FC = () => {
   const generatePDF = () => {
     const totalScore = score.reduce((a, b) => a + b, 0);
     const content = `
-      <html>
-      <head>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 20mm;
-            width: 100%;
-            box-sizing: border-box;
-            word-break: break-word;
-            overflow-wrap: break-word;
-            text-align: left;
-          }
-          h1 { margin: 10mm 0; }
-          h2 { margin: 5mm 0; border-bottom: 1px solid #000; padding-bottom: 5mm; }
-          p { margin: 2mm 0; }
-          strong { margin-right: 10mm; }
-          .section-break {
-            page-break-before: always;
-            margin-top: 20mm;
-          }
-          .answer-section { margin-left: 20mm; text-align: left; }
-          .content-wrapper { width: 100%; max-width: 210mm; margin: 0 auto; }
-        </style>
-      </head>
-      <body>
-        <div class="content-wrapper">
-          <h1>RESULTADO DEL TEST – 7</h1>
-          <h2>Datos del estudiante</h2>
-          <p><strong>Nombre:</strong> ${studentData.nombres}</p>
-          <p><strong>Apellido:</strong> ${studentData.apellidos}</p>
-          <p><strong>Edad:</strong> ${studentData.edad}</p>
-          <p><strong>Genero:</strong> ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : ''}</p>
-          <p><strong>Curso/Grado:</strong> ${studentData.curso}</p>
-          <p><strong>Institución:</strong> ${studentData.institucion}</p>
-          <p><strong>Fecha y hora:</strong> ${testStartTime}</p>
-          <h2>PUNTUACIÓN TOTAL: ${totalScore}/87 Puntos</h2>
-          <h2>Detalles del Test:</h2>
-          ${subtests.map((subtest, subtestIndex) => `
-            <div class="${subtestIndex > 0 ? 'section-break' : ''}">
-              <h2>${subtest.name}: ${score[subtestIndex]} / ${subtest.maxScore}</h2>
-              ${answerHistory
-                .filter(a => a.subtestIndex === subtestIndex)
-                .map(a => `
-                  <div class="answer-section">
-                    <p><strong>Pregunta:</strong> ${a.question}</p>
-                    <p><strong>Respuesta esperada:</strong> ${a.correctAnswer}</p>
-                    <p><strong>Respuesta proporcionada:</strong> ${a.userAnswer || 'No proporcionada'}</p>
-                    <p><strong>Puntos obtenidos:</strong> ${a.pointsEarned} / ${subtests[a.subtestIndex].items[a.itemIndex].points}</p>
-                  </div>
-                `).join('')}
-            </div>
-          `).join('')}
-        </div>
-      </body>
-      </html>
+    <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 20mm;
+          width: 100%;
+          box-sizing: border-box;
+          word-break: break-word;
+          overflow-wrap: break-word;
+          text-align: left;
+        }
+        h1 { 
+          margin: 0mm 0; /* Reducido de 10mm a 5mm para mover el título más arriba */
+        }
+        h2 { 
+          margin: 5mm 0; 
+          border-bottom: 1px solid #000; 
+          padding-bottom: 5mm; 
+        }
+        p { margin: 2mm 0; }
+        strong { margin-right: 10mm; }
+        .section-break {
+          page-break-before: always;
+          margin-top: 20mm;
+        }
+        .answer-section { margin-left: 20mm; text-align: left; }
+        .content-wrapper { width: 100%; max-width: 310mm; margin: 0 auto; }
+      </style>
+    </head>
+    <body>
+      <div class="content-wrapper">
+        <h1>RESULTADO DEL TEST – 7</h1>
+        <h2>Datos del estudiante</h2>
+        <p><strong>Nombre:</strong> ${studentData.nombres}</p>
+        <p><strong>Apellido:</strong> ${studentData.apellidos}</p>
+        <p><strong>Edad:</strong> ${studentData.edad}</p>
+        <p><strong>Genero:</strong> ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : ''}</p>
+        <p><strong>Curso/Grado:</strong> ${studentData.curso}</p>
+        <p><strong>Institución:</strong> ${studentData.institucion}</p>
+        <p><strong>Fecha y hora:</strong> ${testStartTime}</p>
+        <h2>PUNTUACIÓN TOTAL: ${totalScore}/87 Puntos</h2>
+        <div class="section-break"></div> <!-- Salto de página antes de Detalles del Test -->
+        <h2>Detalles del Test:</h2>
+        ${subtests.map((subtest, subtestIndex) => `
+          <div class="${subtestIndex > 0 ? 'section-break' : ''}">
+            <h2>${subtest.name}: ${score[subtestIndex]} / ${subtest.maxScore}</h2>
+            ${answerHistory
+              .filter(a => a.subtestIndex === subtestIndex)
+              .map(a => `
+                <div class="answer-section">
+                  <p><strong>Pregunta:</strong> ${a.question}</p>
+                  <p><strong>Respuesta esperada:</strong> ${a.correctAnswer}</p>
+                  <p><strong>Respuesta proporcionada:</strong> ${a.userAnswer || 'No proporcionada'}</p>
+                  <p><strong>Puntos obtenidos:</strong> ${a.pointsEarned} / ${subtests[a.subtestIndex].items[a.itemIndex].points}</p>
+                </div>
+              `).join('')}
+          </div>
+        `).join('')}
+      </div>
+    </body>
+    </html>
     `;
 
     const pdfOptions = {
-      margin: [20, 20, 20, 20],
-      filename: `Resultado_Test_7_${studentData.nombres}_${studentData.apellidos}.pdf`,
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
+    margin: [20, 20, 20, 20],
+    filename: `Resultado_Test_7_${studentData.nombres}_${studentData.apellidos}.pdf`,
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+   };
 
-    html2pdf().set(pdfOptions).from(content).save();
+   html2pdf().set(pdfOptions).from(content).save();
   };
 
   const renderStudentForm = () => (
