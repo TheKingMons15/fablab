@@ -201,48 +201,12 @@ const ProCalculo8: React.FC = () => {
       name: "Posicionar un número en una escala",
       maxScore: 10,
       items: [
-        { 
-          question: "Escribe dónde colocarías el número 56 en una escala del 0 al 100", 
-          answer: "2", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escala_56.png'
-        },
-        { 
-          question: "Escribe dónde colocarías el número 86 en una escala del 0 al 100", 
-          answer: "3", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escala_86.png'
-        },
-        { 
-          question: "Escribe dónde colocarías el número 48 en una escala del 0 al 100", 
-          answer: "2", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escala_48.png'
-        },
-        { 
-          question: "Escribe dónde colocarías el número 32 en una escala del 0 al 100", 
-          answer: "32", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escala_32.png'
-        },
-        { 
-          question: "Escribe dónde colocarías el número 5 en una escala del 0 al 100", 
-          answer: "1", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escala_5.png'
-        },
-        { 
-          question: "Escribe dónde colocarías el número 62 en una escala del 0 al 100", 
-          answer: "2", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Escala_62.png'
-        }
+        { question: "Escribe dónde colocarías el número 56 en una escala del 0 al 100", answer: "2", points: 2, type: "escrito", image: "/img/Test_8 Escala_56.png" },
+        { question: "Escribe dónde colocarías el número 86 en una escala del 0 al 100", answer: "3", points: 2, type: "escrito", image: "/img/Test_8 Escala_86.png" },
+        { question: "Escribe dónde colocarías el número 48 en una escala del 0 al 100", answer: "2", points: 2, type: "escrito", image: "/img/Test_8 Escala_48.png" },
+        { question: "Escribe dónde colocarías el número 32 en una escala del 0 al 100", answer: "32", points: 2, type: "escrito", image: "/img/Test_8 Escala_32.png" },
+        { question: "Escribe dónde colocarías el número 5 en una escala del 0 al 100", answer: "1", points: 2, type: "escrito", image: "/img/Test_8 Escala_5.png" },
+        { question: "Escribe dónde colocarías el número 62 en una escala del 0 al 100", answer: "2", points: 2, type: "escrito", image: "/img/Test_8 Escala_62.png" }
       ]
     },
     {
