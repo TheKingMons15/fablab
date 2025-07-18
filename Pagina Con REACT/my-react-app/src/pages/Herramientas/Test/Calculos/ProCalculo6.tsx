@@ -60,29 +60,24 @@ const ProCalculo6: React.FC = () => {
   // Array que define en qué subtests mostrar minijuegos
   const minigameSubtests = [3, 6];
 
-  // Función para normalizar respuestas - MEJORADA
   const normalizeAnswer = (answer: string | number, isNumericQuestion: boolean = false): string | number => {
     if (typeof answer === 'number') return answer;
     
-    // Manejar números escritos con comas como decimales
     const commaToDot = answer.toString().replace(',', '.');
     if (!isNaN(Number(commaToDot))) {
       const num = Number(commaToDot);
       return isNumericQuestion ? Math.round(num) : num;
     }
     
-    // Convertir números escritos en texto a minúsculas sin acentos
     return answer.toString().toLowerCase()
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
       .trim();
   };
 
-  // Función para comparar respuestas - MEJORADA
   const compareAnswers = (userAnswer: string | number, correctAnswer: string | number, isNumericQuestion: boolean = false): boolean => {
     const normalizedUser = normalizeAnswer(userAnswer, isNumericQuestion);
     const normalizedCorrect = normalizeAnswer(correctAnswer, isNumericQuestion);
     
-    // Comparación numérica con tolerancia para decimales
     if (typeof normalizedCorrect === 'number') {
       const userNum = typeof normalizedUser === 'number' 
         ? normalizedUser 
@@ -90,20 +85,16 @@ const ProCalculo6: React.FC = () => {
       
       if (isNaN(userNum)) return false;
       
-      // Para preguntas numéricas, comparación exacta sin tolerancia
       if (isNumericQuestion) {
         return userNum === normalizedCorrect;
       }
       
-      // Tolerancia para números decimales en otras preguntas
       return Math.abs(userNum - normalizedCorrect) < 0.1;
     }
     
-    // Comparación de texto exacta
     return normalizedUser.toString() === normalizedCorrect.toString();
   };
 
-  // Efecto para el temporizador
   useEffect(() => {
     let timer: NodeJS.Timeout;
     
@@ -122,7 +113,6 @@ const ProCalculo6: React.FC = () => {
     };
   }, [timeLeft, timerActive, showResult, timeUp, showStudentForm, showMiniGame]);
 
-  // Efecto para registrar la hora de inicio
   useEffect(() => {
     if (!showStudentForm && timerActive) {
       const now = new Date();
@@ -130,15 +120,12 @@ const ProCalculo6: React.FC = () => {
     }
   }, [showStudentForm, timerActive]);
 
-  // Función para calcular el puntaje total - MEJORADA con logs de diagnóstico
   const calculateTotalScore = (): number => {
     let total = 0;
     subtests.forEach((subtest, index) => {
       const subtestScore = Math.min(score[index], subtest.maxScore);
-      console.log(`Subtest ${index} (${subtest.name}): ${score[index]} / ${subtest.maxScore}`);
       total += subtestScore;
     });
-    console.log('Total calculado:', total);
     return total;
   };
 
@@ -148,20 +135,16 @@ const ProCalculo6: React.FC = () => {
     setSaveError(false);
     
     try {
-      const edadNum = parseInt(studentData.edad) || 0;
-
       const testData = {
         nombres: studentData.nombres.trim(),
         apellidos: studentData.apellidos.trim(),
-        edad: edadNum,
+        edad: parseInt(studentData.edad) || 0,
         genero: studentData.genero,
         curso: studentData.curso.trim(),
         institucion: studentData.institucion.trim(),
         test_tipo: "ProCálculo6",
-        puntuacion_total: totalScore,
+        puntuacion_total: totalScore // Envío directo del total calculado
       };
-
-      console.log('Enviando datos al servidor:', testData);
 
       const response = await fetch('https://fablab.upec.edu.ec/procalculo-api/guardar-test', {
         method: 'POST',
@@ -169,18 +152,13 @@ const ProCalculo6: React.FC = () => {
         body: JSON.stringify(testData)
       });
 
-      if (!response.ok) {
-        throw new Error('Error al guardar los resultados');
-      }
+      if (!response.ok) throw new Error('Error al guardar los resultados');
 
       const result = await response.json();
-      console.log('Respuesta del servidor:', result);
       setTestId(result.id);
       setShowResult(true);
       
-      if (totalScore > 30) {
-        launchConfetti();
-      }
+      if (totalScore > 30) launchConfetti();
     } catch (error) {
       console.error('Error al guardar resultados:', error);
       setSaveError(true);
@@ -324,7 +302,6 @@ const ProCalculo6: React.FC = () => {
       setScore(prevScore => {
         const newScore = [...prevScore];
         newScore[currentSubtest] += currentQuestion.points;
-        console.log(`Pregunta correcta! Puntos añadidos: ${currentQuestion.points}. Subtest ${currentSubtest} ahora tiene: ${newScore[currentSubtest]}`);
         return newScore;
       });
       setAnimation('correct');
@@ -357,8 +334,7 @@ const ProCalculo6: React.FC = () => {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        setShowResult(true);
-        setTimerActive(false);
+        finishTest();
       }
     } else {
       setCurrentItem(currentItem + 1);
