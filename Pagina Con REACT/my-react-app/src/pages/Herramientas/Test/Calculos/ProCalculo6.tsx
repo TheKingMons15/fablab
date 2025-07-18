@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars } from 'react-icons/fa';
+import { FaArrowLeft, FaRedo, FaClock, FaUser, FaSchool, FaBirthdayCake, FaVenusMars, FaPlay, FaFlagCheckered } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import styles from './ProCalculo.module.css';
 import confetti from 'canvas-confetti';
 import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 import SnakeGame from '../../Minijuego/SnakeGame';
+import jsPDF from 'jspdf';
 
 interface QuestionItem {
   question: string;
@@ -54,6 +55,7 @@ const ProCalculo6: React.FC = () => {
   const [showStudentForm, setShowStudentForm] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [testStartTime, setTestStartTime] = useState<string>('');
 
   // Array que define en qué subtests mostrar minijuegos
   const minigameSubtests = [3, 6];
@@ -119,6 +121,14 @@ const ProCalculo6: React.FC = () => {
       if (timer) clearTimeout(timer);
     };
   }, [timeLeft, timerActive, showResult, timeUp, showStudentForm, showMiniGame]);
+
+  // Efecto para registrar la hora de inicio
+  useEffect(() => {
+    if (!showStudentForm && timerActive) {
+      const now = new Date();
+      setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
+    }
+  }, [showStudentForm, timerActive]);
 
   // Función para calcular el puntaje total - MEJORADA con logs de diagnóstico
   const calculateTotalScore = (): number => {
@@ -220,270 +230,82 @@ const ProCalculo6: React.FC = () => {
       name: "Enumeración",
       maxScore: 12,
       items: [
-        { 
-          question: "¿Cuántos animales hay en la imagen?", 
-          answer: "5", 
-          points: 4,
-          type: "escrito",
-          image: '/img/Test_6 Enumeración_5.png',
-          isNumeric: true
-        },
-        { 
-          question: "¿Cuántos animales hay en la imagen?", 
-          answer: "8", 
-          points: 4,
-          type: "escrito",
-          image: '/img/Test_6 Enumeración_8.png',
-          isNumeric: true
-        },
-        { 
-          question: "¿Cuántos animales hay en la imagen?", 
-          answer: "10", 
-          points: 4,
-          type: "escrito",
-          image: '/img/Test_6 Enumeración_10.png',
-          isNumeric: true
-        }
+        { question: "¿Cuántos animales hay en la imagen?", answer: "5", points: 4, type: "escrito", image: "/img/Test_6 Enumeración_5.png", isNumeric: true },
+        { question: "¿Cuántos animales hay en la imagen?", answer: "8", points: 4, type: "escrito", image: "/img/Test_6 Enumeración_8.png", isNumeric: true },
+        { question: "¿Cuántos animales hay en la imagen?", answer: "10", points: 4, type: "escrito", image: "/img/Test_6 Enumeración_10.png", isNumeric: true }
       ]
     },
     {
       name: "Contar para atrás",
       maxScore: 2,
       items: [
-        { 
-          question: "Escribe los números del 10 al 0 en orden descendente, separados por comas", 
-          answer: "10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Contar para atrás.png'
-        }
+        { question: "Escribe los números del 10 al 0 en orden descendente, separados por comas y sin espacios", answer: "10,9,8,7,6,5,4,3,2,1,0", points: 2, type: "escrito", image: "/img/Test_6 Contar para atrás.png" }
       ]
     },
     {
       name: "Escritura de números",
       maxScore: 6,
       items: [
-        { 
-          question: "Escribe el número 'siete'", 
-          answer: "7", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Escritura_7.png',
-          isNumeric: true
-        },
-        { 
-          question: "Escribe el número 'veinte'", 
-          answer: "20", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Escritura_20.png',
-          isNumeric: true
-        },
-        { 
-          question: "Escribe el número 'trescientos cinco'", 
-          answer: "305", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Escritura_305.png',
-          isNumeric: true
-        }
+        { question: "Escribe el número 'siete'", answer: "7", points: 2, type: "escrito", image: "/img/Test_6 Escritura_7.png", isNumeric: true },
+        { question: "Escribe el número 'veinte'", answer: "20", points: 2, type: "escrito", image: "/img/Test_6 Escritura_20.png", isNumeric: true },
+        { question: "Escribe el número 'trescientos cinco'", answer: "305", points: 2, type: "escrito", image: "/img/Test_6 Escritura_305.png", isNumeric: true }
       ]
     },
     {
       name: "Cálculo mental oral",
       maxScore: 12,
       items: [
-        { 
-          question: "10 + 10", 
-          answer: 20, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Calculo_20.png',
-          isNumeric: true
-        },
-        { 
-          question: "1 + 15", 
-          answer: 16, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Calculo_16.png',
-          isNumeric: true
-        },
-        { 
-          question: "2 + 7", 
-          answer: 9, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Calculo_9.png',
-          isNumeric: true
-        },
-        { 
-          question: "10 - 3", 
-          answer: 7, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Calculo_7.png',
-          isNumeric: true
-        },
-        { 
-          question: "18 - 6", 
-          answer: 12, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Calculo_12.png',
-          isNumeric: true
-        },
-        { 
-          question: "7 - 4", 
-          answer: 3, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Calculo_3.png',
-          isNumeric: true
-        }
+        { question: "10 + 10", answer: 20, points: 2, type: "escrito", image: "/img/Test_6 Calculo_20.png", isNumeric: true },
+        { question: "1 + 15", answer: 16, points: 2, type: "escrito", image: "/img/Test_6 Calculo_16.png", isNumeric: true },
+        { question: "2 + 7", answer: 9, points: 2, type: "escrito", image: "/img/Test_6 Calculo_9.png", isNumeric: true },
+        { question: "10 - 3", answer: 7, points: 2, type: "escrito", image: "/img/Test_6 Calculo_7.png", isNumeric: true },
+        { question: "18 - 6", answer: 12, points: 2, type: "escrito", image: "/img/Test_6 Calculo_12.png", isNumeric: true },
+        { question: "7 - 4", answer: 3, points: 2, type: "escrito", image: "/img/Test_6 Calculo_3.png", isNumeric: true }
       ]
     },
     {
       name: "Lectura de números",
       maxScore: 8,
       items: [
-        { 
-          question: "Lee y escribe con palabras minúsculas el número: 57", 
-          answer: "cincuenta y siete", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Lectura_57.png'
-        },
-        { 
-          question: "Lee y escribe con palabras minúsculas el número: 15", 
-          answer: "quince", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Lectura_15.png'
-        },
-        { 
-          question: "Lee y escribe con palabras minúsculas el número: 138", 
-          answer: "ciento treinta y ocho", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Lectura_138.png'
-        },
-        { 
-          question: "Lee y escribe con palabras minúsculas el número: 9", 
-          answer: "nueve", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Lectura_9.png'
-        }
+        { question: "Lee y escribe con palabras minúsculas el número: 57", answer: "cincuenta y siete", points: 2, type: "escrito", image: "/img/Test_6 Lectura_57.png" },
+        { question: "Lee y escribe con palabras minúsculas el número: 15", answer: "quince", points: 2, type: "escrito", image: "/img/Test_6 Lectura_15.png" },
+        { question: "Lee y escribe con palabras minúsculas el número: 138", answer: "ciento treinta y ocho", points: 2, type: "escrito", image: "/img/Test_6 Lectura_138.png" },
+        { question: "Lee y escribe con palabras minúsculas el número: 9", answer: "nueve", points: 2, type: "escrito", image: "/img/Test_6 Lectura_9.png" }
       ]
     },
     {
       name: "Estimación",
       maxScore: 6,
       items: [
-        { 
-          question: "¿2 nubes en el cielo es poco o mucho?", 
-          answer: "poco", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Estimación_nubes.png'
-        },
-        { 
-          question: "¿2 niños jugando en el recreo es poco o mucho?", 
-          answer: "poco", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Estimación_niños.png'
-        },
-        { 
-          question: "¿60 chicos en un cumpleaños es poco o mucho?", 
-          answer: "mucho", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Estimación_cumpleaños.png'
-        }
+        { question: "¿2 nubes en el cielo es poco o mucho?", answer: "poco", points: 2, type: "escrito", image: "/img/Test_6 Estimación_nubes.png" },
+        { question: "¿2 niños jugando en el recreo es poco o mucho?", answer: "poco", points: 2, type: "escrito", image: "/img/Test_6 Estimación_niños.png" },
+        { question: "¿60 chicos en un cumpleaños es poco o mucho?", answer: "mucho", points: 2, type: "escrito", image: "/img/Test_6 Estimación_cumpleaños.png" }
       ]
     },
     {
       name: "Resolución de problemas",
       maxScore: 4,
       items: [
-        { 
-          question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?", 
-          answer: 10, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Resolución_10.png',
-          isNumeric: true
-        },
-        { 
-          question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", 
-          answer: 5, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Resolución_5.png',
-          isNumeric: true
-        }
+        { question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?", answer: 10, points: 2, type: "escrito", image: "/img/Test_6 Resolución_10.png", isNumeric: true },
+        { question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", answer: 5, points: 2, type: "escrito", image: "/img/Test_6 Resolución_5.png", isNumeric: true }
       ]
     },
     {
       name: "Adaptación",
       maxScore: 8,
       items: [
-        { 
-          question: "¿Cuánto crees que cuesta una bicicleta?", 
-          answer: 150, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Adaptación_150.png',
-          isNumeric: true
-        },
-        { 
-          question: "¿Cuánto crees que cuesta una radio?", 
-          answer: 90, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Adaptación_90.png',
-          isNumeric: true
-        },
-        { 
-          question: "¿Cuánto crees que cuesta una pelota de cuero?", 
-          answer: 50, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Adaptación_50.png',
-          isNumeric: true
-        },
-        { 
-          question: "¿Cuánto crees que cuesta una gaseosa?", 
-          answer: 1.50, 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_6 Adaptación_1.50.png',
-          isNumeric: true
-        }
+        { question: "¿Cuánto crees que cuesta una bicicleta?", answer: 150, points: 2, type: "escrito", image: "/img/Test_6 Adaptación_150.png", isNumeric: true },
+        { question: "¿Cuánto crees que cuesta una radio?", answer: 90, points: 2, type: "escrito", image: "/img/Test_6 Adaptación_90.png", isNumeric: true },
+        { question: "¿Cuánto crees que cuesta una pelota de cuero?", answer: 50, points: 2, type: "escrito", image: "/img/Test_6 Adaptación_50.png", isNumeric: true },
+        { question: "¿Cuánto crees que cuesta una gaseosa?", answer: 1.50, points: 2, type: "escrito", image: "/img/Test_6 Adaptación_1.50.png", isNumeric: true }
       ]
     },
     {
       name: "Escribir en cifra",
       maxScore: 2,
       items: [
-        { 
-          question: "Escribe el número 'quince'", 
-          answer: 15, 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_6 Escribir_15.png',
-          isNumeric: true
-        },
-        { 
-          question: "Escribe el número 'veinticinco'", 
-          answer: 25, 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_6 Escribir_25.png',
-          isNumeric: true
-        }
+        { question: "Escribe el número 'quince'", answer: 15, points: 1, type: "escrito", image: "/img/Test_6 Escribir_15.png", isNumeric: true },
+        { question: "Escribe el número 'veinticinco'", answer: 25, points: 1, type: "escrito", image: "/img/Test_6 Escribir_25.png", isNumeric: true }
       ]
     }
   ];
@@ -535,7 +357,8 @@ const ProCalculo6: React.FC = () => {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        finishTest();
+        setShowResult(true);
+        setTimerActive(false);
       }
     } else {
       setCurrentItem(currentItem + 1);
@@ -585,6 +408,7 @@ const ProCalculo6: React.FC = () => {
     setShowStudentForm(true);
     setTestId(null);
     setSaveError(false);
+    setTestStartTime('');
   };
 
   const getResultMessage = () => {
@@ -634,6 +458,67 @@ const ProCalculo6: React.FC = () => {
     }
   };
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    let yPos = 10;
+
+    doc.setFontSize(20);
+    doc.text('RESULTADO DEL TEST - 6', 105, yPos, { align: 'center' });
+    yPos += 15;
+
+    doc.setFontSize(14);
+    doc.text('Datos del estudiante', 10, yPos);
+    yPos += 10;
+    doc.setFontSize(12);
+    doc.text(`Nombre: ${studentData.nombres}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Apellido: ${studentData.apellidos}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Edad: ${studentData.edad}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Género: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : ''}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Curso/Grado: ${studentData.curso}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Institución: ${studentData.institucion}`, 10, yPos);
+    yPos += 5;
+    doc.text(`Fecha y hora de inicio: ${testStartTime}`, 10, yPos);
+    yPos += 10;
+
+    doc.text('PUNTUACIÓN TOTAL', 10, yPos);
+    yPos += 5;
+    doc.text(`Puntuación total: ${calculateTotalScore()}/60 Puntos`, 10, yPos);
+    yPos += 10;
+
+    doc.text('Detalles del Test:', 10, yPos);
+    yPos += 10;
+
+    subtests.forEach((subtest, idx) => {
+      if (yPos > 280) {
+        doc.addPage();
+        yPos = 10;
+      }
+      doc.text(`${subtest.name}: ${score[idx]} / ${subtest.maxScore}`, 10, yPos);
+      yPos += 5;
+      subtest.items.forEach((item) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 10;
+        }
+        doc.text(`Pregunta: ${item.question}`, 10, yPos);
+        yPos += 5;
+        doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
+        yPos += 5;
+        doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
+        yPos += 5;
+        doc.text(`Puntos obtenidos: ${score[idx] >= item.points ? item.points : 0} / ${item.points}`, 10, yPos);
+        yPos += 5;
+      });
+    });
+
+    doc.save(`Resultado_Test_6_${studentData.nombres}_${studentData.apellidos}.pdf`);
+  };
+
   const renderStudentForm = () => (
     <div className={styles.studentFormContainer}>
       <div className={styles.studentFormCard}>
@@ -652,6 +537,7 @@ const ProCalculo6: React.FC = () => {
             value={studentData.nombres}
             onChange={handleInputChange}
             className={formErrors.nombres ? styles.inputError : ''}
+            disabled={isSubmitting}
           />
           {formErrors.nombres && <span className={styles.errorMessage}>{formErrors.nombres}</span>}
         </div>
@@ -667,6 +553,7 @@ const ProCalculo6: React.FC = () => {
             value={studentData.apellidos}
             onChange={handleInputChange}
             className={formErrors.apellidos ? styles.inputError : ''}
+            disabled={isSubmitting}
           />
           {formErrors.apellidos && <span className={styles.errorMessage}>{formErrors.apellidos}</span>}
         </div>
@@ -684,6 +571,7 @@ const ProCalculo6: React.FC = () => {
             min="5"
             max="12"
             className={formErrors.edad ? styles.inputError : ''}
+            disabled={isSubmitting}
           />
           {formErrors.edad && <span className={styles.errorMessage}>{formErrors.edad}</span>}
         </div>
@@ -698,6 +586,7 @@ const ProCalculo6: React.FC = () => {
             value={studentData.genero}
             onChange={handleInputChange}
             className={formErrors.genero ? styles.inputError : ''}
+            disabled={isSubmitting}
           >
             <option value="">Selecciona...</option>
             <option value="M">Masculino</option>
@@ -717,6 +606,7 @@ const ProCalculo6: React.FC = () => {
             value={studentData.curso}
             onChange={handleInputChange}
             className={formErrors.curso ? styles.inputError : ''}
+            disabled={isSubmitting}
           />
           {formErrors.curso && <span className={styles.errorMessage}>{formErrors.curso}</span>}
         </div>
@@ -732,6 +622,7 @@ const ProCalculo6: React.FC = () => {
             value={studentData.institucion}
             onChange={handleInputChange}
             className={formErrors.institucion ? styles.inputError : ''}
+            disabled={isSubmitting}
           />
           {formErrors.institucion && <span className={styles.errorMessage}>{formErrors.institucion}</span>}
         </div>
@@ -740,8 +631,9 @@ const ProCalculo6: React.FC = () => {
           <button 
             className={styles.startTestButton}
             onClick={startTest}
+            disabled={isSubmitting}
           >
-            Comenzar Test
+            {isSubmitting ? 'Cargando...' : <><FaPlay /> Comenzar Test</>}
           </button>
         </div>
       </div>
@@ -918,6 +810,13 @@ const ProCalculo6: React.FC = () => {
                   {isSubmitting ? 'Guardando...' : 'Reintentar guardado'}
                 </button>
               )}
+              <button 
+                className={styles.downloadButton} 
+                onClick={generatePDF}
+                disabled={isSubmitting}
+              >
+                Descargar PDF
+              </button>
             </div>
           </div>
         </div>
@@ -964,6 +863,24 @@ const ProCalculo6: React.FC = () => {
         <div className={styles.questionCard}>
           {renderQuestion()}
         </div>
+
+        {currentItem + 1 === subtests[currentSubtest].items.length && currentSubtest + 1 === subtests.length && (
+          <div className={styles.finishTestContainer}>
+            <div className={styles.finishTestCard}>
+              <h2>¡Has completado todas las preguntas!</h2>
+              <p>Tiempo restante: {formatTime(timeLeft)}</p>
+              <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
+              
+              <button 
+                className={styles.finishTestButton}
+                onClick={finishTest}
+                disabled={isSubmitting}
+              >
+                <FaFlagCheckered /> {isSubmitting ? 'Finalizando...' : 'Finalizar Test'}
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </>
   );
