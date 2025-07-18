@@ -55,9 +55,7 @@ const ProCalculo6: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testStartTime, setTestStartTime] = useState('');
 
-  // Subtests en el estado para preservar providedAnswer
   const [subtests, setSubtests] = useState<Subtest[]>([
-    // Subtest 1
     {
       name: "Enumeración",
       maxScore: 12,
@@ -67,7 +65,6 @@ const ProCalculo6: React.FC = () => {
         { question: "¿Cuántos animales hay en la imagen?", answer: 10, points: 4, type: "escrito", image: "/img/Test_6 Enumeración_10.png", isNumeric: true }
       ]
     },
-    // Subtest 2
     {
       name: "Contar para atrás",
       maxScore: 2,
@@ -75,7 +72,6 @@ const ProCalculo6: React.FC = () => {
         { question: "Escribe los números del 10 al 0 en orden descendente, separados por comas y sin espacios", answer: "10,9,8,7,6,5,4,3,2,1,0", points: 2, type: "escrito", image: "/img/Test_6 Contar para atrás.png" }
       ]
     },
-    // Subtest 3
     {
       name: "Escritura de números",
       maxScore: 6,
@@ -85,7 +81,6 @@ const ProCalculo6: React.FC = () => {
         { question: "Escribe el número 'trescientos cinco'", answer: 305, points: 2, type: "escrito", image: "/img/Test_6 Escritura_305.png", isNumeric: true }
       ]
     },
-    // Subtest 4
     {
       name: "Cálculo mental oral",
       maxScore: 12,
@@ -98,7 +93,6 @@ const ProCalculo6: React.FC = () => {
         { question: "7 - 4", answer: 3, points: 2, type: "escrito", image: "/img/Test_6 Calculo_3.png", isNumeric: true }
       ]
     },
-    // Subtest 5
     {
       name: "Lectura de números",
       maxScore: 8,
@@ -109,7 +103,6 @@ const ProCalculo6: React.FC = () => {
         { question: "Lee y escribe con palabras minúsculas el número: 9", answer: "nueve", points: 2, type: "escrito", image: "/img/Test_6 Lectura_9.png" }
       ]
     },
-    // Subtest 6
     {
       name: "Estimación",
       maxScore: 6,
@@ -119,7 +112,6 @@ const ProCalculo6: React.FC = () => {
         { question: "¿60 chicos en un cumpleaños es poco o mucho?", answer: "mucho", points: 2, type: "escrito", image: "/img/Test_6 Estimación_cumpleaños.png" }
       ]
     },
-    // Subtest 7
     {
       name: "Resolución de problemas",
       maxScore: 4,
@@ -128,7 +120,6 @@ const ProCalculo6: React.FC = () => {
         { question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", answer: 5, points: 2, type: "escrito", image: "/img/Test_6 Resolución_5.png", isNumeric: true }
       ]
     },
-    // Subtest 8
     {
       name: "Adaptación",
       maxScore: 8,
@@ -139,7 +130,6 @@ const ProCalculo6: React.FC = () => {
         { question: "¿Cuánto crees que cuesta una gaseosa?", answer: 1.5, points: 2, type: "escrito", image: "/img/Test_6 Adaptación_1.50.png", isNumeric: true }
       ]
     },
-    // Subtest 9
     {
       name: "Escribir en cifra",
       maxScore: 2,
@@ -154,10 +144,11 @@ const ProCalculo6: React.FC = () => {
 
   const normalizeAnswer = (answer: string | number, isNumericQuestion: boolean = false): string | number => {
     if (typeof answer === 'number') return answer;
+    
     const commaToDot = answer.toString().replace(',', '.');
     if (!isNaN(Number(commaToDot))) {
       const num = Number(commaToDot);
-      return isNumericQuestion ? Math.round(num) : num;
+      return isNumericQuestion ? num : num;
     }
     return answer.toString().toLowerCase()
       .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -165,17 +156,28 @@ const ProCalculo6: React.FC = () => {
   };
 
   const compareAnswers = (userAnswer: string | number, correctAnswer: string | number, isNumericQuestion: boolean = false): boolean => {
+    console.log('Comparando respuestas:', {
+      userAnswer,
+      correctAnswer,
+      isNumericQuestion
+    });
+
     const normalizedUser = normalizeAnswer(userAnswer, isNumericQuestion);
     const normalizedCorrect = normalizeAnswer(correctAnswer, isNumericQuestion);
+
     if (typeof normalizedCorrect === 'number') {
       const userNum = typeof normalizedUser === 'number' 
         ? normalizedUser 
         : Number(normalizedUser);
+      
       if (isNaN(userNum)) return false;
-      return isNumericQuestion 
-        ? userNum === normalizedCorrect 
-        : Math.abs(userNum - normalizedCorrect) < 0.1;
+      
+      if (isNumericQuestion) {
+        return userNum === normalizedCorrect;
+      }
+      return Math.abs(userNum - normalizedCorrect) < 0.1;
     }
+    
     return normalizedUser.toString() === normalizedCorrect.toString();
   };
 
@@ -198,7 +200,11 @@ const ProCalculo6: React.FC = () => {
   useEffect(() => {
     if (!showStudentForm && timerActive) {
       const now = new Date();
-      setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
+      setTestStartTime(now.toLocaleString('es-ES', { 
+        dateStyle: 'long', 
+        timeStyle: 'short', 
+        timeZone: 'America/Guayaquil' 
+      }));
     }
   }, [showStudentForm, timerActive]);
 
@@ -217,6 +223,13 @@ const ProCalculo6: React.FC = () => {
     const totalScore = calculateTotalScore();
     setIsSubmitting(true);
     setSaveError(false);
+    
+    console.log('Verificación Subtest 9 - Escribir en cifra:', {
+      respuestas: subtests[8].items.map(item => item.providedAnswer),
+      puntuacion: score[8],
+      maxScore: subtests[8].maxScore
+    });
+
     try {
       const edadNum = parseInt(studentData.edad) || 0;
       const testData = {
@@ -229,19 +242,23 @@ const ProCalculo6: React.FC = () => {
         test_tipo: "ProCálculo6",
         puntuacion_total: totalScore,
       };
+      
       console.log('Enviando datos al servidor:', testData);
       const response = await fetch('https://fablab.upec.edu.ec/procalculo-api/guardar-test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(testData)
       });
+      
       if (!response.ok) {
         throw new Error('Error al guardar los resultados');
       }
+      
       const result = await response.json();
       console.log('Respuesta del servidor:', result);
       setTestId(result.id);
       setShowResult(true);
+      
       if (totalScore > 30) {
         launchConfetti();
       }
@@ -287,10 +304,17 @@ const ProCalculo6: React.FC = () => {
 
   const handleAnswer = (selectedAnswer: string | number) => {
     if (showFeedback || timeUp) return;
-    const isNumericQuestion = subtests[currentSubtest].items[currentItem].isNumeric || false;
-    const isCorrect = compareAnswers(selectedAnswer, subtests[currentSubtest].items[currentItem].answer, isNumericQuestion);
+    const currentQuestion = subtests[currentSubtest].items[currentItem];
+    const isNumericQuestion = currentQuestion.isNumeric || false;
+    const isCorrect = compareAnswers(selectedAnswer, currentQuestion.answer, isNumericQuestion);
 
-    // Actualizar subtests con providedAnswer de forma inmutable
+    console.log('Respuesta evaluada:', {
+      selectedAnswer,
+      correctAnswer: currentQuestion.answer,
+      isCorrect,
+      isNumericQuestion
+    });
+
     setSubtests(prevSubtests => {
       const newSubtests = [...prevSubtests];
       newSubtests[currentSubtest].items[currentItem] = {
@@ -302,17 +326,19 @@ const ProCalculo6: React.FC = () => {
 
     setCorrectAnswer(isCorrect);
     setShowFeedback(true);
+    
     if (isCorrect) {
       setScore(prevScore => {
         const newScore = [...prevScore];
-        newScore[currentSubtest] += subtests[currentSubtest].items[currentItem].points;
-        console.log(`Pregunta correcta! Puntos añadidos: ${subtests[currentSubtest].items[currentItem].points}. Subtest ${currentSubtest} ahora tiene: ${newScore[currentSubtest]}`);
+        newScore[currentSubtest] += currentQuestion.points;
+        console.log(`Pregunta correcta! Puntos añadidos: ${currentQuestion.points}. Subtest ${currentSubtest} ahora tiene: ${newScore[currentSubtest]}`);
         return newScore;
       });
       setAnimation('correct');
     } else {
       setAnimation('wrong');
     }
+    
     setTimeout(() => {
       moveToNextItem();
     }, 2000);
@@ -385,7 +411,6 @@ const ProCalculo6: React.FC = () => {
     setTestId(null);
     setSaveError(false);
     setTestStartTime('');
-    // Reiniciar providedAnswer en el estado
     setSubtests(prevSubtests =>
       prevSubtests.map(subtest => ({
         ...subtest,
@@ -442,94 +467,56 @@ const ProCalculo6: React.FC = () => {
   };
 
   const generatePDF = () => {
-  const doc = new jsPDF();
-  const margin = 20; // Márgenes izquierdo y derecho
-  const maxWidth = 190 - (2 * margin); // Ancho máximo disponible dentro de los márgenes
-  let yPos = 20;
+    const doc = new jsPDF();
+    const margin = 20;
+    const maxWidth = 190 - (2 * margin);
+    let yPos = 20;
 
-  // Página 1: Datos del estudiante y puntuación total
-  doc.setFontSize(18);
-  doc.text('RESULTADO DEL TEST - 6', 105, yPos, { align: 'center' });
-  yPos += 20;
-
-  doc.setFontSize(14);
-  doc.text('Datos del Estudiante', margin, yPos);
-  yPos += 10;
-  doc.setLineWidth(0.5);
-  doc.line(margin, yPos, 190 - margin, yPos);
-  yPos += 10;
-
-  doc.setFontSize(12);
-  const studentDataLines = [
-    `Nombre: ${studentData.nombres}`,
-    `Apellido: ${studentData.apellidos}`,
-    `Edad: ${studentData.edad}`,
-    `Género: ${studentData.genero === 'M' ? 'Masculino' : 'Femenino'}`,
-    `Curso/Grado: ${studentData.curso}`,
-    `Institución: ${studentData.institucion}`,
-    `Fecha y hora de inicio: ${testStartTime}`
-  ];
-  studentDataLines.forEach(line => {
-    const textLines = doc.splitTextToSize(line, maxWidth);
-    textLines.forEach((textLine: string) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 20;
-      }
-      doc.text(textLine, margin, yPos);
-      yPos += 8;
-    });
-  });
-  yPos += 15;
-
-  doc.setFontSize(14);
-  doc.text('Puntuación Total', margin, yPos);
-  yPos += 10;
-  doc.setLineWidth(0.5);
-  doc.line(margin, yPos, 190 - margin, yPos);
-  yPos += 10;
-
-  doc.setFontSize(12);
-  const totalScoreText = `Puntuación total: ${calculateTotalScore()}/60 Puntos`;
-  const totalScoreLines = doc.splitTextToSize(totalScoreText, maxWidth);
-  totalScoreLines.forEach((textLine: string) => {
-    if (yPos > 280) {
-      doc.addPage();
-      yPos = 20;
-    }
-    doc.text(textLine, margin, yPos);
-    yPos += 8;
-  });
-  yPos += 15;
-
-  // Cada subtest en una nueva página
-  subtests.forEach((subtest, idx) => {
-    if (subtest.items.length === 0) return;
-
-    doc.addPage();
-    yPos = 20;
+    doc.setFontSize(18);
+    doc.text('RESULTADO DEL TEST - 6', 105, yPos, { align: 'center' });
+    yPos += 20;
 
     doc.setFontSize(14);
-    const subtestTitle = `Sección: ${subtest.name}`;
-    const subtestTitleLines = doc.splitTextToSize(subtestTitle, maxWidth);
-    subtestTitleLines.forEach((textLine: string) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 20;
-      }
-      doc.text(textLine, margin, yPos);
-      yPos += 10;
-    });
+    doc.text('Datos del Estudiante', margin, yPos);
     yPos += 10;
-
     doc.setLineWidth(0.5);
     doc.line(margin, yPos, 190 - margin, yPos);
     yPos += 10;
 
     doc.setFontSize(12);
-    const subtestScoreText = `Puntuación: ${score[idx]} / ${subtest.maxScore}`;
-    const subtestScoreLines = doc.splitTextToSize(subtestScoreText, maxWidth);
-    subtestScoreLines.forEach((textLine: string) => {
+    const studentDataLines = [
+      `Nombre: ${studentData.nombres}`,
+      `Apellido: ${studentData.apellidos}`,
+      `Edad: ${studentData.edad}`,
+      `Género: ${studentData.genero === 'M' ? 'Masculino' : 'Femenino'}`,
+      `Curso/Grado: ${studentData.curso}`,
+      `Institución: ${studentData.institucion}`,
+      `Fecha y hora de inicio: ${testStartTime}`
+    ];
+    studentDataLines.forEach(line => {
+      const textLines = doc.splitTextToSize(line, maxWidth);
+      textLines.forEach((textLine: string) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text(textLine, margin, yPos);
+        yPos += 8;
+      });
+    });
+    yPos += 15;
+
+    doc.setFontSize(14);
+    doc.text('Puntuación Total', margin, yPos);
+    yPos += 10;
+    doc.setLineWidth(0.5);
+    doc.line(margin, yPos, 190 - margin, yPos);
+    yPos += 10;
+
+    doc.setFontSize(12);
+    const totalScoreText = `Puntuación total: ${calculateTotalScore()}/60 Puntos`;
+    const totalScoreLines = doc.splitTextToSize(totalScoreText, maxWidth);
+    totalScoreLines.forEach((textLine: string) => {
       if (yPos > 280) {
         doc.addPage();
         yPos = 20;
@@ -539,15 +526,33 @@ const ProCalculo6: React.FC = () => {
     });
     yPos += 15;
 
-    subtest.items.forEach((item, itemIdx) => {
-      if (yPos > 270) {
-        doc.addPage();
-        yPos = 20;
-      }
+    subtests.forEach((subtest, idx) => {
+      if (subtest.items.length === 0) return;
 
-      const questionText = `Pregunta ${itemIdx + 1}: ${item.question}`;
-      const questionLines = doc.splitTextToSize(questionText, maxWidth);
-      questionLines.forEach((textLine: string) => {
+      doc.addPage();
+      yPos = 20;
+
+      doc.setFontSize(14);
+      const subtestTitle = `Sección: ${subtest.name}`;
+      const subtestTitleLines = doc.splitTextToSize(subtestTitle, maxWidth);
+      subtestTitleLines.forEach((textLine: string) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text(textLine, margin, yPos);
+        yPos += 10;
+      });
+      yPos += 10;
+
+      doc.setLineWidth(0.5);
+      doc.line(margin, yPos, 190 - margin, yPos);
+      yPos += 10;
+
+      doc.setFontSize(12);
+      const subtestScoreText = `Puntuación: ${score[idx]} / ${subtest.maxScore}`;
+      const subtestScoreLines = doc.splitTextToSize(subtestScoreText, maxWidth);
+      subtestScoreLines.forEach((textLine: string) => {
         if (yPos > 280) {
           doc.addPage();
           yPos = 20;
@@ -555,50 +560,68 @@ const ProCalculo6: React.FC = () => {
         doc.text(textLine, margin, yPos);
         yPos += 8;
       });
+      yPos += 15;
 
-      const correctAnswerText = `Respuesta esperada: ${item.answer}`;
-      const correctAnswerLines = doc.splitTextToSize(correctAnswerText, maxWidth);
-      correctAnswerLines.forEach((textLine: string) => {
-        if (yPos > 280) {
+      subtest.items.forEach((item, itemIdx) => {
+        if (yPos > 270) {
           doc.addPage();
           yPos = 20;
         }
-        doc.text(textLine, margin, yPos);
-        yPos += 8;
-      });
 
-      const providedAnswer = item.providedAnswer !== undefined && item.providedAnswer !== null
-        ? item.providedAnswer
-        : 'No proporcionada';
-      const providedAnswerText = `Respuesta proporcionada: ${providedAnswer}`;
-      const providedAnswerLines = doc.splitTextToSize(providedAnswerText, maxWidth);
-      providedAnswerLines.forEach((textLine: string) => {
-        if (yPos > 280) {
-          doc.addPage();
-          yPos = 20;
-        }
-        doc.text(textLine, margin, yPos);
-        yPos += 8;
-      });
+        const questionText = `Pregunta ${itemIdx + 1}: ${item.question}`;
+        const questionLines = doc.splitTextToSize(questionText, maxWidth);
+        questionLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 8;
+        });
 
-      const pointsObtained = item.providedAnswer !== undefined && item.providedAnswer !== null
-        ? (compareAnswers(item.providedAnswer, item.answer, item.isNumeric || false) ? item.points : 0)
-        : 0;
-      const pointsText = `Puntos obtenidos: ${pointsObtained} / ${item.points}`;
-      const pointsLines = doc.splitTextToSize(pointsText, maxWidth);
-      pointsLines.forEach((textLine: string) => {
-        if (yPos > 280) {
-          doc.addPage();
-          yPos = 20;
-        }
-        doc.text(textLine, margin, yPos);
-        yPos += 15;
+        const correctAnswerText = `Respuesta esperada: ${item.answer}`;
+        const correctAnswerLines = doc.splitTextToSize(correctAnswerText, maxWidth);
+        correctAnswerLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 8;
+        });
+
+        const providedAnswer = item.providedAnswer !== undefined && item.providedAnswer !== null
+          ? item.providedAnswer
+          : 'No proporcionada';
+        const providedAnswerText = `Respuesta proporcionada: ${providedAnswer}`;
+        const providedAnswerLines = doc.splitTextToSize(providedAnswerText, maxWidth);
+        providedAnswerLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 8;
+        });
+
+        const pointsObtained = item.providedAnswer !== undefined && item.providedAnswer !== null
+          ? (compareAnswers(item.providedAnswer, item.answer, item.isNumeric || false) ? item.points : 0)
+          : 0;
+        const pointsText = `Puntos obtenidos: ${pointsObtained} / ${item.points}`;
+        const pointsLines = doc.splitTextToSize(pointsText, maxWidth);
+        pointsLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 15;
+        });
       });
     });
-  });
 
-  doc.save(`Resultado_Test_6_${studentData.nombres}_${studentData.apellidos}.pdf`);
-};
+    doc.save(`Resultado_Test_6_${studentData.nombres}_${studentData.apellidos}.pdf`);
+  };
 
   const renderStudentForm = () => (
     <div className={styles.studentFormContainer}>
