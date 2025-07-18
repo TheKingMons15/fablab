@@ -448,7 +448,7 @@ const ProCalculo6: React.FC = () => {
   let yPos = 20;
 
   // Página 1: Datos del estudiante y puntuación total
-  doc.setFontSize(18);
+  doc.setFontSize(30);
   doc.text('RESULTADO DEL TEST - 6', 105, yPos, { align: 'center' });
   yPos += 20;
 
@@ -456,18 +456,19 @@ const ProCalculo6: React.FC = () => {
   doc.text('Datos del Estudiante', margin, yPos);
   yPos += 10;
   doc.setLineWidth(0.5);
+  yPos -= 5; // Mueve la línea 5mm más arriba
   doc.line(margin, yPos, 190 - margin, yPos);
   yPos += 10;
 
   doc.setFontSize(12);
   const studentDataLines = [
-    `Nombre: ${studentData.nombres}`,
-    `Apellido: ${studentData.apellidos}`,
-    `Edad: ${studentData.edad}`,
-    `Género: ${studentData.genero === 'M' ? 'Masculino' : 'Femenino'}`,
-    `Curso/Grado: ${studentData.curso}`,
-    `Institución: ${studentData.institucion}`,
-    `Fecha y hora de inicio: ${testStartTime}`
+    `Nombre: ${studentData.nombres || 'No especificado'}`,
+    `Apellido: ${studentData.apellidos || 'No especificado'}`,
+    `Edad: ${studentData.edad || 'No especificado'}`,
+    `Género: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : 'No especificado'}`,
+    `Curso/Grado: ${studentData.curso || 'No especificado'}`,
+    `Institución: ${studentData.institucion || 'No especificado'}`,
+    `Fecha y hora de inicio: ${testStartTime || 'No especificado'}`
   ];
   studentDataLines.forEach(line => {
     const textLines = doc.splitTextToSize(line, maxWidth);
@@ -483,14 +484,15 @@ const ProCalculo6: React.FC = () => {
   yPos += 15;
 
   doc.setFontSize(14);
-  doc.text('Puntuación Total', margin, yPos);
   yPos += 10;
   doc.setLineWidth(0.5);
+  yPos -= 5; // Mueve la línea 5mm más arriba
   doc.line(margin, yPos, 190 - margin, yPos);
   yPos += 10;
 
-  doc.setFontSize(12);
+  doc.setFontSize(20);
   const totalScoreText = `Puntuación total: ${calculateTotalScore()}/60 Puntos`;
+  doc.setFont('helvetica', 'bold'); // Cambia a negritas
   const totalScoreLines = doc.splitTextToSize(totalScoreText, maxWidth);
   totalScoreLines.forEach((textLine: string) => {
     if (yPos > 280) {
@@ -500,6 +502,7 @@ const ProCalculo6: React.FC = () => {
     doc.text(textLine, margin, yPos);
     yPos += 8;
   });
+  doc.setFont('helvetica', 'normal'); // Restaura a normal
   yPos += 15;
 
   // Cada subtest en una nueva página
@@ -520,9 +523,9 @@ const ProCalculo6: React.FC = () => {
       doc.text(textLine, margin, yPos);
       yPos += 10;
     });
-    yPos += 10;
-
+    yPos += 5; // Reduce el espacio antes de la línea
     doc.setLineWidth(0.5);
+    yPos -= 5; // Mueve la línea 5mm más arriba
     doc.line(margin, yPos, 190 - margin, yPos);
     yPos += 10;
 
@@ -597,7 +600,7 @@ const ProCalculo6: React.FC = () => {
     });
   });
 
-  doc.save(`Resultado_Test_6_${studentData.nombres}_${studentData.apellidos}.pdf`);
+  doc.save(`Resultado_Test_6_${studentData.nombres || 'Usuario'}_${studentData.apellidos || 'Desconocido'}.pdf`);
 };
 
   const renderStudentForm = () => (
