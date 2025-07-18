@@ -520,7 +520,7 @@ const ProCalculo7: React.FC = () => {
     }
     doc.text('Estimación en contexto: 0 / 6', 10, yPos);
     yPos += 5;
-    subtests[6].items.forEach((item) => {
+    subtests[7].items.forEach((item) => {
       if (yPos > 280) {
         doc.addPage();
         yPos = 10;
@@ -603,7 +603,7 @@ const ProCalculo7: React.FC = () => {
       yPos += 5;
     });
 
-    doc.save('Resultado_Test_7_Sebas_Paucar.pdf');
+    doc.save(`Resultado_Test_7_${studentData.nombres}_${studentData.apellidos}.pdf`);
   };
 
   const renderStudentForm = () => (

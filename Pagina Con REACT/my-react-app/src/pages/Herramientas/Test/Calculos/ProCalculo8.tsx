@@ -213,328 +213,88 @@ const ProCalculo8: React.FC = () => {
       name: "Estimación perceptiva de cantidad",
       maxScore: 4,
       items: [
-        { 
-          question: "¿Cuántas pelotas hay en la imagen?", 
-          answer: "54", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Estimación_54.png'
-        },
-        { 
-          question: "¿Cuántos vasos hay en la imagen?", 
-          answer: "66", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Estimación_66.png'
-        }
+        { question: "¿Cuántas pelotas hay en la imagen?", answer: "54", points: 2, type: "escrito", image: "/img/Test_8 Estimación_54.png" },
+        { question: "¿Cuántos vasos hay en la imagen?", answer: "66", points: 2, type: "escrito", image: "/img/Test_8 Estimación_66.png" }
       ]
     },
     {
       name: "Estimación de cantidades en contexto",
       maxScore: 10,
       items: [
-        { 
-          question: "¿4 profesores en la misma clase es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
-          answer: "mucho", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Estimación_4.png'
-        },
-        { 
-          question: "¿2 nubes en el cielo es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
-          answer: "poco", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Estimación_2.png'
-        },
-        { 
-          question: "¿8 niños en una familia es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
-          answer: "más o menos", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Estimación_8A.png'
-        },
-        { 
-          question: "¿10 hojas en un árbol es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
-          answer: "poco", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Estimación_10.png'
-        },
-        { 
-          question: "¿8 lámparas en una habitación es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", 
-          answer: "mucho", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Estimación_8B.png'
-        }
+        { question: "¿4 profesores en la misma clase es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", answer: "mucho", points: 2, type: "escrito", image: "/img/Test_8 Estimación_4.png" },
+        { question: "¿2 nubes en el cielo es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", answer: "poco", points: 2, type: "escrito", image: "/img/Test_8 Estimación_2.png" },
+        { question: "¿8 niños en una familia es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", answer: "más o menos", points: 2, type: "escrito", image: "/img/Test_8 Estimación_8A.png" },
+        { question: "¿10 hojas en un árbol es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", answer: "poco", points: 2, type: "escrito", image: "/img/Test_8 Estimación_10.png" },
+        { question: "¿8 lámparas en una habitación es poco, más o menos o mucho? (Escribe 'poco', 'más o menos' o 'mucho')", answer: "mucho", points: 2, type: "escrito", image: "/img/Test_8 Estimación_8B.png" }
       ]
     },
     {
       name: "Resolución de problemas aritméticos",
       maxScore: 8,
       items: [
-        { 
-          question: "Pedro tiene 12 bolitas. Le da 5 bolitas a Ana. ¿Cuántas bolitas le quedan a Pedro en total?", 
-          answer: "7", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Resolución_7.png'
-        },
-        { 
-          question: "Pedro tiene 16 bolitas. Él tiene 4 bolitas más que Maria. ¿Cuántas bolitas tiene Maria?", 
-          answer: "12", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Resolución_12.png'
-        },
-        { 
-          question: "Pedro tiene muchas bolitas. Le da 6 bolitas a Deicy. Sólo le quedan 7 bolitas. ¿Cuántas bolitas tenía al comienzo Pedro?", 
-          answer: "13", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Resolución_13.png'
-        },
-        { 
-          question: "Pedro tiene 4 bolitas. Camila tiene 3 bolitas más que Pedro y Julio tiene 2 bolitas menos que Camila. ¿Cuántas bolitas tienen entre todos?", 
-          answer: "16", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Resolución_16.png'
-        }
+        { question: "Pedro tiene 12 bolitas. Le da 5 bolitas a Ana. ¿Cuántas bolitas le quedan a Pedro en total?", answer: "7", points: 2, type: "escrito", image: "/img/Test_8 Resolución_7.png" },
+        { question: "Pedro tiene 16 bolitas. Él tiene 4 bolitas más que Maria. ¿Cuántas bolitas tiene Maria?", answer: "12", points: 2, type: "escrito", image: "/img/Test_8 Resolución_12.png" },
+        { question: "Pedro tiene muchas bolitas. Le da 6 bolitas a Deicy. Sólo le quedan 7 bolitas. ¿Cuántas bolitas tenía al comienzo Pedro?", answer: "13", points: 2, type: "escrito", image: "/img/Test_8 Resolución_13.png" },
+        { question: "Pedro tiene 4 bolitas. Camila tiene 3 bolitas más que Pedro y Julio tiene 2 bolitas menos que Camila. ¿Cuántas bolitas tienen entre todos?", answer: "16", points: 2, type: "escrito", image: "/img/Test_8 Resolución_16.png" }
       ]
     },
     {
       name: "Comparación de dos números",
       maxScore: 16,
       items: [
-        { 
-          question: "¿Cuál es mayor: 654 o 546? (Escribe el número mayor)", 
-          answer: "654", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Comparación_654.png'
-        },
-        { 
-          question: "¿Cuál es mayor: 79 o 81? (Escribe el número mayor)", 
-          answer: "81", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Comparación_81.png'
-        },
-        { 
-          question: "¿Cuál es mayor: 1007 o 1070? (Escribe el número mayor)", 
-          answer: "1070", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Comparación_1070.png'
-        },
-        { 
-          question: "¿Cuál es mayor: 511 o 298? (Escribe el número mayor)", 
-          answer: "511", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Comparación_511.png'
-        },
-        { 
-          question: "¿Cuál es mayor: 13 o 31? (Escribe el número mayor)", 
-          answer: "31", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Comparación_31.png'
-        },
-        { 
-          question: "¿Cuál es mayor: 9768 o 35201? (Escribe el número mayor)", 
-          answer: "35201", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Comparación_35201.png'
-        },
-        { 
-          question: "¿Cuál es mayor: 96 o 69? (Escribe el número mayor)", 
-          answer: "96", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Comparación_96.png'
-        },
-        { 
-          question: "¿Cuál es mayor: 377 o 433? (Escribe el número mayor)", 
-          answer: "433", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Comparación_433.png'
-        }
+        { question: "¿Cuál es mayor: 654 o 546? (Escribe el número mayor)", answer: "654", points: 2, type: "escrito", image: "/img/Test_8 Comparación_654.png" },
+        { question: "¿Cuál es mayor: 79 o 81? (Escribe el número mayor)", answer: "81", points: 2, type: "escrito", image: "/img/Test_8 Comparación_81.png" },
+        { question: "¿Cuál es mayor: 1007 o 1070? (Escribe el número mayor)", answer: "1070", points: 2, type: "escrito", image: "/img/Test_8 Comparación_1070.png" },
+        { question: "¿Cuál es mayor: 511 o 298? (Escribe el número mayor)", answer: "511", points: 2, type: "escrito", image: "/img/Test_8 Comparación_511.png" },
+        { question: "¿Cuál es mayor: 13 o 31? (Escribe el número mayor)", answer: "31", points: 2, type: "escrito", image: "/img/Test_8 Comparación_31.png" },
+        { question: "¿Cuál es mayor: 9768 o 35201? (Escribe el número mayor)", answer: "35201", points: 2, type: "escrito", image: "/img/Test_8 Comparación_35201.png" },
+        { question: "¿Cuál es mayor: 96 o 69? (Escribe el número mayor)", answer: "96", points: 2, type: "escrito", image: "/img/Test_8 Comparación_96.png" },
+        { question: "¿Cuál es mayor: 377 o 433? (Escribe el número mayor)", answer: "433", points: 2, type: "escrito", image: "/img/Test_8 Comparación_433.png" }
       ]
     },
     {
       name: "Determinación de cantidad",
       maxScore: 21,
       items: [
-        { 
-          question: "Escribe la cifra menor de todas.", 
-          answer: "12", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Determinación_12.png'
-        },
-        { 
-          question: "Escribe la cifra mayor de todas.", 
-          answer: "549755813888", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Determinación_549755813888.png'
-        },
-        { 
-          question: "Escribe las cifras menores de 100.", 
-          answer: "ninguna", 
-          points: 5,
-          type: "escrito",
-          image: '/img/Test_8 Determinación_ningunaA.png'
-        },
-        { 
-          question: "Escribe las cifras más grandes que mil.", 
-          answer: "todas", 
-          points: 11,
-          type: "escrito",
-          image: '/img/Test_8 Determinación_todasA.png'
-        },
-        { 
-          question: "Escribe el cien mil.", 
-          answer: "100000", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Determinación_100000.png'
-        },
-        { 
-          question: "Escribe las cifras más grandes que un millón.", 
-          answer: "todas", 
-          points: 2,
-          type: "escrito",
-          image: '/img/Test_8 Determinación_todasB.png'
-        }
+        { question: "Escribe la cifra menor de todas.", answer: "12", points: 1, type: "escrito", image: "/img/Test_8 Determinación_12.png" },
+        { question: "Escribe la cifra mayor de todas.", answer: "549755813888", points: 1, type: "escrito", image: "/img/Test_8 Determinación_549755813888.png" },
+        { question: "Escribe las cifras menores de 100.", answer: "ninguna", points: 5, type: "escrito", image: "/img/Test_8 Determinación_ningunaA.png" },
+        { question: "Escribe las cifras más grandes que mil.", answer: "todas", points: 11, type: "escrito", image: "/img/Test_8 Determinación_todasA.png" },
+        { question: "Escribe el cien mil.", answer: "100000", points: 1, type: "escrito", image: "/img/Test_8 Determinación_100000.png" },
+        { question: "Escribe las cifras más grandes que un millón.", answer: "todas", points: 2, type: "escrito", image: "/img/Test_8 Determinación_todasB.png" }
       ]
     },
     {
       name: "Escribir en cifra",
       maxScore: 3,
       items: [
-        { 
-          question: "Escribe los 5 números que vienen después de 137", 
-          answer: "138,139,140,141,142", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Escribir_137.png'
-        },
-        { 
-          question: "Escribe los 5 números antes de 362", 
-          answer: "361,360,359,358,357", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Escribir_362A.png'
-        },
-        { 
-          question: "Escribe los 5 números después de 362", 
-          answer: "363,364,365,366,367", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Escribir_362D.png'
-        }
+        { question: "Escribe los 5 números que vienen después de 137", answer: "138,139,140,141,142", points: 1, type: "escrito", image: "/img/Test_8 Escribir_137.png" },
+        { question: "Escribe los 5 números antes de 362", answer: "361,360,359,358,357", points: 1, type: "escrito", image: "/img/Test_8 Escribir_362A.png" },
+        { question: "Escribe los 5 números después de 362", answer: "363,364,365,366,367", points: 1, type: "escrito", image: "/img/Test_8 Escribir_362D.png" }
       ]
     },
     {
       name: "Escritura correcta del número",
       maxScore: 5,
       items: [
-        { 
-          question: "Escribe el número 'ciento dos' entre estas opciones.", 
-          answer: "102", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Escritura correcta_102.png'
-        },
-        { 
-          question: "Escribe el número cinco mil doce entre estas opciones.", 
-          answer: "5012", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Escritura correcta_5012.png'
-        },
-        { 
-          question: "Escribe el número ocho mil trescientos cincuenta y siete entre estas opciones.", 
-          answer: "8357", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Escritura correcta_8357.png'
-        },
-        { 
-          question: "Escribe el número mil cinco entre estas opciones.", 
-          answer: "1005", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Escritura correcta_1005.png'
-        },
-        { 
-          question: "Escribe el número mil ciento once entre estas opciones.", 
-          answer: "1111", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Escritura correcta_1111.png'
-        }
+        { question: "Escribe el número 'ciento dos' entre estas opciones.", answer: "102", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_102.png" },
+        { question: "Escribe el número cinco mil doce entre estas opciones.", answer: "5012", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_5012.png" },
+        { question: "Escribe el número ocho mil trescientos cincuenta y siete entre estas opciones.", answer: "8357", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_8357.png" },
+        { question: "Escribe el número mil cinco entre estas opciones.", answer: "1005", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_1005.png" },
+        { question: "Escribe el número mil ciento once entre estas opciones.", answer: "1111", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_1111.png" }
       ]
     },
     {
       name: "Lectura alfabética de números y escritura en cifras",
       maxScore: 7,
       items: [
-        { 
-          question: "Escribe 'trescientos' en cifra", 
-          answer: "300", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_300.png'
-        },
-        { 
-          question: "Escribe 'ochocientos veintisiete' en cifra", 
-          answer: "827", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_827.png'
-        },
-        { 
-          question: "Escribe 'doscientos sesenta y nueve' en cifra", 
-          answer: "269", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_269.png'
-        },
-        { 
-          question: "Escribe 'seiscientos dos' en cifra", 
-          answer: "602", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_602.png'
-        },
-        { 
-          question: "Escribe 'cinco mil doce' en cifra", 
-          answer: "5012", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_5012.png'
-        },
-        { 
-          question: "Escribe 'mil uno' en cifra", 
-          answer: "1001", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_1001.png'
-        },
-        { 
-          question: "Escribe 'mil cuatrocientos cinco' en cifra", 
-          answer: "1405", 
-          points: 1,
-          type: "escrito",
-          image: '/img/Test_8 Lectura_1405.png'
-        }
+        { question: "Escribe 'trescientos' en cifra", answer: "300", points: 1, type: "escrito", image: "/img/Test_8 Lectura_300.png" },
+        { question: "Escribe 'ochocientos veintisiete' en cifra", answer: "827", points: 1, type: "escrito", image: "/img/Test_8 Lectura_827.png" },
+        { question: "Escribe 'doscientos sesenta y nueve' en cifra", answer: "269", points: 1, type: "escrito", image: "/img/Test_8 Lectura_269.png" },
+        { question: "Escribe 'seiscientos dos' en cifra", answer: "602", points: 1, type: "escrito", image: "/img/Test_8 Lectura_602.png" },
+        { question: "Escribe 'cinco mil doce' en cifra", answer: "5012", points: 1, type: "escrito", image: "/img/Test_8 Lectura_5012.png" },
+        { question: "Escribe 'mil uno' en cifra", answer: "1001", points: 1, type: "escrito", image: "/img/Test_8 Lectura_1001.png" },
+        { question: "Escribe 'mil cuatrocientos cinco' en cifra", answer: "1405", points: 1, type: "escrito", image: "/img/Test_8 Lectura_1405.png" }
       ]
     }
   ];
@@ -1018,7 +778,7 @@ const ProCalculo8: React.FC = () => {
       yPos += 5;
     });
 
-    doc.save('Resultado_Test_8_Sebas_Paucar.pdf');
+    doc.save(`Resultado_Test_8_${studentData.nombres}_${studentData.apellidos}.pdf`);
   };
 
   const renderStudentForm = () => (
