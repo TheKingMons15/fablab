@@ -400,210 +400,167 @@ const ProCalculo7: React.FC = () => {
     }
   };
 
+  const calculateTotalScore = (): number => {
+    return score.reduce((a, b) => a + b, 0);
+  };
+
   const generatePDF = () => {
     const doc = new jsPDF();
-    let yPos = 10;
+    const margin = 20;
+    const maxWidth = 190 - (2 * margin);
+    let yPos = 20;
 
-    doc.setFontSize(20);
+    // Page 1: Student Data and Total Score
+    doc.setFontSize(30);
     doc.text('RESULTADO DEL TEST - 7', 105, yPos, { align: 'center' });
+    yPos += 20;
+
+    doc.setFontSize(14);
+    doc.text('Datos del Estudiante', margin, yPos);
+    yPos += 10;
+    doc.setLineWidth(0.5);
+    yPos -= 5;
+    doc.line(margin, yPos, 190 - margin, yPos);
+    yPos += 10;
+
+    doc.setFontSize(12);
+    const studentDataLines = [
+      `Nombre: ${studentData.nombres || 'No especificado'}`,
+      `Apellido: ${studentData.apellidos || 'No especificado'}`,
+      `Edad: ${studentData.edad || 'No especificado'}`,
+      `Género: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : 'No especificado'}`,
+      `Curso/Grado: ${studentData.curso || 'No especificado'}`,
+      `Institución: ${studentData.institucion || 'No especificado'}`,
+      `Fecha y hora de inicio: ${testStartTime || 'No especificado'}`,
+    ];
+    studentDataLines.forEach(line => {
+      const textLines = doc.splitTextToSize(line, maxWidth);
+      textLines.forEach((textLine: string) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text(textLine, margin, yPos);
+        yPos += 8;
+      });
+    });
     yPos += 15;
 
     doc.setFontSize(14);
-    doc.text('Datos del estudiante', 10, yPos);
     yPos += 10;
-    doc.setFontSize(12);
-    doc.text(`Nombre: ${studentData.nombres}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Apellido: ${studentData.apellidos}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Edad: ${studentData.edad}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Genero: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : ''}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Curso/Grado: ${studentData.curso}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Institución: ${studentData.institucion}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Fecha y hora de inicio: ${testStartTime}`, 10, yPos);
+    doc.setLineWidth(0.5);
+    yPos -= 5;
+    doc.line(margin, yPos, 190 - margin, yPos);
     yPos += 10;
 
-    doc.text('PUNTUACIÓN TOTAL', 10, yPos);
-    yPos += 5;
-    doc.text(`Puntuación total: ${score.reduce((a, b) => a + b, 0)}/87 Puntos`, 10, yPos);
-    yPos += 10;
-
-    doc.text('Detalles del Test:', 10, yPos);
-    yPos += 10;
-
-    doc.text('Enumeración: 0 / 12', 10, yPos);
-    yPos += 5;
-    subtests[0].items.forEach((item) => {
+    doc.setFontSize(20);
+    const totalScoreText = `Puntuación total: ${calculateTotalScore()}/87 Puntos`;
+    doc.setFont('helvetica', 'bold');
+    const totalScoreLines = doc.splitTextToSize(totalScoreText, maxWidth);
+    totalScoreLines.forEach((textLine: string) => {
       if (yPos > 280) {
         doc.addPage();
-        yPos = 10;
+        yPos = 20;
       }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      doc.text(textLine, margin, yPos);
+      yPos += 8;
+    });
+    doc.setFont('helvetica', 'normal');
+    yPos += 15;
+
+    subtests.forEach((subtest, idx) => {
+      if (subtest.items.length === 0) return;
+
+      doc.addPage();
+      yPos = 20;
+
+      doc.setFontSize(14);
+      const subtestTitle = `Sección: ${subtest.name}`;
+      const subtestTitleLines = doc.splitTextToSize(subtestTitle, maxWidth);
+      subtestTitleLines.forEach((textLine: string) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text(textLine, margin, yPos);
+        yPos += 10;
+      });
       yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
+      doc.setLineWidth(0.5);
+      yPos -= 5;
+      doc.line(margin, yPos, 190 - margin, yPos);
+      yPos += 10;
+
+      doc.setFontSize(12);
+      const subtestScoreText = `Puntuación: ${score[idx]} / ${subtest.maxScore}`;
+      const subtestScoreLines = doc.splitTextToSize(subtestScoreText, maxWidth);
+      subtestScoreLines.forEach((textLine: string) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text(textLine, margin, yPos);
+        yPos += 8;
+      });
+      yPos += 15;
+
+      subtest.items.forEach((item, itemIdx) => {
+        if (yPos > 270) {
+          doc.addPage();
+          yPos = 20;
+        }
+
+        const questionText = `Pregunta ${itemIdx + 1}: ${item.question}`;
+        const questionLines = doc.splitTextToSize(questionText, maxWidth);
+        questionLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 8;
+        });
+
+        const correctAnswerText = `Respuesta esperada: ${item.answer}`;
+        const correctAnswerLines = doc.splitTextToSize(correctAnswerText, maxWidth);
+        correctAnswerLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 8;
+        });
+
+        const providedAnswer = item.answer !== undefined && item.answer !== null
+          ? writtenAnswer || 'No proporcionada'
+          : 'No proporcionada';
+        const providedAnswerText = `Respuesta proporcionada: ${providedAnswer}`;
+        const providedAnswerLines = doc.splitTextToSize(providedAnswerText, maxWidth);
+        providedAnswerLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 8;
+        });
+
+        const pointsObtained = normalizeText(writtenAnswer || '') === normalizeText(item.answer.toString()) ? item.points : 0;
+        const pointsText = `Puntos obtenidos: ${pointsObtained} / ${item.points}`;
+        const pointsLines = doc.splitTextToSize(pointsText, maxWidth);
+        pointsLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 15;
+        });
+      });
     });
 
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0', 10, yPos);
-    yPos += 10;
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('ESCRITURA DE NÚMEROS: 0 / 8', 10, yPos);
-    yPos += 10;
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Cálculo mental oral: 0 / 12', 10, yPos);
-    yPos += 5;
-    subtests[3].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Lectura de números: 0 / 8', 10, yPos);
-    yPos += 10;
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Posicionar en escala: 0 / 6', 10, yPos);
-    yPos += 10;
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('¿Cuántas pelotas y vasos hay en total? Escribe: número de pelotas y número de vasos totales', 10, yPos);
-    yPos += 5;
-    doc.text(`Respuesta esperada: 16`, 10, yPos);
-    yPos += 5;
-    doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Puntos obtenidos: 0 / 4`, 10, yPos);
-    yPos += 10;
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Estimación en contexto: 0 / 6', 10, yPos);
-    yPos += 5;
-    subtests[7].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Resolución de problemas: 0 / 8', 10, yPos);
-    yPos += 5;
-    subtests[8].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    subtests[9].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Determinación de cantidad: 0 / 12', 10, yPos);
-    yPos += 10;
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('0 / 3', 10, yPos);
-    yPos += 5;
-    subtests[11].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    doc.save(`Resultado_Test_7_${studentData.nombres}_${studentData.apellidos}.pdf`);
+    doc.save(`Resultado_Test_7_${studentData.nombres || 'Usuario'}_${studentData.apellidos || 'Desconocido'}.pdf`);
   };
 
   const renderStudentForm = () => (
@@ -720,7 +677,7 @@ const ProCalculo7: React.FC = () => {
             onClick={saveStudentData}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Cargando...' : 'Comenzar Test'}
+            {isSubmitting ? 'Cargando...' : <><FaPlay /> Comenzar Test</>}
           </button>
         </div>
       </div>
@@ -864,20 +821,25 @@ const ProCalculo7: React.FC = () => {
           </div>
           
           <div className={styles.actionsContainer}>
-            <button className={styles.restartButton} onClick={restartTest}>
-              <FaRedo /> Intentar de nuevo
+            <button 
+              className={styles.restartButton}
+              onClick={restartTest}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Guardando...' : <><FaRedo /> Intentar de nuevo</>}
             </button>
             <button 
-              className={styles.homeButton} 
+              className={styles.homeButton}
               onClick={() => navigate('/herramientas/test')}
             >
               Elegir otra prueba
             </button>
             <button 
-              className={styles.downloadButton} 
+              className={styles.restartButton}
               onClick={generatePDF}
+              disabled={isSubmitting}
             >
-              Descargar PDF
+              {isSubmitting ? 'Generando...' : <><FaRedo /> Descargar PDF</>}
             </button>
           </div>
         </div>
@@ -912,8 +874,9 @@ const ProCalculo7: React.FC = () => {
         <button 
           className={styles.finishTestButton}
           onClick={finishTest}
+          disabled={isSubmitting}
         >
-          <FaFlagCheckered /> Finalizar Test
+          <FaFlagCheckered /> {isSubmitting ? 'Finalizando...' : 'Finalizar Test'}
         </button>
       </div>
     </div>
