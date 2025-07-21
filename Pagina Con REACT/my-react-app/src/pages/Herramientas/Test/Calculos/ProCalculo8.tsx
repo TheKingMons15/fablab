@@ -10,10 +10,11 @@ import jsPDF from 'jspdf';
 interface QuestionItem {
   question: string;
   answer: string | number;
+  providedAnswer?: string | number;
   points: number;
-  type: 'escrito' | 'opciones';
-  options?: string[];
+  type: 'escrito';
   image?: string;
+  isNumeric?: boolean;
 }
 
 interface Subtest {
@@ -26,12 +27,10 @@ const ProCalculo8: React.FC = () => {
   const navigate = useNavigate();
   const [currentSubtest, setCurrentSubtest] = useState(0);
   const [currentItem, setCurrentItem] = useState(0);
-  const [score, setScore] = useState<number[]>(Array(15).fill(0));
+  const [score, setScore] = useState<number[]>(Array(14).fill(0));
   const [showResult, setShowResult] = useState(false);
-  const [userAnswers, setUserAnswers] = useState<(string | number)[][]>(Array(15).fill([]));
-  const [optionSelected, setOptionSelected] = useState<string | number | null>(null);
-  const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [correctAnswer, setCorrectAnswer] = useState<boolean | null>(null);
   const [animation, setAnimation] = useState('');
   const [writtenAnswer, setWrittenAnswer] = useState('');
   const [writtenAnswerConfirmed, setWrittenAnswerConfirmed] = useState(false);
@@ -40,6 +39,8 @@ const ProCalculo8: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(30 * 60);
   const [timerActive, setTimerActive] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
+  const [testId, setTestId] = useState<number | null>(null);
+  const [saveError, setSaveError] = useState(false);
   const [studentData, setStudentData] = useState({
     nombres: '',
     apellidos: '',
@@ -51,93 +52,13 @@ const ProCalculo8: React.FC = () => {
   const [showStudentForm, setShowStudentForm] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [testStartTime, setTestStartTime] = useState<string>('');
+  const [testStartTime, setTestStartTime] = useState('');
   const [testStarted, setTestStarted] = useState(false);
   const [showFinishScreen, setShowFinishScreen] = useState(false);
 
   const minigameSubtests = [3, 6, 9, 12];
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    
-    if (testStarted && timerActive && timeLeft > 0 && !showMiniGame && !showFinishScreen) {
-      timer = setTimeout(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && !showResult && !timeUp) {
-      setTimerActive(false);
-      setTimeUp(true);
-      setShowFinishScreen(true);
-    }
-    
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [timeLeft, timerActive, showResult, timeUp, showMiniGame, showFinishScreen, testStarted]);
-
-  useEffect(() => {
-    if (testStarted && timerActive) {
-      const now = new Date();
-      setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
-    }
-  }, [testStarted, timerActive]);
-
-  const validateForm = () => {
-    const errors: Record<string, string> = {};
-    const edadNum = parseInt(studentData.edad);
-
-    if (!studentData.nombres.trim()) errors.nombres = 'Por favor ingresa los nombres';
-    if (!studentData.apellidos.trim()) errors.apellidos = 'Por favor ingresa los apellidos';
-    if (!studentData.edad || isNaN(edadNum)) errors.edad = 'Edad inválida';
-    if (edadNum < 7 || edadNum > 9) errors.edad = 'La edad debe estar entre 7 y 9 años';
-    if (!studentData.genero) errors.genero = 'Selecciona un género';
-    if (!studentData.curso.trim()) errors.curso = 'Ingresa el curso/grado';
-    if (!studentData.institucion.trim()) errors.institucion = 'Ingresa la institución';
-    
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const saveStudentData = async () => {
-    if (!validateForm()) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setShowStudentForm(false);
-    } catch (error) {
-      console.error('Error al guardar datos:', error);
-      alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const startTest = () => {
-    setTestStarted(true);
-    setTimerActive(true);
-    const now = new Date();
-    setTestStartTime(now.toLocaleString('es-ES', { 
-      dateStyle: 'long', 
-      timeStyle: 'short', 
-      timeZone: 'America/Guayaquil' 
-    }));
-  };
-
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const normalizeText = (text: string): string => {
-    return text.toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .trim();
-  };
-
-  const subtests: Subtest[] = [
+  const [subtests, setSubtests] = useState<Subtest[]>([
     {
       name: "Contar para adelante",
       maxScore: 16,
@@ -159,30 +80,30 @@ const ProCalculo8: React.FC = () => {
       name: "Escritura de números",
       maxScore: 12,
       items: [
-        { question: "Escribe el número 'ciento sesenta y nueve'", answer: "169", points: 2, type: "escrito", image: '/img/Test_8 Escritura_169.png' },
-        { question: "Escribe el número 'treinta y ocho'", answer: "38", points: 2, type: "escrito", image: '/img/Test_8 Escritura_38.png' },
-        { question: "Escribe el número 'mil doscientos'", answer: "1200", points: 2, type: "escrito", image: '/img/Test_8 Escritura_1200.png' },
-        { question: "Escribe el número 'trescientos cinco'", answer: "305", points: 2, type: "escrito", image: '/img/Test_8 Escritura_305.png' },
-        { question: "Escribe el número 'catorce'", answer: "14", points: 2, type: "escrito", image: '/img/Test_8 Escritura_14.png' },
-        { question: "Escribe el número 'seis mil doscientos ochenta y cinco'", answer: "6285", points: 2, type: "escrito", image: '/img/Test_8 Escritura_6285.png' }
+        { question: "Escribe el número 'ciento sesenta y nueve'", answer: 169, points: 2, type: "escrito", image: '/img/Test_8 Escritura_169.png', isNumeric: true },
+        { question: "Escribe el número 'treinta y ocho'", answer: 38, points: 2, type: "escrito", image: '/img/Test_8 Escritura_38.png', isNumeric: true },
+        { question: "Escribe el número 'mil doscientos'", answer: 1200, points: 2, type: "escrito", image: '/img/Test_8 Escritura_1200.png', isNumeric: true },
+        { question: "Escribe el número 'trescientos cinco'", answer: 305, points: 2, type: "escrito", image: '/img/Test_8 Escritura_305.png', isNumeric: true },
+        { question: "Escribe el número 'catorce'", answer: 14, points: 2, type: "escrito", image: '/img/Test_8 Escritura_14.png', isNumeric: true },
+        { question: "Escribe el número 'seis mil doscientos ochenta y cinco'", answer: 6285, points: 2, type: "escrito", image: '/img/Test_8 Escritura_6285.png', isNumeric: true }
       ]
     },
     {
       name: "Cálculo mental",
       maxScore: 24,
       items: [
-        { question: "5 + 8", answer: "13", points: 2, type: "escrito", image: '/img/Test_8 Cálculo_13.png'},
-        { question: "12 + 6", answer: "18", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_18.png" },
-        { question: "4 + 13", answer: "17", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_17.png" },
-        { question: "9 + 7", answer: "16", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_16.png" },
-        { question: "15 + 12", answer: "27", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_27.png" },
-        { question: "13 + 19", answer: "32", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_32.png" },
-        { question: "17 - 5", answer: "12", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_12.png" },
-        { question: "14 - 6", answer: "8", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_8.png" },
-        { question: "24 - 17", answer: "7", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_7.png" },
-        { question: "19 - 6", answer: "13", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_13B.png" },
-        { question: "15 - 9", answer: "6", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_6.png" },
-        { question: "25 - 12", answer: "13", points: 2, type: "escrito", image: "/img/Test_8 Cálculo_13C.png" }
+        { question: "5 + 8", answer: 13, points: 2, type: "escrito", image: '/img/Test_8 Cálculo_13.png', isNumeric: true },
+        { question: "12 + 6", answer: 18, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_18.png", isNumeric: true },
+        { question: "4 + 13", answer: 17, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_17.png", isNumeric: true },
+        { question: "9 + 7", answer: 16, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_16.png", isNumeric: true },
+        { question: "15 + 12", answer: 27, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_27.png", isNumeric: true },
+        { question: "13 + 19", answer: 32, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_32.png", isNumeric: true },
+        { question: "17 - 5", answer: 12, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_12.png", isNumeric: true },
+        { question: "14 - 6", answer: 8, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_8.png", isNumeric: true },
+        { question: "24 - 17", answer: 7, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_7.png", isNumeric: true },
+        { question: "19 - 6", answer: 13, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_13B.png", isNumeric: true },
+        { question: "15 - 9", answer: 6, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_6.png", isNumeric: true },
+        { question: "25 - 12", answer: 13, points: 2, type: "escrito", image: "/img/Test_8 Cálculo_13C.png", isNumeric: true }
       ]
     },
     {
@@ -199,22 +120,22 @@ const ProCalculo8: React.FC = () => {
     },
     {
       name: "Posicionar un número en una escala",
-      maxScore: 10,
+      maxScore: 12,
       items: [
-        { question: "Escribe dónde colocarías el número 56 en una escala del 0 al 100", answer: "2", points: 2, type: "escrito", image: "/img/Test_8 Escala_56.png" },
-        { question: "Escribe dónde colocarías el número 86 en una escala del 0 al 100", answer: "3", points: 2, type: "escrito", image: "/img/Test_8 Escala_86.png" },
-        { question: "Escribe dónde colocarías el número 48 en una escala del 0 al 100", answer: "2", points: 2, type: "escrito", image: "/img/Test_8 Escala_48.png" },
-        { question: "Escribe dónde colocarías el número 32 en una escala del 0 al 100", answer: "32", points: 2, type: "escrito", image: "/img/Test_8 Escala_32.png" },
-        { question: "Escribe dónde colocarías el número 5 en una escala del 0 al 100", answer: "1", points: 2, type: "escrito", image: "/img/Test_8 Escala_5.png" },
-        { question: "Escribe dónde colocarías el número 62 en una escala del 0 al 100", answer: "2", points: 2, type: "escrito", image: "/img/Test_8 Escala_62.png" }
+        { question: "Escribe dónde colocarías el número 56 en una escala del 0 al 100", answer: 2, points: 2, type: "escrito", image: "/img/Test_8 Escala_56.png", isNumeric: true },
+        { question: "Escribe dónde colocarías el número 86 en una escala del 0 al 100", answer: 3, points: 2, type: "escrito", image: "/img/Test_8 Escala_86.png", isNumeric: true },
+        { question: "Escribe dónde colocarías el número 48 en una escala del 0 al 100", answer: 2, points: 2, type: "escrito", image: "/img/Test_8 Escala_48.png", isNumeric: true },
+        { question: "Escribe dónde colocarías el número 32 en una escala del 0 al 100", answer: 1, points: 2, type: "escrito", image: "/img/Test_8 Escala_32.png", isNumeric: true },
+        { question: "Escribe dónde colocarías el número 5 en una escala del 0 al 100", answer: 1, points: 2, type: "escrito", image: "/img/Test_8 Escala_5.png", isNumeric: true },
+        { question: "Escribe dónde colocarías el número 62 en una escala del 0 al 100", answer: 2, points: 2, type: "escrito", image: "/img/Test_8 Escala_62.png", isNumeric: true }
       ]
     },
     {
       name: "Estimación perceptiva de cantidad",
       maxScore: 4,
       items: [
-        { question: "¿Cuántas pelotas hay en la imagen?", answer: "54", points: 2, type: "escrito", image: "/img/Test_8 Estimación_54.png" },
-        { question: "¿Cuántos vasos hay en la imagen?", answer: "66", points: 2, type: "escrito", image: "/img/Test_8 Estimación_66.png" }
+        { question: "Escribe cuántas pelotas hay en la imagen", answer: 54, points: 2, type: "escrito", image: "/img/Test_8 Estimación_54.png", isNumeric: true },
+        { question: "Escribe cuántos vasos hay en la imagen", answer: 66, points: 2, type: "escrito", image: "/img/Test_8 Estimación_66.png", isNumeric: true }
       ]
     },
     {
@@ -232,35 +153,35 @@ const ProCalculo8: React.FC = () => {
       name: "Resolución de problemas aritméticos",
       maxScore: 8,
       items: [
-        { question: "Pedro tiene 12 bolitas. Le da 5 bolitas a Ana. ¿Cuántas bolitas le quedan a Pedro en total?", answer: "7", points: 2, type: "escrito", image: "/img/Test_8 Resolución_7.png" },
-        { question: "Pedro tiene 16 bolitas. Él tiene 4 bolitas más que Maria. ¿Cuántas bolitas tiene Maria?", answer: "12", points: 2, type: "escrito", image: "/img/Test_8 Resolución_12.png" },
-        { question: "Pedro tiene muchas bolitas. Le da 6 bolitas a Deicy. Sólo le quedan 7 bolitas. ¿Cuántas bolitas tenía al comienzo Pedro?", answer: "13", points: 2, type: "escrito", image: "/img/Test_8 Resolución_13.png" },
-        { question: "Pedro tiene 4 bolitas. Camila tiene 3 bolitas más que Pedro y Julio tiene 2 bolitas menos que Camila. ¿Cuántas bolitas tienen entre todos?", answer: "16", points: 2, type: "escrito", image: "/img/Test_8 Resolución_16.png" }
+        { question: "Pedro tiene 12 bolitas. Le da 5 bolitas a Ana. ¿Cuántas bolitas le quedan a Pedro en total?", answer: 7, points: 2, type: "escrito", image: "/img/Test_8 Resolución_7.png", isNumeric: true },
+        { question: "Pedro tiene 16 bolitas. Él tiene 4 bolitas más que Maria. ¿Cuántas bolitas tiene Maria?", answer: 12, points: 2, type: "escrito", image: "/img/Test_8 Resolución_12.png", isNumeric: true },
+        { question: "Pedro tiene muchas bolitas. Le da 6 bolitas a Deicy. Sólo le quedan 7 bolitas. ¿Cuántas bolitas tenía al comienzo Pedro?", answer: 13, points: 2, type: "escrito", image: "/img/Test_8 Resolución_13.png", isNumeric: true },
+        { question: "Pedro tiene 4 bolitas. Camila tiene 3 bolitas más que Pedro y Julio tiene 2 bolitas menos que Camila. ¿Cuántas bolitas tienen entre todos?", answer: 16, points: 2, type: "escrito", image: "/img/Test_8 Resolución_16.png", isNumeric: true }
       ]
     },
     {
       name: "Comparación de dos números",
       maxScore: 16,
       items: [
-        { question: "¿Cuál es mayor: 654 o 546? (Escribe el número mayor)", answer: "654", points: 2, type: "escrito", image: "/img/Test_8 Comparación_654.png" },
-        { question: "¿Cuál es mayor: 79 o 81? (Escribe el número mayor)", answer: "81", points: 2, type: "escrito", image: "/img/Test_8 Comparación_81.png" },
-        { question: "¿Cuál es mayor: 1007 o 1070? (Escribe el número mayor)", answer: "1070", points: 2, type: "escrito", image: "/img/Test_8 Comparación_1070.png" },
-        { question: "¿Cuál es mayor: 511 o 298? (Escribe el número mayor)", answer: "511", points: 2, type: "escrito", image: "/img/Test_8 Comparación_511.png" },
-        { question: "¿Cuál es mayor: 13 o 31? (Escribe el número mayor)", answer: "31", points: 2, type: "escrito", image: "/img/Test_8 Comparación_31.png" },
-        { question: "¿Cuál es mayor: 9768 o 35201? (Escribe el número mayor)", answer: "35201", points: 2, type: "escrito", image: "/img/Test_8 Comparación_35201.png" },
-        { question: "¿Cuál es mayor: 96 o 69? (Escribe el número mayor)", answer: "96", points: 2, type: "escrito", image: "/img/Test_8 Comparación_96.png" },
-        { question: "¿Cuál es mayor: 377 o 433? (Escribe el número mayor)", answer: "433", points: 2, type: "escrito", image: "/img/Test_8 Comparación_433.png" }
+        { question: "¿Cuál es mayor: 654 o 546? (Escribe el número mayor)", answer: 654, points: 2, type: "escrito", image: "/img/Test_8 Comparación_654.png", isNumeric: true },
+        { question: "¿Cuál es mayor: 79 o 81? (Escribe el número mayor)", answer: 81, points: 2, type: "escrito", image: "/img/Test_8 Comparación_81.png", isNumeric: true },
+        { question: "¿Cuál es mayor: 1007 o 1070? (Escribe el número mayor)", answer: 1070, points: 2, type: "escrito", image: "/img/Test_8 Comparación_1070.png", isNumeric: true },
+        { question: "¿Cuál es mayor: 511 o 298? (Escribe el número mayor)", answer: 511, points: 2, type: "escrito", image: "/img/Test_8 Comparación_511.png", isNumeric: true },
+        { question: "¿Cuál es mayor: 13 o 31? (Escribe el número mayor)", answer: 31, points: 2, type: "escrito", image: "/img/Test_8 Comparación_31.png", isNumeric: true },
+        { question: "¿Cuál es mayor: 9768 o 35201? (Escribe el número mayor)", answer: 35201, points: 2, type: "escrito", image: "/img/Test_8 Comparación_35201.png", isNumeric: true },
+        { question: "¿Cuál es mayor: 96 o 69? (Escribe el número mayor)", answer: 96, points: 2, type: "escrito", image: "/img/Test_8 Comparación_96.png", isNumeric: true },
+        { question: "¿Cuál es mayor: 377 o 433? (Escribe el número mayor)", answer: 433, points: 2, type: "escrito", image: "/img/Test_8 Comparación_433.png", isNumeric: true }
       ]
     },
     {
       name: "Determinación de cantidad",
       maxScore: 21,
       items: [
-        { question: "Escribe la cifra menor de todas.", answer: "12", points: 1, type: "escrito", image: "/img/Test_8 Determinación_12.png" },
-        { question: "Escribe la cifra mayor de todas.", answer: "549755813888", points: 1, type: "escrito", image: "/img/Test_8 Determinación_549755813888.png" },
+        { question: "Escribe la cifra menor de todas.", answer: 12, points: 1, type: "escrito", image: "/img/Test_8 Determinación_12.png", isNumeric: true },
+        { question: "Escribe la cifra mayor de todas.", answer: 549755813888, points: 1, type: "escrito", image: "/img/Test_8 Determinación_549755813888.png", isNumeric: true },
         { question: "Escribe las cifras menores de 100.", answer: "ninguna", points: 5, type: "escrito", image: "/img/Test_8 Determinación_ningunaA.png" },
         { question: "Escribe las cifras más grandes que mil.", answer: "todas", points: 11, type: "escrito", image: "/img/Test_8 Determinación_todasA.png" },
-        { question: "Escribe el cien mil.", answer: "100000", points: 1, type: "escrito", image: "/img/Test_8 Determinación_100000.png" },
+        { question: "Escribe el cien mil.", answer: 100000, points: 1, type: "escrito", image: "/img/Test_8 Determinación_100000.png", isNumeric: true },
         { question: "Escribe las cifras más grandes que un millón.", answer: "todas", points: 2, type: "escrito", image: "/img/Test_8 Determinación_todasB.png" }
       ]
     },
@@ -277,52 +198,246 @@ const ProCalculo8: React.FC = () => {
       name: "Escritura correcta del número",
       maxScore: 5,
       items: [
-        { question: "Escribe el número 'ciento dos' entre estas opciones.", answer: "102", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_102.png" },
-        { question: "Escribe el número cinco mil doce entre estas opciones.", answer: "5012", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_5012.png" },
-        { question: "Escribe el número ocho mil trescientos cincuenta y siete entre estas opciones.", answer: "8357", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_8357.png" },
-        { question: "Escribe el número mil cinco entre estas opciones.", answer: "1005", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_1005.png" },
-        { question: "Escribe el número mil ciento once entre estas opciones.", answer: "1111", points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_1111.png" }
+        { question: "Escribe el número 'ciento dos' en cifra", answer: 102, points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_102.png", isNumeric: true },
+        { question: "Escribe el número 'cinco mil doce' en cifra", answer: 5012, points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_5012.png", isNumeric: true },
+        { question: "Escribe el número 'ocho mil trescientos cincuenta y siete' en cifra", answer: 8357, points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_8357.png", isNumeric: true },
+        { question: "Escribe el número 'mil cinco' en cifra", answer: 1005, points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_1005.png", isNumeric: true },
+        { question: "Escribe el número 'mil ciento once' en cifra", answer: 1111, points: 1, type: "escrito", image: "/img/Test_8 Escritura correcta_1111.png", isNumeric: true }
       ]
     },
     {
       name: "Lectura alfabética de números y escritura en cifras",
       maxScore: 7,
       items: [
-        { question: "Escribe 'trescientos' en cifra", answer: "300", points: 1, type: "escrito", image: "/img/Test_8 Lectura_300.png" },
-        { question: "Escribe 'ochocientos veintisiete' en cifra", answer: "827", points: 1, type: "escrito", image: "/img/Test_8 Lectura_827.png" },
-        { question: "Escribe 'doscientos sesenta y nueve' en cifra", answer: "269", points: 1, type: "escrito", image: "/img/Test_8 Lectura_269.png" },
-        { question: "Escribe 'seiscientos dos' en cifra", answer: "602", points: 1, type: "escrito", image: "/img/Test_8 Lectura_602.png" },
-        { question: "Escribe 'cinco mil doce' en cifra", answer: "5012", points: 1, type: "escrito", image: "/img/Test_8 Lectura_5012.png" },
-        { question: "Escribe 'mil uno' en cifra", answer: "1001", points: 1, type: "escrito", image: "/img/Test_8 Lectura_1001.png" },
-        { question: "Escribe 'mil cuatrocientos cinco' en cifra", answer: "1405", points: 1, type: "escrito", image: "/img/Test_8 Lectura_1405.png" }
+        { question: "Escribe 'trescientos' en cifra", answer: 300, points: 1, type: "escrito", image: "/img/Test_8 Lectura_300.png", isNumeric: true },
+        { question: "Escribe 'ochocientos veintisiete' en cifra", answer: 827, points: 1, type: "escrito", image: "/img/Test_8 Lectura_827.png", isNumeric: true },
+        { question: "Escribe 'doscientos sesenta y nueve' en cifra", answer: 269, points: 1, type: "escrito", image: "/img/Test_8 Lectura_269.png", isNumeric: true },
+        { question: "Escribe 'seiscientos dos' en cifra", answer: 602, points: 1, type: "escrito", image: "/img/Test_8 Lectura_602.png", isNumeric: true },
+        { question: "Escribe 'cinco mil doce' en cifra", answer: 5012, points: 1, type: "escrito", image: "/img/Test_8 Lectura_5012.png", isNumeric: true },
+        { question: "Escribe 'mil uno' en cifra", answer: 1001, points: 1, type: "escrito", image: "/img/Test_8 Lectura_1001.png", isNumeric: true },
+        { question: "Escribe 'mil cuatrocientos cinco' en cifra", answer: 1405, points: 1, type: "escrito", image: "/img/Test_8 Lectura_1405.png", isNumeric: true }
       ]
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (testStarted && timerActive && timeLeft > 0 && !showMiniGame && !showFinishScreen) {
+      timer = setTimeout(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && !showResult && !timeUp) {
+      setTimerActive(false);
+      setTimeUp(true);
+      setShowFinishScreen(true);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [timeLeft, timerActive, showResult, timeUp, showMiniGame, showFinishScreen, testStarted]);
+
+  useEffect(() => {
+    if (testStarted && timerActive) {
+      const now = new Date();
+      setTestStartTime(now.toLocaleString('es-ES', {
+        dateStyle: 'long',
+        timeStyle: 'short',
+        timeZone: 'America/Guayaquil'
+      }));
+    }
+  }, [testStarted, timerActive]);
+
+  const normalizeAnswer = (answer: string | number, isNumericQuestion: boolean = false): string | number => {
+    if (typeof answer === 'number') return answer;
+
+    const commaToDot = answer.toString().replace(',', '.');
+    if (!isNaN(Number(commaToDot))) {
+      const num = Number(commaToDot);
+      return isNumericQuestion ? num : num;
+    }
+    return answer.toString().toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  };
+
+  const compareAnswers = (userAnswer: string | number, correctAnswer: string | number, isNumericQuestion: boolean = false): boolean => {
+    console.log('Comparando respuestas:', {
+      userAnswer,
+      correctAnswer,
+      isNumericQuestion
+    });
+
+    const normalizedUser = normalizeAnswer(userAnswer, isNumericQuestion);
+    const normalizedCorrect = normalizeAnswer(correctAnswer, isNumericQuestion);
+
+    if (typeof normalizedCorrect === 'number') {
+      const userNum = typeof normalizedUser === 'number'
+        ? normalizedUser
+        : Number(normalizedUser);
+
+      if (isNaN(userNum)) return false;
+
+      if (isNumericQuestion) {
+        return userNum === normalizedCorrect;
+      }
+      return Math.abs(userNum - normalizedCorrect) < 0.1;
+    }
+
+    return normalizedUser.toString() === normalizedCorrect.toString();
+  };
+
+  const calculateTotalScore = (): number => {
+    let total = 0;
+    subtests.forEach((subtest, index) => {
+      const subtestScore = Math.min(score[index], subtest.maxScore);
+      console.log(`Subtest ${index} (${subtest.name}): ${subtestScore} / ${subtest.maxScore}`);
+      total += subtestScore;
+    });
+    console.log('Total calculado:', total);
+    return total;
+  };
+
+  const finishTest = async () => {
+    const totalScore = calculateTotalScore();
+    setIsSubmitting(true);
+    setSaveError(false);
+
+    console.log('Verificación Subtest 14 - Lectura alfabética de números y escritura en cifras:', {
+      respuestas: subtests[13].items.map(item => item.providedAnswer),
+      puntuacion: score[13],
+      maxScore: subtests[13].maxScore
+    });
+
+    try {
+      const edadNum = parseInt(studentData.edad) || 0;
+      const testData = {
+        nombres: studentData.nombres.trim(),
+        apellidos: studentData.apellidos.trim(),
+        edad: edadNum,
+        genero: studentData.genero,
+        curso: studentData.curso.trim(),
+        institucion: studentData.institucion.trim(),
+        test_tipo: "ProCálculo8",
+        puntuacion_total: totalScore,
+      };
+
+      console.log('Enviando datos al servidor:', testData);
+      const response = await fetch('https://fablab.upec.edu.ec/procalculo-api/guardar-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al guardar los resultados');
+      }
+
+      const result = await response.json();
+      console.log('Respuesta del servidor:', result);
+      setTestId(result.id);
+      setShowResult(true);
+
+      if (totalScore > 80) {
+        launchConfetti();
+      }
+    } catch (error) {
+      console.error('Error al guardar resultados:', error);
+      setSaveError(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    const edadNum = parseInt(studentData.edad);
+    if (!studentData.nombres.trim()) errors.nombres = 'Por favor ingresa los nombres';
+    if (!studentData.apellidos.trim()) errors.apellidos = 'Por favor ingresa los apellidos';
+    if (!studentData.edad || isNaN(edadNum)) errors.edad = 'Edad inválida';
+    if (edadNum < 7 || edadNum > 9) errors.edad = 'La edad debe estar entre 7 y 9 años';
+    if (!studentData.genero) errors.genero = 'Selecciona un género';
+    if (!studentData.curso.trim()) errors.curso = 'Ingresa el curso/grado';
+    if (!studentData.institucion.trim()) errors.institucion = 'Ingresa la institución';
+    setFormErrors(errors);
+    if (!errors.edad) {
+      setStudentData(prev => ({
+        ...prev,
+        edad: edadNum.toString()
+      }));
+    }
+    return Object.keys(errors).length === 0;
+  };
+
+  const saveStudentData = async () => {
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setShowStudentForm(false);
+    } catch (error) {
+      console.error('Error al guardar datos:', error);
+      alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const startTest = () => {
+    setTestStarted(true);
+    setTimerActive(true);
+    const now = new Date();
+    setTestStartTime(now.toLocaleString('es-ES', {
+      dateStyle: 'long',
+      timeStyle: 'short',
+      timeZone: 'America/Guayaquil'
+    }));
+  };
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleAnswer = (selectedAnswer: string | number) => {
     if (showFeedback || timeUp) return;
-    
     const currentQuestion = subtests[currentSubtest].items[currentItem];
-    const isCorrect = normalizeText(selectedAnswer.toString()) === 
-                     normalizeText(currentQuestion.answer.toString());
-    
-    setOptionSelected(selectedAnswer);
+    const isNumericQuestion = currentQuestion.isNumeric || false;
+    const isCorrect = compareAnswers(selectedAnswer, currentQuestion.answer, isNumericQuestion);
+
+    console.log('Respuesta evaluada:', {
+      selectedAnswer,
+      correctAnswer: currentQuestion.answer,
+      isCorrect,
+      isNumericQuestion
+    });
+
+    setSubtests(prevSubtests => {
+      const newSubtests = [...prevSubtests];
+      newSubtests[currentSubtest].items[currentItem] = {
+        ...newSubtests[currentSubtest].items[currentItem],
+        providedAnswer: selectedAnswer
+      };
+      return newSubtests;
+    });
+
     setCorrectAnswer(isCorrect);
     setShowFeedback(true);
-    
+
     if (isCorrect) {
-      const newScore = [...score];
-      newScore[currentSubtest] += currentQuestion.points;
-      setScore(newScore);
+      setScore(prevScore => {
+        const newScore = [...prevScore];
+        newScore[currentSubtest] += currentQuestion.points;
+        console.log(`Pregunta correcta! Puntos añadidos: ${currentQuestion.points}. Subtest ${currentSubtest} ahora tiene: ${newScore[currentSubtest]}`);
+        return newScore;
+      });
       setAnimation('correct');
     } else {
       setAnimation('wrong');
     }
-    
-    const newAnswers = [...userAnswers];
-    newAnswers[currentSubtest] = [...newAnswers[currentSubtest], selectedAnswer];
-    setUserAnswers(newAnswers);
-    
+
     setTimeout(() => {
       moveToNextItem();
     }, 2000);
@@ -330,21 +445,20 @@ const ProCalculo8: React.FC = () => {
 
   const moveToNextItem = () => {
     setShowFeedback(false);
-    setOptionSelected(null);
     setCorrectAnswer(null);
     setAnimation('');
     setWrittenAnswer('');
     setWrittenAnswerConfirmed(false);
-    
+
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
-      
+
       if (minigameSubtests.includes(currentSubtest)) {
         setShowMiniGame(true);
         setMiniGameType(currentSubtest === 3 || currentSubtest === 9 ? 'egg' : 'snake');
         return;
       }
-      
+
       if (nextSubtest < subtests.length) {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
@@ -356,24 +470,14 @@ const ProCalculo8: React.FC = () => {
     }
   };
 
-  const finishTest = () => {
-    setShowFinishScreen(false);
-    setShowResult(true);
-    setTimerActive(false);
-    const totalScore = score.reduce((a, b) => a + b, 0);
-    if (totalScore > 80) {
-      launchConfetti();
-    }
-  };
-
   const handleMiniGameComplete = (success: boolean) => {
     setShowMiniGame(false);
     setAnimation(success ? 'correct' : 'wrong');
-    
+
     setTimeout(() => {
       setAnimation('');
       const nextSubtest = currentSubtest + 1;
-      
+
       if (nextSubtest < subtests.length) {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
@@ -394,11 +498,9 @@ const ProCalculo8: React.FC = () => {
   const restartTest = () => {
     setCurrentSubtest(0);
     setCurrentItem(0);
-    setScore(Array(15).fill(0));
+    setScore(Array(14).fill(0));
     setShowResult(false);
-    setUserAnswers(Array(15).fill([]));
     setShowFeedback(false);
-    setOptionSelected(null);
     setCorrectAnswer(null);
     setAnimation('');
     setWrittenAnswer('');
@@ -408,20 +510,29 @@ const ProCalculo8: React.FC = () => {
     setTimeLeft(30 * 60);
     setTimerActive(false);
     setTimeUp(false);
+    setTestId(null);
+    setSaveError(false);
     setShowStudentForm(true);
     setTestStartTime('');
     setTestStarted(false);
     setShowFinishScreen(false);
+    setSubtests(prevSubtests =>
+      prevSubtests.map(subtest => ({
+        ...subtest,
+        items: subtest.items.map(item => ({
+          ...item,
+          providedAnswer: undefined
+        }))
+      }))
+    );
   };
 
   const getResultMessage = () => {
-    const totalScore = score.reduce((a, b) => a + b, 0);
-    const percentage = (totalScore / 166) * 100;
-    
+    const totalScore = calculateTotalScore();
+    const percentage = (totalScore / 110) * 100;
     if (timeUp) {
       return "¡Tiempo terminado! ⏰";
     }
-    
     if (percentage >= 80) return "¡Excelente trabajo! 🎉";
     if (percentage >= 60) return "¡Muy bien hecho! 🌟";
     if (percentage >= 40) return "¡Buen intento! 👍";
@@ -451,7 +562,6 @@ const ProCalculo8: React.FC = () => {
       ...prev,
       [name]: value
     }));
-    
     if (formErrors[name]) {
       setFormErrors(prev => {
         const newErrors = { ...prev };
@@ -463,322 +573,163 @@ const ProCalculo8: React.FC = () => {
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    let yPos = 10;
+    const margin = 20;
+    const maxWidth = 190 - (2 * margin);
+    let yPos = 20;
 
-    doc.setFontSize(20);
+    // Page 1: Student Data and Total Score
+    doc.setFontSize(30);
     doc.text('RESULTADO DEL TEST - 8', 105, yPos, { align: 'center' });
+    yPos += 20;
+
+    doc.setFontSize(14);
+    doc.text('Datos del Estudiante', margin, yPos);
+    yPos += 10;
+    doc.setLineWidth(0.5);
+    yPos -= 5;
+    doc.line(margin, yPos, 190 - margin, yPos);
+    yPos += 10;
+
+    doc.setFontSize(12);
+    const studentDataLines = [
+      `Nombre: ${studentData.nombres || 'No especificado'}`,
+      `Apellido: ${studentData.apellidos || 'No especificado'}`,
+      `Edad: ${studentData.edad || 'No especificado'}`,
+      `Género: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : 'No especificado'}`,
+      `Curso/Grado: ${studentData.curso || 'No especificado'}`,
+      `Institución: ${studentData.institucion || 'No especificado'}`,
+      `Fecha y hora de inicio: ${testStartTime || 'No especificado'}`,
+    ];
+    studentDataLines.forEach(line => {
+      const textLines = doc.splitTextToSize(line, maxWidth);
+      textLines.forEach((textLine: string) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text(textLine, margin, yPos);
+        yPos += 8;
+      });
+    });
     yPos += 15;
 
     doc.setFontSize(14);
-    doc.text('Datos del estudiante', 10, yPos);
     yPos += 10;
-    doc.setFontSize(12);
-    doc.text(`Nombre: ${studentData.nombres}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Apellido: ${studentData.apellidos}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Edad: ${studentData.edad}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Genero: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : ''}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Curso/Grado: ${studentData.curso}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Institución: ${studentData.institucion}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Fecha y hora de inicio: ${testStartTime}`, 10, yPos);
+    doc.setLineWidth(0.5);
+    yPos -= 5;
+    doc.line(margin, yPos, 190 - margin, yPos);
     yPos += 10;
 
-    doc.text('PUNTUACIÓN TOTAL', 10, yPos);
-    yPos += 5;
-    doc.text(`Puntuación total: ${score.reduce((a, b) => a + b, 0)}/166 Puntos`, 10, yPos);
-    yPos += 10;
-
-    doc.text('Detalles del Test:', 10, yPos);
-    yPos += 10;
-
-    doc.text('Contar para adelante: 0 / 16', 10, yPos);
-    yPos += 5;
-    subtests[0].items.forEach((item) => {
+    doc.setFontSize(20);
+    const totalScoreText = `Puntuación total: ${calculateTotalScore()}/110 Puntos`;
+    doc.setFont('helvetica', 'bold');
+    const totalScoreLines = doc.splitTextToSize(totalScoreText, maxWidth);
+    totalScoreLines.forEach((textLine: string) => {
       if (yPos > 280) {
         doc.addPage();
-        yPos = 10;
+        yPos = 20;
       }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
+      doc.text(textLine, margin, yPos);
+      yPos += 8;
+    });
+    doc.setFont('helvetica', 'normal');
+    yPos += 15;
+
+    subtests.forEach((subtest, idx) => {
+      if (subtest.items.length === 0) return;
+
+      doc.addPage();
+      yPos = 20;
+
+      doc.setFontSize(14);
+      const subtestTitle = `Sección: ${subtest.name}`;
+      const subtestTitleLines = doc.splitTextToSize(subtestTitle, maxWidth);
+      subtestTitleLines.forEach((textLine: string) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text(textLine, margin, yPos);
+        yPos += 10;
+      });
       yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
+      doc.setLineWidth(0.5);
+      yPos -= 5;
+      doc.line(margin, yPos, 190 - margin, yPos);
+      yPos += 10;
+
+      doc.setFontSize(12);
+      const subtestScoreText = `Puntuación: ${score[idx]} / ${subtest.maxScore}`;
+      const subtestScoreLines = doc.splitTextToSize(subtestScoreText, maxWidth);
+      subtestScoreLines.forEach((textLine: string) => {
+        if (yPos > 280) {
+          doc.addPage();
+          yPos = 20;
+        }
+        doc.text(textLine, margin, yPos);
+        yPos += 8;
+      });
+      yPos += 15;
+
+      subtest.items.forEach((item, itemIdx) => {
+        if (yPos > 270) {
+          doc.addPage();
+          yPos = 20;
+        }
+
+        const questionText = `Pregunta ${itemIdx + 1}: ${item.question}`;
+        const questionLines = doc.splitTextToSize(questionText, maxWidth);
+        questionLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 8;
+        });
+
+        const correctAnswerText = `Respuesta esperada: ${item.answer}`;
+        const correctAnswerLines = doc.splitTextToSize(correctAnswerText, maxWidth);
+        correctAnswerLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 8;
+        });
+
+        const providedAnswer = item.providedAnswer !== undefined && item.providedAnswer !== null
+          ? item.providedAnswer
+          : 'No proporcionada';
+        const providedAnswerText = `Respuesta proporcionada: ${providedAnswer}`;
+        const providedAnswerLines = doc.splitTextToSize(providedAnswerText, maxWidth);
+        providedAnswerLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 8;
+        });
+
+        const pointsObtained = item.providedAnswer !== undefined && item.providedAnswer !== null
+          ? (compareAnswers(item.providedAnswer, item.answer, item.isNumeric || false) ? item.points : 0)
+          : 0;
+        const pointsText = `Puntos obtenidos: ${pointsObtained} / ${item.points}`;
+        const pointsLines = doc.splitTextToSize(pointsText, maxWidth);
+        pointsLines.forEach((textLine: string) => {
+          if (yPos > 280) {
+            doc.addPage();
+            yPos = 20;
+          }
+          doc.text(textLine, margin, yPos);
+          yPos += 15;
+        });
+      });
     });
 
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Contar para atrás: 0 / 2', 10, yPos);
-    yPos += 5;
-    doc.text(`Respuesta esperada: 23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0`, 10, yPos);
-    yPos += 5;
-    doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-    yPos += 5;
-    doc.text(`Puntos obtenidos: 0 / 2`, 10, yPos);
-    yPos += 10;
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Escritura de números: 0 / 12', 10, yPos);
-    yPos += 5;
-    subtests[2].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Cálculo mental: 0 / 24', 10, yPos);
-    yPos += 5;
-    subtests[3].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Lectura de números: 0 / 12', 10, yPos);
-    yPos += 5;
-    subtests[4].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Posicionar un número en una escala: 0 / 10', 10, yPos);
-    yPos += 5;
-    subtests[5].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Estimación perceptiva de cantidad: 0 / 4', 10, yPos);
-    yPos += 5;
-    subtests[6].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Estimación de cantidades en contexto: 0 / 10', 10, yPos);
-    yPos += 5;
-    subtests[7].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Resolución de problemas aritméticos: 0 / 8', 10, yPos);
-    yPos += 5;
-    subtests[8].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Comparación de dos números: 0 / 16', 10, yPos);
-    yPos += 5;
-    subtests[9].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Determinación de cantidad: 0 / 21', 10, yPos);
-    yPos += 5;
-    subtests[10].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Escribir en cifra: 0 / 3', 10, yPos);
-    yPos += 5;
-    subtests[11].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Escritura correcta del número: 0 / 5', 10, yPos);
-    yPos += 5;
-    subtests[12].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    if (yPos > 250) {
-      doc.addPage();
-      yPos = 10;
-    }
-    doc.text('Lectura alfabética de números y escritura en cifras: 0 / 7', 10, yPos);
-    yPos += 5;
-    subtests[13].items.forEach((item) => {
-      if (yPos > 280) {
-        doc.addPage();
-        yPos = 10;
-      }
-      doc.text(`Pregunta: ${item.question}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta esperada: ${item.answer}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Respuesta proporcionada: ${writtenAnswer || 'No proporcionada'}`, 10, yPos);
-      yPos += 5;
-      doc.text(`Puntos obtenidos: 0 / ${item.points}`, 10, yPos);
-      yPos += 5;
-    });
-
-    doc.save(`Resultado_Test_8_${studentData.nombres}_${studentData.apellidos}.pdf`);
+    doc.save(`Resultado_Test_8_${studentData.nombres || 'Usuario'}_${studentData.apellidos || 'Desconocido'}.pdf`);
   };
 
   const renderStudentForm = () => (
@@ -787,7 +738,6 @@ const ProCalculo8: React.FC = () => {
         <h2 className={styles.formTitle}>
           <FaUser /> Datos del Estudiante
         </h2>
-        
         <div className={styles.formGroup}>
           <label htmlFor="nombres">
             <FaUser /> Nombres:
@@ -803,7 +753,6 @@ const ProCalculo8: React.FC = () => {
           />
           {formErrors.nombres && <span className={styles.errorMessage}>{formErrors.nombres}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="apellidos">
             <FaUser /> Apellidos:
@@ -819,7 +768,6 @@ const ProCalculo8: React.FC = () => {
           />
           {formErrors.apellidos && <span className={styles.errorMessage}>{formErrors.apellidos}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="edad">
             <FaBirthdayCake /> Edad:
@@ -837,7 +785,6 @@ const ProCalculo8: React.FC = () => {
           />
           {formErrors.edad && <span className={styles.errorMessage}>{formErrors.edad}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="genero">
             <FaVenusMars /> Género:
@@ -856,7 +803,6 @@ const ProCalculo8: React.FC = () => {
           </select>
           {formErrors.genero && <span className={styles.errorMessage}>{formErrors.genero}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="curso">
             <FaSchool /> Curso/Grado:
@@ -872,7 +818,6 @@ const ProCalculo8: React.FC = () => {
           />
           {formErrors.curso && <span className={styles.errorMessage}>{formErrors.curso}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="institucion">
             <FaSchool /> Institución Educativa:
@@ -888,9 +833,8 @@ const ProCalculo8: React.FC = () => {
           />
           {formErrors.institucion && <span className={styles.errorMessage}>{formErrors.institucion}</span>}
         </div>
-        
         <div className={styles.formActions}>
-          <button 
+          <button
             className={styles.startTestButton}
             onClick={saveStudentData}
             disabled={isSubmitting}
@@ -904,19 +848,17 @@ const ProCalculo8: React.FC = () => {
 
   const renderInputField = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
-    
     return (
       <div className={styles.writtenAnswerContainer}>
         {currentQuestion.image && (
           <div className={styles.questionImageContainer}>
-            <img 
-              src={currentQuestion.image} 
+            <img
+              src={currentQuestion.image}
               alt={currentQuestion.question}
               className={styles.questionImage}
             />
           </div>
         )}
-        
         <div className={styles.inputContainer}>
           <input
             type="text"
@@ -934,7 +876,7 @@ const ProCalculo8: React.FC = () => {
             }}
             disabled={timeUp || showFeedback}
           />
-          <button 
+          <button
             className={styles.submitButton}
             onClick={handleSubmitAnswer}
             disabled={!writtenAnswer.trim() || timeUp || showFeedback}
@@ -942,20 +884,19 @@ const ProCalculo8: React.FC = () => {
             Enviar respuesta
           </button>
         </div>
-
         {writtenAnswerConfirmed && !showFeedback && (
           <div className={styles.confirmationButtons}>
             <p>Tu respuesta: <strong>"{writtenAnswer}"</strong></p>
             <p>¿Estás seguro de tu respuesta?</p>
             <div className={styles.confirmationButtonGroup}>
-              <button 
+              <button
                 className={styles.confirmButton}
                 onClick={handleConfirmAnswer}
                 disabled={timeUp}
               >
                 Sí, confirmar
               </button>
-              <button 
+              <button
                 className={styles.cancelButton}
                 onClick={handleCancelAnswer}
                 disabled={timeUp}
@@ -963,6 +904,27 @@ const ProCalculo8: React.FC = () => {
                 No, corregir
               </button>
             </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const renderQuestion = () => {
+    const currentSubtestData = subtests[currentSubtest];
+    const currentQuestion = currentSubtestData.items[currentItem];
+    return (
+      <div className={styles.questionContent}>
+        <h3 className={styles.subtestTitle}>{currentSubtestData.name}</h3>
+        <p className={styles.questionPrompt}>{currentQuestion.question}</p>
+        {renderInputField()}
+        {showFeedback && (
+          <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
+            <p>
+              {correctAnswer
+                ? "¡Correcto! 🎉"
+                : `La respuesta correcta es: ${currentQuestion.answer}`}
+            </p>
           </div>
         )}
       </div>
@@ -979,104 +941,83 @@ const ProCalculo8: React.FC = () => {
     </div>
   );
 
-  const renderQuestion = () => {
-    const currentSubtestData = subtests[currentSubtest];
-    const currentQuestion = currentSubtestData.items[currentItem];
-    
+  const renderResults = () => {
+    const totalScore = calculateTotalScore();
     return (
-      <div className={styles.questionContent}>
-        <h3 className={styles.subtestTitle}>{currentSubtestData.name}</h3>
-        <p className={styles.questionPrompt}>{currentQuestion.question}</p>
-        
-        {currentQuestion.type === "opciones" && currentQuestion.options && (
-          <div className={styles.optionsGrid}>
-            {currentQuestion.options.map((option, index) => (
-              <button
-                key={index}
-                className={`${styles.optionButton} 
-                  ${optionSelected === option ? styles.selected : ''} 
-                  ${showFeedback && option === currentQuestion.answer ? styles.correct : ''} 
-                  ${showFeedback && optionSelected === option && option !== currentQuestion.answer ? styles.incorrect : ''}`}
-                onClick={() => handleAnswer(option)}
-                disabled={showFeedback || timeUp}
-              >
-                {option}
-              </button>
-            ))}
-          </div>
-        )}
-        
-        {currentQuestion.type === "escrito" && renderInputField()}
-        
-        {showFeedback && (
-          <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
-            <p>
-              {correctAnswer 
-                ? "¡Correcto! 🎉" 
-                : `La respuesta correcta es: ${currentQuestion.answer}`}
-            </p>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderResults = () => (
-    <section className={styles.resultSection}>
-      <div className={styles.resultContainer}>
-        <h2 className={styles.resultTitle}>
-          {getResultMessage()}
-        </h2>
-        
-        <div className={styles.scoreCard}>
-          <div className={styles.scoreVisual}>
-            <div className={styles.scoreCircle}>
-              <span className={styles.scoreNumber}>{score.reduce((a, b) => a + b, 0)}</span>
-              <span className={styles.scoreTotal}>/166</span>
-            </div>
-            {timeUp && (
-              <div className={styles.timeUpWarning}>
-                ⏰ El tiempo ha terminado
+      <section className={styles.resultSection}>
+        <div className={styles.resultContainer}>
+          <h2 className={styles.resultTitle}>
+            {getResultMessage()}
+          </h2>
+          <div className={styles.scoreCard}>
+            <div className={styles.scoreVisual}>
+              <div className={styles.scoreCircle}>
+                <span className={styles.scoreNumber}>{totalScore}</span>
+                <span className={styles.scoreTotal}>/110</span>
               </div>
-            )}
-          </div>
-          
-          <p className={styles.scoreText}>
-            Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 166 puntos
-          </p>
-          
-          <div className={styles.subtestScores}>
-            <h3>Puntuación por subtest:</h3>
-            <ul>
-              {subtests.map((subtest, index) => (
-                <li key={index}>
-                  {subtest.name}: {score[index]} / {subtest.maxScore}
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className={styles.actionsContainer}>
-            <button className={styles.restartButton} onClick={restartTest}>
-              <FaRedo /> Intentar de nuevo
-            </button>
-            <button 
-              className={styles.homeButton} 
-              onClick={() => navigate('/herramientas/test')}
-            >
-              Elegir otra prueba
-            </button>
-            <button 
-              className={styles.downloadButton} 
-              onClick={generatePDF}
-            >
-              Descargar PDF
-            </button>
+              {timeUp && (
+                <div className={styles.timeUpWarning}>
+                  ⏰ El tiempo ha terminado
+                </div>
+              )}
+              {saveError && (
+                <div className={styles.saveError}>
+                  ⚠ Hubo un problema al guardar los resultados
+                </div>
+              )}
+            </div>
+            <p className={styles.scoreText}>
+              Puntuación total: <span className={styles.scoreHighlight}>{totalScore}</span> de 110 puntos
+              {testId && (
+                <span className={styles.testId}>ID de prueba: {testId}</span>
+              )}
+            </p>
+            <div className={styles.subtestScores}>
+              <h3>Puntuación por subtest:</h3>
+              <ul>
+                {subtests.map((subtest, index) => (
+                  <li key={index}>
+                    {subtest.name}: {score[index]} / {subtest.maxScore}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className={styles.actionsContainer}>
+              <button
+                className={styles.restartButton}
+                onClick={restartTest}
+                disabled={isSubmitting}
+              >
+                <FaRedo /> {isSubmitting ? 'Guardando...' : 'Intentar de nuevo'}
+              </button>
+              <button
+                className={styles.homeButton}
+                onClick={() => navigate('/herramientas/test')}
+              >
+                Elegir otra prueba
+              </button>
+              {saveError && (
+                <button
+                  className={styles.retryButton}
+                  onClick={finishTest}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Guardando...' : 'Reintentar guardado'}
+                </button>
+              )}
+              <button
+                className={styles.downloadButton}
+                onClick={generatePDF}
+                disabled={isSubmitting}
+              >
+                Descargar PDF
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  };
 
   const renderStartTestScreen = () => (
     <div className={styles.startTestContainer}>
@@ -1084,8 +1025,7 @@ const ProCalculo8: React.FC = () => {
         <h2>¡Todo listo para comenzar!</h2>
         <p>El test tiene una duración máxima de 30 minutos.</p>
         <p>Por favor, asegúrate de estar en un lugar tranquilo y sin distracciones.</p>
-        
-        <button 
+        <button
           className={styles.startTestButton}
           onClick={startTest}
         >
@@ -1101,12 +1041,12 @@ const ProCalculo8: React.FC = () => {
         <h2>¡Has completado todas las preguntas!</h2>
         <p>Tiempo restante: {formatTime(timeLeft)}</p>
         <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
-        
-        <button 
+        <button
           className={styles.finishTestButton}
           onClick={finishTest}
+          disabled={isSubmitting}
         >
-          <FaFlagCheckered /> Finalizar Test
+          <FaFlagCheckered /> {isSubmitting ? 'Finalizando...' : 'Finalizar Test'}
         </button>
       </div>
     </div>
@@ -1121,27 +1061,24 @@ const ProCalculo8: React.FC = () => {
             Pro-Cálculo <span className={styles.ageBadge}>8 años</span>
           </h1>
         </div>
-        
         <div className={styles.controlButtons}>
-          <button 
-            className={styles.backButton} 
+          <button
+            className={styles.backButton}
             onClick={() => navigate('/herramientas/test')}
           >
             <FaArrowLeft /> Volver
           </button>
         </div>
       </section>
-
       <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
         <div className={styles.progressBar}>
-          <div 
-            className={styles.progressFill} 
-            style={{ 
-              width: `${((currentSubtest + (currentItem / subtests[currentSubtest].items.length)) / subtests.length) * 100}%` 
+          <div
+            className={styles.progressFill}
+            style={{
+              width: `${((currentSubtest + currentItem / subtests[currentSubtest].items.length) / subtests.length) * 100}%`
             }}
           ></div>
         </div>
-        
         <div className={styles.questionInfo}>
           <div className={styles.questionCounter}>
             Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
@@ -1150,7 +1087,6 @@ const ProCalculo8: React.FC = () => {
             <FaClock /> Tiempo restante: {formatTime(timeLeft)}
           </div>
         </div>
-        
         <div className={styles.questionCard}>
           {renderQuestion()}
         </div>
@@ -1162,7 +1098,6 @@ const ProCalculo8: React.FC = () => {
     <div className={styles.pageContainer}>
       <main className={styles.testContainer}>
         <div className={styles.cloudBackground}></div>
-        
         {showStudentForm ? (
           renderStudentForm()
         ) : showMiniGame ? (

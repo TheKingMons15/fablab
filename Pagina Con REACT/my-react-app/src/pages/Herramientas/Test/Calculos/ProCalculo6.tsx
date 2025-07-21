@@ -54,6 +54,8 @@ const ProCalculo6: React.FC = () => {
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [testStartTime, setTestStartTime] = useState('');
+  const [testStarted, setTestStarted] = useState(false);
+  const [showFinishScreen, setShowFinishScreen] = useState(false);
 
   const [subtests, setSubtests] = useState<Subtest[]>([
     {
@@ -142,6 +144,33 @@ const ProCalculo6: React.FC = () => {
 
   const minigameSubtests = [3, 6];
 
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (testStarted && timerActive && timeLeft > 0 && !showMiniGame && !showFinishScreen) {
+      timer = setTimeout(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && !showResult && !timeUp) {
+      setTimerActive(false);
+      setTimeUp(true);
+      setShowFinishScreen(true);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [timeLeft, timerActive, showResult, timeUp, showMiniGame, showFinishScreen, testStarted]);
+
+  useEffect(() => {
+    if (testStarted && timerActive) {
+      const now = new Date();
+      setTestStartTime(now.toLocaleString('es-ES', { 
+        dateStyle: 'long', 
+        timeStyle: 'short', 
+        timeZone: 'America/Guayaquil' 
+      }));
+    }
+  }, [testStarted, timerActive]);
+
   const normalizeAnswer = (answer: string | number, isNumericQuestion: boolean = false): string | number => {
     if (typeof answer === 'number') return answer;
     
@@ -180,33 +209,6 @@ const ProCalculo6: React.FC = () => {
     
     return normalizedUser.toString() === normalizedCorrect.toString();
   };
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (!showStudentForm && timerActive && timeLeft > 0 && !showMiniGame) {
-      timer = setTimeout(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && !showResult && !timeUp) {
-      setTimerActive(false);
-      setTimeUp(true);
-      finishTest();
-    }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [timeLeft, timerActive, showResult, timeUp, showStudentForm, showMiniGame]);
-
-  useEffect(() => {
-    if (!showStudentForm && timerActive) {
-      const now = new Date();
-      setTestStartTime(now.toLocaleString('es-ES', { 
-        dateStyle: 'long', 
-        timeStyle: 'short', 
-        timeZone: 'America/Guayaquil' 
-      }));
-    }
-  }, [showStudentForm, timerActive]);
 
   const calculateTotalScore = (): number => {
     let total = 0;
@@ -290,10 +292,31 @@ const ProCalculo6: React.FC = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const startTest = () => {
+  const saveStudentData = async () => {
     if (!validateForm()) return;
-    setShowStudentForm(false);
+    
+    setIsSubmitting(true);
+    
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setShowStudentForm(false);
+    } catch (error) {
+      console.error('Error al guardar datos:', error);
+      alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const startTest = () => {
+    setTestStarted(true);
     setTimerActive(true);
+    const now = new Date();
+    setTestStartTime(now.toLocaleString('es-ES', { 
+      dateStyle: 'long', 
+      timeStyle: 'short', 
+      timeZone: 'America/Guayaquil' 
+    }));
   };
 
   const formatTime = (seconds: number): string => {
@@ -350,19 +373,21 @@ const ProCalculo6: React.FC = () => {
     setAnimation('');
     setWrittenAnswer('');
     setWrittenAnswerConfirmed(false);
+    
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
+      
       if (minigameSubtests.includes(currentSubtest)) {
         setShowMiniGame(true);
         setMiniGameType(currentSubtest === 3 ? 'egg' : 'snake');
         return;
       }
+      
       if (nextSubtest < subtests.length) {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        setShowResult(true);
-        setTimerActive(false);
+        setShowFinishScreen(true);
       }
     } else {
       setCurrentItem(currentItem + 1);
@@ -372,14 +397,16 @@ const ProCalculo6: React.FC = () => {
   const handleMiniGameComplete = (success: boolean) => {
     setShowMiniGame(false);
     setAnimation(success ? 'correct' : 'wrong');
+    
     setTimeout(() => {
       setAnimation('');
       const nextSubtest = currentSubtest + 1;
+      
       if (nextSubtest < subtests.length) {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
       } else {
-        finishTest();
+        setShowFinishScreen(true);
       }
     }, 1000);
   };
@@ -411,6 +438,8 @@ const ProCalculo6: React.FC = () => {
     setTestId(null);
     setSaveError(false);
     setTestStartTime('');
+    setTestStarted(false);
+    setShowFinishScreen(false);
     setSubtests(prevSubtests =>
       prevSubtests.map(subtest => ({
         ...subtest,
@@ -731,10 +760,10 @@ const ProCalculo6: React.FC = () => {
         <div className={styles.formActions}>
           <button
             className={styles.startTestButton}
-            onClick={startTest}
+            onClick={saveStudentData}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Cargando...' : <><FaPlay /> Comenzar Test</>}
+            {isSubmitting ? 'Cargando...' : 'Comenzar Test'}
           </button>
         </div>
       </div>
@@ -914,6 +943,41 @@ const ProCalculo6: React.FC = () => {
     );
   };
 
+  const renderStartTestScreen = () => (
+    <div className={styles.startTestContainer}>
+      <div className={styles.startTestCard}>
+        <h2>¡Todo listo para comenzar!</h2>
+        <p>El test tiene una duración máxima de 20 minutos.</p>
+        <p>Por favor, asegúrate de estar en un lugar tranquilo y sin distracciones.</p>
+        
+        <button 
+          className={styles.startTestButton}
+          onClick={startTest}
+        >
+          <FaPlay /> Iniciar Test
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderFinishScreen = () => (
+    <div className={styles.finishTestContainer}>
+      <div className={styles.finishTestCard}>
+        <h2>¡Has completado todas las preguntas!</h2>
+        <p>Tiempo restante: {formatTime(timeLeft)}</p>
+        <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
+        
+        <button 
+          className={styles.finishTestButton}
+          onClick={finishTest}
+          disabled={isSubmitting}
+        >
+          <FaFlagCheckered /> {isSubmitting ? 'Finalizando...' : 'Finalizar Test'}
+        </button>
+      </div>
+    </div>
+  );
+
   const renderTestInProgress = () => (
     <>
       <section className={styles.testHeader}>
@@ -949,22 +1013,6 @@ const ProCalculo6: React.FC = () => {
         <div className={styles.questionCard}>
           {renderQuestion()}
         </div>
-        {currentItem + 1 === subtests[currentSubtest].items.length && currentSubtest + 1 === subtests.length && (
-          <div className={styles.finishTestContainer}>
-            <div className={styles.finishTestCard}>
-              <h2>¡Has completado todas las preguntas!</h2>
-              <p>Tiempo restante: {formatTime(timeLeft)}</p>
-              <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
-              <button
-                className={styles.finishTestButton}
-                onClick={finishTest}
-                disabled={isSubmitting}
-              >
-                <FaFlagCheckered /> {isSubmitting ? 'Finalizando...' : 'Finalizar Test'}
-              </button>
-            </div>
-          </div>
-        )}
       </section>
     </>
   );
@@ -979,6 +1027,10 @@ const ProCalculo6: React.FC = () => {
           renderMiniGame()
         ) : showResult ? (
           renderResults()
+        ) : showFinishScreen ? (
+          renderFinishScreen()
+        ) : !testStarted ? (
+          renderStartTestScreen()
         ) : (
           renderTestInProgress()
         )}
