@@ -324,23 +324,7 @@ const Test: React.FC = () => {
     }
 
     const data = await response.json();
-    
-    // Mapear los datos para que coincidan con lo que espera tu frontend
-    const mappedData = data.data.map((item: any) => ({
-      id: item.id,
-      nombres: item.nombres,
-      apellidos: item.apellidos,
-      edad: item.edad,
-      genero: item.genero,
-      curso: item.curso,
-      institucion: item.institucion,
-      test_tipo: item.test_tipo, // Usamos el valor directamente de la BD
-      puntuacion_total: item.puntuacion_total,
-      fecha_registro: item.fecha_registro,
-      fecha_test: item.fecha_test
-    }));
-    
-    setReportes(mappedData);
+    setReportes(data.data);
     setError(null);
   } catch (err) {
     const error = err as Error;
@@ -449,9 +433,9 @@ const Test: React.FC = () => {
                   className={styles.filterSelect}
                 >
                   <option value="">Todos</option>
-                  <option value="ProCálculo6">ProCálculo6</option>
-                  <option value="ProCálculo7">ProCálculo7</option>
-                  <option value="ProCálculo8">ProCálculo8</option>
+                  <option value="Pro-Cálculo para 6 años">6 años</option>
+                  <option value="Pro-Cálculo para 7 años">7 años</option>
+                  <option value="Pro-Cálculo para 8 años">8 años</option>
                 </select>
               </div>
 
