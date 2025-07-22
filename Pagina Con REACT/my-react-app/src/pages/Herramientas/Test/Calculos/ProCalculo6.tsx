@@ -7,6 +7,7 @@ import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 import SnakeGame from '../../Minijuego/SnakeGame';
 import jsPDF from 'jspdf';
 
+// Interfaces
 interface QuestionItem {
   question: string;
   answer: string | number;
@@ -24,8 +25,11 @@ interface Subtest {
   items: QuestionItem[];
 }
 
+// Main Component
 const ProCalculo6: React.FC = () => {
   const navigate = useNavigate();
+
+  // State Management
   const [currentSubtest, setCurrentSubtest] = useState(0);
   const [currentItem, setCurrentItem] = useState(0);
   const [score, setScore] = useState<number[]>(Array(9).fill(0));
@@ -48,7 +52,7 @@ const ProCalculo6: React.FC = () => {
     edad: '',
     genero: '',
     curso: '',
-    institucion: ''
+    institucion: '',
   });
   const [showStudentForm, setShowStudentForm] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -57,93 +61,119 @@ const ProCalculo6: React.FC = () => {
   const [testStarted, setTestStarted] = useState(false);
   const [showFinishScreen, setShowFinishScreen] = useState(false);
 
+  // Subtests Data
   const [subtests, setSubtests] = useState<Subtest[]>([
     {
-      name: "Enumeración",
+      name: 'Enumeración',
       maxScore: 12,
       items: [
-        { question: "¿Cuántos animales hay en la imagen?", answer: 5, points: 4, type: "escrito", image: "/img/Test_6 Enumeración_5.png"},
-        { question: "¿Cuántos animales hay en la imagen?", answer: 8, points: 4, type: "escrito", image: "/img/Test_6 Enumeración_8.png", isNumeric: true },
-        { question: "¿Cuántos animales hay en la imagen?", answer: 10, points: 4, type: "escrito", image: "/img/Test_6 Enumeración_10.png", isNumeric: true }
-      ]
+        { question: '¿Cuántos animales hay en la imagen?', answer: 5, points: 4, type: 'escrito', image: '/img/Test_6 Enumeración_5.png' },
+        { question: '¿Cuántos animales hay en la imagen?', answer: 8, points: 4, type: 'escrito', image: '/img/Test_6 Enumeración_8.png', isNumeric: true },
+        { question: '¿Cuántos animales hay en la imagen?', answer: 10, points: 4, type: 'escrito', image: '/img/Test_6 Enumeración_10.png', isNumeric: true },
+      ],
     },
     {
-      name: "Contar para atrás",
+      name: 'Contar para atrás',
       maxScore: 2,
-      items: [
-        { question: "Escribe los números del 10 al 0 en orden descendente, separados por comas y sin espacios", answer: "10,9,8,7,6,5,4,3,2,1,0", points: 2, type: "escrito", image: "/img/Test_6 Contar para atrás.png" }
-      ]
+      items: [{ question: 'Escribe los números del 10 al 0 en orden descendente, separados por comas y sin espacios', answer: '10,9,8,7,6,5,4,3,2,1,0', points: 2, type: 'escrito', image: '/img/Test_6 Contar para atrás.png' }],
     },
     {
-      name: "Escritura de números",
+      name: 'Escritura de números',
       maxScore: 6,
       items: [
-        { question: "Escribe el número 'siete'", answer: 7, points: 2, type: "escrito", image: "/img/Test_6 Escritura_7.png", isNumeric: true },
-        { question: "Escribe el número 'veinte'", answer: 20, points: 2, type: "escrito", image: "/img/Test_6 Escritura_20.png", isNumeric: true },
-        { question: "Escribe el número 'trescientos cinco'", answer: 305, points: 2, type: "escrito", image: "/img/Test_6 Escritura_305.png", isNumeric: true }
-      ]
+        { question: 'Escribe el número \'siete\'', answer: 7, points: 2, type: 'escrito', image: '/img/Test_6 Escritura_7.png', isNumeric: true },
+        { question: 'Escribe el número \'veinte\'', answer: 20, points: 2, type: 'escrito', image: '/img/Test_6 Escritura_20.png', isNumeric: true },
+        { question: 'Escribe el número \'trescientos cinco\'', answer: 305, points: 2, type: 'escrito', image: '/img/Test_6 Escritura_305.png', isNumeric: true },
+      ],
     },
     {
-      name: "Cálculo mental oral",
+      name: 'Cálculo mental oral',
       maxScore: 12,
       items: [
-        { question: "10 + 10", answer: 20, points: 2, type: "escrito", image: "/img/Test_6 Calculo_20.png", isNumeric: true },
-        { question: "1 + 15", answer: 16, points: 2, type: "escrito", image: "/img/Test_6 Calculo_16.png", isNumeric: true },
-        { question: "2 + 7", answer: 9, points: 2, type: "escrito", image: "/img/Test_6 Calculo_9.png", isNumeric: true },
-        { question: "10 - 3", answer: 7, points: 2, type: "escrito", image: "/img/Test_6 Calculo_7.png", isNumeric: true },
-        { question: "18 - 6", answer: 12, points: 2, type: "escrito", image: "/img/Test_6 Calculo_12.png", isNumeric: true },
-        { question: "7 - 4", answer: 3, points: 2, type: "escrito", image: "/img/Test_6 Calculo_3.png", isNumeric: true }
-      ]
+        { question: '10 + 10', answer: 20, points: 2, type: 'escrito', image: '/img/Test_6 Calculo_20.png', isNumeric: true },
+        { question: '1 + 15', answer: 16, points: 2, type: 'escrito', image: '/img/Test_6 Calculo_16.png', isNumeric: true },
+        { question: '2 + 7', answer: 9, points: 2, type: 'escrito', image: '/img/Test_6 Calculo_9.png', isNumeric: true },
+        { question: '10 - 3', answer: 7, points: 2, type: 'escrito', image: '/img/Test_6 Calculo_7.png', isNumeric: true },
+        { question: '18 - 6', answer: 12, points: 2, type: 'escrito', image: '/img/Test_6 Calculo_12.png', isNumeric: true },
+        { question: '7 - 4', answer: 3, points: 2, type: 'escrito', image: '/img/Test_6 Calculo_3.png', isNumeric: true },
+      ],
     },
     {
-      name: "Lectura de números",
+      name: 'Lectura de números',
       maxScore: 8,
       items: [
-        { question: "Lee y escribe con palabras minúsculas el número: 57", answer: "cincuenta y siete", points: 2, type: "escrito", image: "/img/Test_6 Lectura_57.png" },
-        { question: "Lee y escribe con palabras minúsculas el número: 15", answer: "quince", points: 2, type: "escrito", image: "/img/Test_6 Lectura_15.png" },
-        { question: "Lee y escribe con palabras minúsculas el número: 138", answer: "ciento treinta y ocho", points: 2, type: "escrito", image: "/img/Test_6 Lectura_138.png" },
-        { question: "Lee y escribe con palabras minúsculas el número: 9", answer: "nueve", points: 2, type: "escrito", image: "/img/Test_6 Lectura_9.png" }
-      ]
+        { question: 'Lee y escribe con palabras minúsculas el número: 57', answer: 'cincuenta y siete', points: 2, type: 'escrito', image: '/img/Test_6 Lectura_57.png' },
+        { question: 'Lee y escribe con palabras minúsculas el número: 15', answer: 'quince', points: 2, type: 'escrito', image: '/img/Test_6 Lectura_15.png' },
+        { question: 'Lee y escribe con palabras minúsculas el número: 138', answer: 'ciento treinta y ocho', points: 2, type: 'escrito', image: '/img/Test_6 Lectura_138.png' },
+        { question: 'Lee y escribe con palabras minúsculas el número: 9', answer: 'nueve', points: 2, type: 'escrito', image: '/img/Test_6 Lectura_9.png' },
+      ],
     },
     {
-      name: "Estimación",
+      name: 'Estimación',
       maxScore: 6,
       items: [
-        { question: "¿2 nubes en el cielo es poco o mucho?", answer: "poco", points: 2, type: "escrito", image: "/img/Test_6 Estimación_nubes.png" },
-        { question: "¿2 niños jugando en el recreo es poco o mucho?", answer: "poco", points: 2, type: "escrito", image: "/img/Test_6 Estimación_niños.png" },
-        { question: "¿60 chicos en un cumpleaños es poco o mucho?", answer: "mucho", points: 2, type: "escrito", image: "/img/Test_6 Estimación_cumpleaños.png" }
-      ]
+        { question: '¿2 nubes en el cielo es poco o mucho?', answer: 'poco', points: 2, type: 'escrito', image: '/img/Test_6 Estimación_nubes.png' },
+        { question: '¿2 niños jugando en el recreo es poco o mucho?', answer: 'poco', points: 2, type: 'escrito', image: '/img/Test_6 Estimación_niños.png' },
+        { question: '¿60 chicos en un cumpleaños es poco o mucho?', answer: 'mucho', points: 2, type: 'escrito', image: '/img/Test_6 Estimación_cumpleaños.png' },
+      ],
     },
     {
-      name: "Resolución de problemas",
+      name: 'Resolución de problemas',
       maxScore: 4,
       items: [
-        { question: "Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?", answer: 10, points: 2, type: "escrito", image: "/img/Test_6 Resolución_10.png", isNumeric: true },
-        { question: "Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?", answer: 5, points: 2, type: "escrito", image: "/img/Test_6 Resolución_5.png", isNumeric: true }
-      ]
+        { question: 'Pedro tiene 8 bolitas rojas y 2 amarillas. ¿Cuántas bolitas tiene en total?', answer: 10, points: 2, type: 'escrito', image: '/img/Test_6 Resolución_10.png', isNumeric: true },
+        { question: 'Pedro tiene 10 bolitas y pierde 5. ¿Cuántas bolitas le quedan?', answer: 5, points: 2, type: 'escrito', image: '/img/Test_6 Resolución_5.png', isNumeric: true },
+      ],
     },
     {
-      name: "Adaptación",
+      name: 'Adaptación',
       maxScore: 8,
       items: [
-        { question: "¿Cuánto crees que cuesta una bicicleta?", answer: 150, points: 2, type: "escrito", image: "/img/Test_6 Adaptación_150.png", isNumeric: true },
-        { question: "¿Cuánto crees que cuesta una radio?", answer: 90, points: 2, type: "escrito", image: "/img/Test_6 Adaptación_90.png", isNumeric: true },
-        { question: "¿Cuánto crees que cuesta una pelota de cuero?", answer: 50, points: 2, type: "escrito", image: "/img/Test_6 Adaptación_50.png", isNumeric: true },
-        { question: "¿Cuánto crees que cuesta una gaseosa?", answer: 1.5, points: 2, type: "escrito", image: "/img/Test_6 Adaptación_1.50.png", isNumeric: true }
-      ]
+        { question: '¿Cuánto crees que cuesta una bicicleta?', answer: 150, points: 2, type: 'escrito', image: '/img/Test_6 Adaptación_150.png', isNumeric: true },
+        { question: '¿Cuánto crees que cuesta una radio?', answer: 90, points: 2, type: 'escrito', image: '/img/Test_6 Adaptación_90.png', isNumeric: true },
+        { question: '¿Cuánto crees que cuesta una pelota de cuero?', answer: 50, points: 2, type: 'escrito', image: '/img/Test_6 Adaptación_50.png', isNumeric: true },
+        { question: '¿Cuánto crees que cuesta una gaseosa?', answer: 1.5, points: 2, type: 'escrito', image: '/img/Test_6 Adaptación_1.50.png', isNumeric: true },
+      ],
     },
     {
-      name: "Escribir en cifra",
+      name: 'Escribir en cifra',
       maxScore: 2,
       items: [
-        { question: "Escribe el número 'quince'", answer: 15, points: 1, type: "escrito", image: "/img/Test_6 Escribir_15.png", isNumeric: true },
-        { question: "Escribe el número 'veinticinco'", answer: 25, points: 1, type: "escrito", image: "/img/Test_6 Escribir_25.png", isNumeric: true }
-      ]
-    }
+        { question: 'Escribe el número \'quince\'', answer: 15, points: 1, type: 'escrito', image: '/img/Test_6 Escribir_15.png', isNumeric: true },
+        { question: 'Escribe el número \'veinticinco\'', answer: 25, points: 1, type: 'escrito', image: '/img/Test_6 Escribir_25.png', isNumeric: true },
+      ],
+    },
   ]);
 
   const minigameSubtests = [3, 6];
 
+  // Utility Functions
+  const normalizeAnswer = (answer: string | number, isNumericQuestion: boolean = false): string | number => {
+    if (typeof answer === 'number') return answer;
+    const commaToDot = answer.toString().replace(',', '.');
+    if (!isNaN(Number(commaToDot))) {
+      const num = Number(commaToDot);
+      return isNumericQuestion ? Math.round(num) : num;
+    }
+    return answer.toString().toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  };
+
+  const compareAnswers = (userAnswer: string | number, correctAnswer: string | number, isNumericQuestion: boolean = false): boolean => {
+    const normalizedUser = normalizeAnswer(userAnswer, isNumericQuestion);
+    const normalizedCorrect = normalizeAnswer(correctAnswer, isNumericQuestion);
+    if (typeof normalizedCorrect === 'number') {
+      const userNum = typeof normalizedUser === 'number' ? normalizedUser : Number(normalizedUser);
+      if (isNaN(userNum)) return false;
+      return isNumericQuestion
+        ? userNum === normalizedCorrect
+        : Math.abs(userNum - normalizedCorrect) < 0.1;
+    }
+    return normalizedUser.toString() === normalizedCorrect.toString();
+  };
+
+  // Effect Hooks
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (testStarted && timerActive && timeLeft > 0 && !showMiniGame && !showFinishScreen) {
@@ -163,113 +193,20 @@ const ProCalculo6: React.FC = () => {
   useEffect(() => {
     if (testStarted && timerActive) {
       const now = new Date();
-      setTestStartTime(now.toLocaleString('es-ES', { 
-        dateStyle: 'long', 
-        timeStyle: 'short', 
-        timeZone: 'America/Guayaquil' 
-      }));
+      setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
     }
   }, [testStarted, timerActive]);
 
-  const normalizeAnswer = (answer: string | number, isNumericQuestion: boolean = false): string | number => {
-    if (typeof answer === 'number') return answer;
-    
-    const commaToDot = answer.toString().replace(',', '.');
-    if (!isNaN(Number(commaToDot))) {
-      const num = Number(commaToDot);
-      return isNumericQuestion ? num : num;
-    }
-    return answer.toString().toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .trim();
-  };
-
-  const compareAnswers = (userAnswer: string | number, correctAnswer: string | number, isNumericQuestion: boolean = false): boolean => {
-    console.log('Comparando respuestas:', {
-      userAnswer,
-      correctAnswer,
-      isNumericQuestion
-    });
-
-    const normalizedUser = normalizeAnswer(userAnswer, isNumericQuestion);
-    const normalizedCorrect = normalizeAnswer(correctAnswer, isNumericQuestion);
-
-    if (typeof normalizedCorrect === 'number') {
-      const userNum = typeof normalizedUser === 'number' 
-        ? normalizedUser 
-        : Number(normalizedUser);
-      
-      if (isNaN(userNum)) return false;
-      
-      if (isNumericQuestion) {
-        return userNum === normalizedCorrect;
-      }
-      return Math.abs(userNum - normalizedCorrect) < 0.1;
-    }
-    
-    return normalizedUser.toString() === normalizedCorrect.toString();
-  };
-
+  // Core Functions
   const calculateTotalScore = (): number => {
     let total = 0;
     subtests.forEach((subtest, index) => {
       const subtestScore = Math.min(score[index], subtest.maxScore);
-      console.log(Subtest ${index} (${subtest.name}): ${subtestScore} / ${subtest.maxScore});
+      console.log(`Subtest ${index} (${subtest.name}): ${subtestScore} / ${subtest.maxScore}`);
       total += subtestScore;
     });
     console.log('Total calculado:', total);
     return total;
-  };
-
-  const finishTest = async () => {
-    const totalScore = calculateTotalScore();
-    setIsSubmitting(true);
-    setSaveError(false);
-    
-    console.log('Verificación Subtest 9 - Escribir en cifra:', {
-      respuestas: subtests[8].items.map(item => item.providedAnswer),
-      puntuacion: score[8],
-      maxScore: subtests[8].maxScore
-    });
-
-    try {
-      const edadNum = parseInt(studentData.edad) || 0;
-      const testData = {
-        nombres: studentData.nombres.trim(),
-        apellidos: studentData.apellidos.trim(),
-        edad: edadNum,
-        genero: studentData.genero,
-        curso: studentData.curso.trim(),
-        institucion: studentData.institucion.trim(),
-        test_tipo: "ProCálculo6",
-        puntuacion_total: totalScore,
-      };
-      
-      console.log('Enviando datos al servidor:', testData);
-      const response = await fetch('https://fablab.upec.edu.ec/procalculo-api/guardar-test', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(testData)
-      });
-      
-      if (!response.ok) {
-        throw new Error('Error al guardar los resultados');
-      }
-      
-      const result = await response.json();
-      console.log('Respuesta del servidor:', result);
-      setTestId(result.id);
-      setShowResult(true);
-      
-      if (totalScore > 30) {
-        launchConfetti();
-      }
-    } catch (error) {
-      console.error('Error al guardar resultados:', error);
-      setSaveError(true);
-    } finally {
-      setIsSubmitting(false);
-    }
   };
 
   const validateForm = () => {
@@ -286,7 +223,7 @@ const ProCalculo6: React.FC = () => {
     if (!errors.edad) {
       setStudentData(prev => ({
         ...prev,
-        edad: edadNum.toString()
+        edad: edadNum.toString(),
       }));
     }
     return Object.keys(errors).length === 0;
@@ -294,11 +231,9 @@ const ProCalculo6: React.FC = () => {
 
   const saveStudentData = async () => {
     if (!validateForm()) return;
-    
     setIsSubmitting(true);
-    
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
       setShowStudentForm(false);
     } catch (error) {
       console.error('Error al guardar datos:', error);
@@ -312,56 +247,42 @@ const ProCalculo6: React.FC = () => {
     setTestStarted(true);
     setTimerActive(true);
     const now = new Date();
-    setTestStartTime(now.toLocaleString('es-ES', { 
-      dateStyle: 'long', 
-      timeStyle: 'short', 
-      timeZone: 'America/Guayaquil' 
-    }));
+    setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
   };
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')};
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handleAnswer = (selectedAnswer: string | number) => {
     if (showFeedback || timeUp) return;
-    const currentQuestion = subtests[currentSubtest].items[currentItem];
-    const isNumericQuestion = currentQuestion.isNumeric || false;
-    const isCorrect = compareAnswers(selectedAnswer, currentQuestion.answer, isNumericQuestion);
-
-    console.log('Respuesta evaluada:', {
-      selectedAnswer,
-      correctAnswer: currentQuestion.answer,
-      isCorrect,
-      isNumericQuestion
-    });
+    const isNumericQuestion = subtests[currentSubtest].items[currentItem].isNumeric || false;
+    const isCorrect = compareAnswers(selectedAnswer, subtests[currentSubtest].items[currentItem].answer, isNumericQuestion);
 
     setSubtests(prevSubtests => {
       const newSubtests = [...prevSubtests];
       newSubtests[currentSubtest].items[currentItem] = {
         ...newSubtests[currentSubtest].items[currentItem],
-        providedAnswer: selectedAnswer
+        providedAnswer: selectedAnswer,
       };
       return newSubtests;
     });
 
     setCorrectAnswer(isCorrect);
     setShowFeedback(true);
-    
     if (isCorrect) {
       setScore(prevScore => {
         const newScore = [...prevScore];
-        newScore[currentSubtest] += currentQuestion.points;
-        console.log(Pregunta correcta! Puntos añadidos: ${currentQuestion.points}. Subtest ${currentSubtest} ahora tiene: ${newScore[currentSubtest]});
+        newScore[currentSubtest] += subtests[currentSubtest].items[currentItem].points;
+        console.log(`Pregunta correcta! Puntos añadidos: ${subtests[currentSubtest].items[currentItem].points}. Subtest ${currentSubtest} ahora tiene: ${newScore[currentSubtest]}`);
         return newScore;
       });
       setAnimation('correct');
     } else {
       setAnimation('wrong');
     }
-    
     setTimeout(() => {
       moveToNextItem();
     }, 2000);
@@ -373,16 +294,13 @@ const ProCalculo6: React.FC = () => {
     setAnimation('');
     setWrittenAnswer('');
     setWrittenAnswerConfirmed(false);
-    
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
-      
       if (minigameSubtests.includes(currentSubtest)) {
         setShowMiniGame(true);
         setMiniGameType(currentSubtest === 3 ? 'egg' : 'snake');
         return;
       }
-      
       if (nextSubtest < subtests.length) {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
@@ -397,11 +315,9 @@ const ProCalculo6: React.FC = () => {
   const handleMiniGameComplete = (success: boolean) => {
     setShowMiniGame(false);
     setAnimation(success ? 'correct' : 'wrong');
-    
     setTimeout(() => {
       setAnimation('');
       const nextSubtest = currentSubtest + 1;
-      
       if (nextSubtest < subtests.length) {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
@@ -415,7 +331,7 @@ const ProCalculo6: React.FC = () => {
     confetti({
       particleCount: 100,
       spread: 70,
-      origin: { y: 0.6 }
+      origin: { y: 0.6 },
     });
   };
 
@@ -445,8 +361,8 @@ const ProCalculo6: React.FC = () => {
         ...subtest,
         items: subtest.items.map(item => ({
           ...item,
-          providedAnswer: undefined
-        }))
+          providedAnswer: undefined,
+        })),
       }))
     );
   };
@@ -454,13 +370,11 @@ const ProCalculo6: React.FC = () => {
   const getResultMessage = () => {
     const totalScore = calculateTotalScore();
     const percentage = (totalScore / 60) * 100;
-    if (timeUp) {
-      return "¡Tiempo terminado! ⏰";
-    }
-    if (percentage >= 80) return "¡Excelente trabajo! 🎉";
-    if (percentage >= 60) return "¡Muy bien hecho! 🌟";
-    if (percentage >= 40) return "¡Buen intento! 👍";
-    return "¡Sigue practicando! 💪";
+    if (timeUp) return '¡Tiempo terminado! ⏰';
+    if (percentage >= 80) return '¡Excelente trabajo! 🎉';
+    if (percentage >= 60) return '¡Muy bien hecho! 🌟';
+    if (percentage >= 40) return '¡Buen intento! 👍';
+    return '¡Sigue practicando! 💪';
   };
 
   const handleConfirmAnswer = () => {
@@ -484,7 +398,7 @@ const ProCalculo6: React.FC = () => {
     const { name, value } = e.target;
     setStudentData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     if (formErrors[name]) {
       setFormErrors(prev => {
@@ -516,13 +430,13 @@ const ProCalculo6: React.FC = () => {
 
     doc.setFontSize(12);
     const studentDataLines = [
-      Nombre: ${studentData.nombres || 'No especificado'},
-      Apellido: ${studentData.apellidos || 'No especificado'},
-      Edad: ${studentData.edad || 'No especificado'},
-      Género: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : 'No especificado'},
-      Curso/Grado: ${studentData.curso || 'No especificado'},
-      Institución: ${studentData.institucion || 'No especificado'},
-      Fecha y hora de inicio: ${testStartTime || 'No especificado'},
+      `Nombre: ${studentData.nombres || 'No especificado'}`,
+      `Apellido: ${studentData.apellidos || 'No especificado'}`,
+      `Edad: ${studentData.edad || 'No especificado'}`,
+      `Género: ${studentData.genero === 'M' ? 'Masculino' : studentData.genero === 'F' ? 'Femenino' : 'No especificado'}`,
+      `Curso/Grado: ${studentData.curso || 'No especificado'}`,
+      `Institución: ${studentData.institucion || 'No especificado'}`,
+      `Fecha y hora de inicio: ${testStartTime || 'No especificado'}`,
     ];
     studentDataLines.forEach(line => {
       const textLines = doc.splitTextToSize(line, maxWidth);
@@ -545,7 +459,7 @@ const ProCalculo6: React.FC = () => {
     yPos += 10;
 
     doc.setFontSize(20);
-    const totalScoreText = Puntuación total: ${calculateTotalScore()}/60 Puntos;
+    const totalScoreText = `Puntuación total: ${calculateTotalScore()}/60 Puntos`;
     doc.setFont('helvetica', 'bold');
     const totalScoreLines = doc.splitTextToSize(totalScoreText, maxWidth);
     totalScoreLines.forEach((textLine: string) => {
@@ -566,7 +480,7 @@ const ProCalculo6: React.FC = () => {
       yPos = 20;
 
       doc.setFontSize(14);
-      const subtestTitle = Sección: ${subtest.name};
+      const subtestTitle = `Sección: ${subtest.name}`;
       const subtestTitleLines = doc.splitTextToSize(subtestTitle, maxWidth);
       subtestTitleLines.forEach((textLine: string) => {
         if (yPos > 280) {
@@ -583,7 +497,7 @@ const ProCalculo6: React.FC = () => {
       yPos += 10;
 
       doc.setFontSize(12);
-      const subtestScoreText = Puntuación: ${score[idx]} / ${subtest.maxScore};
+      const subtestScoreText = `Puntuación: ${score[idx]} / ${subtest.maxScore}`;
       const subtestScoreLines = doc.splitTextToSize(subtestScoreText, maxWidth);
       subtestScoreLines.forEach((textLine: string) => {
         if (yPos > 280) {
@@ -601,7 +515,7 @@ const ProCalculo6: React.FC = () => {
           yPos = 20;
         }
 
-        const questionText = Pregunta ${itemIdx + 1}: ${item.question};
+        const questionText = `Pregunta ${itemIdx + 1}: ${item.question}`;
         const questionLines = doc.splitTextToSize(questionText, maxWidth);
         questionLines.forEach((textLine: string) => {
           if (yPos > 280) {
@@ -612,7 +526,7 @@ const ProCalculo6: React.FC = () => {
           yPos += 8;
         });
 
-        const correctAnswerText = Respuesta esperada: ${item.answer};
+        const correctAnswerText = `Respuesta esperada: ${item.answer}`;
         const correctAnswerLines = doc.splitTextToSize(correctAnswerText, maxWidth);
         correctAnswerLines.forEach((textLine: string) => {
           if (yPos > 280) {
@@ -626,7 +540,7 @@ const ProCalculo6: React.FC = () => {
         const providedAnswer = item.providedAnswer !== undefined && item.providedAnswer !== null
           ? item.providedAnswer
           : 'No proporcionada';
-        const providedAnswerText = Respuesta proporcionada: ${providedAnswer};
+        const providedAnswerText = `Respuesta proporcionada: ${providedAnswer}`;
         const providedAnswerLines = doc.splitTextToSize(providedAnswerText, maxWidth);
         providedAnswerLines.forEach((textLine: string) => {
           if (yPos > 280) {
@@ -640,7 +554,7 @@ const ProCalculo6: React.FC = () => {
         const pointsObtained = item.providedAnswer !== undefined && item.providedAnswer !== null
           ? (compareAnswers(item.providedAnswer, item.answer, item.isNumeric || false) ? item.points : 0)
           : 0;
-        const pointsText = Puntos obtenidos: ${pointsObtained} / ${item.points};
+        const pointsText = `Puntos obtenidos: ${pointsObtained} / ${item.points}`;
         const pointsLines = doc.splitTextToSize(pointsText, maxWidth);
         pointsLines.forEach((textLine: string) => {
           if (yPos > 280) {
@@ -653,9 +567,20 @@ const ProCalculo6: React.FC = () => {
       });
     });
 
-    doc.save(Resultado_Test_6_${studentData.nombres || 'Usuario'}_${studentData.apellidos || 'Desconocido'}.pdf);
+    doc.save(`Resultado_Test_6_${studentData.nombres || 'Usuario'}_${studentData.apellidos || 'Desconocido'}.pdf`);
   };
 
+  const finishTest = () => {
+    setShowFinishScreen(false);
+    setShowResult(true);
+    setTimerActive(false);
+    const totalScore = calculateTotalScore();
+    if (totalScore > 30) {
+      launchConfetti();
+    }
+  };
+
+  // Render Functions
   const renderStudentForm = () => (
     <div className={styles.studentFormContainer}>
       <div className={styles.studentFormCard}>
@@ -763,7 +688,7 @@ const ProCalculo6: React.FC = () => {
             onClick={saveStudentData}
             disabled={isSubmitting}
           >
-            {isSubmitting ? 'Cargando...' : 'Comenzar Test'}
+            {isSubmitting ? 'Cargando...' : <><FaPlay /> Comenzar Test</>}
           </button>
         </div>
       </div>
@@ -843,11 +768,11 @@ const ProCalculo6: React.FC = () => {
         <p className={styles.questionPrompt}>{currentQuestion.question}</p>
         {renderInputField()}
         {showFeedback && (
-          <div className={${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}}>
+          <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
             <p>
               {correctAnswer
-                ? "¡Correcto! 🎉"
-                : La respuesta correcta es: ${currentQuestion.answer}}
+                ? '¡Correcto! 🎉'
+                : `La respuesta correcta es: ${currentQuestion.answer}`}
             </p>
           </div>
         )}
@@ -862,6 +787,39 @@ const ProCalculo6: React.FC = () => {
       ) : (
         <SnakeGame onComplete={handleMiniGameComplete} />
       )}
+    </div>
+  );
+
+  const renderStartTestScreen = () => (
+    <div className={styles.startTestContainer}>
+      <div className={styles.startTestCard}>
+        <h2>¡Todo listo para comenzar!</h2>
+        <p>El test tiene una duración máxima de 20 minutos.</p>
+        <p>Por favor, asegúrate de estar en un lugar tranquilo y sin distracciones.</p>
+        <button 
+          className={styles.startTestButton}
+          onClick={startTest}
+        >
+          <FaPlay /> Iniciar Test
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderFinishScreen = () => (
+    <div className={styles.finishTestContainer}>
+      <div className={styles.finishTestCard}>
+        <h2>¡Has completado todas las preguntas!</h2>
+        <p>Tiempo restante: {formatTime(timeLeft)}</p>
+        <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
+        <button 
+          className={styles.finishTestButton}
+          onClick={finishTest}
+          disabled={isSubmitting}
+        >
+          <FaFlagCheckered /> {isSubmitting ? 'Finalizando...' : 'Finalizar Test'}
+        </button>
+      </div>
     </div>
   );
 
@@ -930,11 +888,11 @@ const ProCalculo6: React.FC = () => {
                 </button>
               )}
               <button
-                className={styles.downloadButton}
+                className={styles.restartButton}
                 onClick={generatePDF}
                 disabled={isSubmitting}
               >
-                Descargar PDF
+                <FaRedo /> {isSubmitting ? 'Generando...' : 'Descargar PDF'}
               </button>
             </div>
           </div>
@@ -942,41 +900,6 @@ const ProCalculo6: React.FC = () => {
       </section>
     );
   };
-
-  const renderStartTestScreen = () => (
-    <div className={styles.startTestContainer}>
-      <div className={styles.startTestCard}>
-        <h2>¡Todo listo para comenzar!</h2>
-        <p>El test tiene una duración máxima de 20 minutos.</p>
-        <p>Por favor, asegúrate de estar en un lugar tranquilo y sin distracciones.</p>
-        
-        <button 
-          className={styles.startTestButton}
-          onClick={startTest}
-        >
-          <FaPlay /> Iniciar Test
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderFinishScreen = () => (
-    <div className={styles.finishTestContainer}>
-      <div className={styles.finishTestCard}>
-        <h2>¡Has completado todas las preguntas!</h2>
-        <p>Tiempo restante: {formatTime(timeLeft)}</p>
-        <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
-        
-        <button 
-          className={styles.finishTestButton}
-          onClick={finishTest}
-          disabled={isSubmitting}
-        >
-          <FaFlagCheckered /> {isSubmitting ? 'Finalizando...' : 'Finalizar Test'}
-        </button>
-      </div>
-    </div>
-  );
 
   const renderTestInProgress = () => (
     <>
@@ -993,12 +916,12 @@ const ProCalculo6: React.FC = () => {
           </a>
         </div>
       </section>
-      <section className={${styles.questionSection} ${animation ? styles[animation] : ''}}>
+      <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
         <div className={styles.progressBar}>
           <div
             className={styles.progressFill}
             style={{
-              width: ${((currentSubtest + currentItem / subtests[currentSubtest].items.length) / subtests.length) * 100}%
+              width: `${((currentSubtest + currentItem / subtests[currentSubtest].items.length) / subtests.length) * 100}%`,
             }}
           ></div>
         </div>
@@ -1017,6 +940,7 @@ const ProCalculo6: React.FC = () => {
     </>
   );
 
+  // Main Render
   return (
     <div className={styles.pageContainer}>
       <main className={styles.testContainer}>
