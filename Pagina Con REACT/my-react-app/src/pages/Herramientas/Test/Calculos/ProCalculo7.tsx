@@ -7,18 +7,43 @@ import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 import SnakeGame from '../../Minijuego/SnakeGame';
 import jsPDF from 'jspdf';
 
+// Lista de instituciones educativas predefinidas
+const institucionesEducativas = [
+  "Unidad Educativa Particular Bilingüe Jefferson",
+  "Unidad Educativa Particular Bilingüe Ecomundo",
+  "Unidad Educativa Particular Bilingüe Nuevo Mundo",
+  "Unidad Educativa Particular Bilingüe Delta",
+  "Unidad Educativa Particular Bilingüe Tomás Moro",
+  "Unidad Educativa Particular Bilingüe Academia Almirante Nelson",
+  "Unidad Educativa Particular Bilingüe American School",
+  "Unidad Educativa Particular Bilingüe Torremar",
+  "Unidad Educativa Fiscal",
+  "Otra institución"
+];
+
+// Interfaces
 interface QuestionItem {
   question: string;
   answer: string | number;
   points: number;
   type: 'escrito';
   image?: string;
+  providedAnswer?: string | number;
 }
 
 interface Subtest {
   name: string;
   maxScore: number;
   items: QuestionItem[];
+}
+
+interface StudentData {
+  nombres: string;
+  apellidos: string;
+  edad: string;
+  genero: string;
+  curso: string;
+  institucion: string;
 }
 
 const ProCalculo7: React.FC = () => {
@@ -37,13 +62,13 @@ const ProCalculo7: React.FC = () => {
   const [timeLeft, setTimeLeft] = useState(25 * 60);
   const [timerActive, setTimerActive] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
-  const [studentData, setStudentData] = useState({
+  const [studentData, setStudentData] = useState<StudentData>({
     nombres: '',
     apellidos: '',
     edad: '',
     genero: '',
     curso: '',
-    institucion: ''
+    institucion: '',
   });
   const [showStudentForm, setShowStudentForm] = useState(true);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
@@ -54,87 +79,7 @@ const ProCalculo7: React.FC = () => {
 
   const minigameSubtests = [3, 6, 9];
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    
-    if (testStarted && timerActive && timeLeft > 0 && !showMiniGame && !showFinishScreen) {
-      timer = setTimeout(() => {
-        setTimeLeft(prev => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && !showResult && !timeUp) {
-      setTimerActive(false);
-      setTimeUp(true);
-      setShowFinishScreen(true);
-    }
-    
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [timeLeft, timerActive, showResult, timeUp, showMiniGame, showFinishScreen, testStarted]);
-
-  useEffect(() => {
-    if (testStarted && timerActive) {
-      const now = new Date();
-      setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
-    }
-  }, [testStarted, timerActive]);
-
-  const validateForm = () => {
-    const errors: Record<string, string> = {};
-    const edadNum = parseInt(studentData.edad);
-
-    if (!studentData.nombres.trim()) errors.nombres = 'Por favor ingresa los nombres';
-    if (!studentData.apellidos.trim()) errors.apellidos = 'Por favor ingresa los apellidos';
-    if (!studentData.edad || isNaN(edadNum)) errors.edad = 'Edad inválida';
-    if (edadNum < 6 || edadNum > 8) errors.edad = 'La edad debe estar entre 6 y 8 años';
-    if (!studentData.genero) errors.genero = 'Selecciona un género';
-    if (!studentData.curso.trim()) errors.curso = 'Ingresa el curso/grado';
-    if (!studentData.institucion.trim()) errors.institucion = 'Ingresa la institución';
-    
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const saveStudentData = async () => {
-    if (!validateForm()) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setShowStudentForm(false);
-    } catch (error) {
-      console.error('Error al guardar datos:', error);
-      alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const startTest = () => {
-    setTestStarted(true);
-    setTimerActive(true);
-    const now = new Date();
-    setTestStartTime(now.toLocaleString('es-ES', { 
-      dateStyle: 'long', 
-      timeStyle: 'short', 
-      timeZone: 'America/Guayaquil' 
-    }));
-  };
-
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const normalizeText = (text: string): string => {
-    return text.toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-      .trim();
-  };
-
-  const subtests: Subtest[] = [
+  const [subtests, setSubtests] = useState<Subtest[]>([
     {
       name: "Enumeración",
       maxScore: 12,
@@ -245,17 +190,100 @@ const ProCalculo7: React.FC = () => {
         { question: "Escribe los 5 números después de 362 (separados por comas)", answer: "363,364,365,366,367", points: 1, type: "escrito", image: '/img/Test_7 Escribir_362D.png' }
       ]
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (testStarted && timerActive && timeLeft > 0 && !showMiniGame && !showFinishScreen) {
+      timer = setTimeout(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && !showResult && !timeUp) {
+      setTimerActive(false);
+      setTimeUp(true);
+      setShowFinishScreen(true);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [timeLeft, timerActive, showResult, timeUp, showMiniGame, showFinishScreen, testStarted]);
+
+  useEffect(() => {
+    if (testStarted && timerActive) {
+      const now = new Date();
+      setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
+    }
+  }, [testStarted, timerActive]);
+
+  const normalizeText = (text: string): string => {
+    return text.toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .trim();
+  };
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    const edadNum = parseInt(studentData.edad);
+    if (!studentData.nombres.trim()) errors.nombres = 'Por favor ingresa los nombres';
+    if (!studentData.apellidos.trim()) errors.apellidos = 'Por favor ingresa los apellidos';
+    if (!studentData.edad || isNaN(edadNum)) errors.edad = 'Edad inválida';
+    if (edadNum < 6 || edadNum > 8) errors.edad = 'La edad debe estar entre 6 y 8 años';
+    if (!studentData.genero) errors.genero = 'Selecciona un género';
+    if (!studentData.curso.trim()) errors.curso = 'Ingresa el curso/grado';
+    if (!studentData.institucion.trim()) errors.institucion = 'Selecciona la institución educativa';
+    setFormErrors(errors);
+    if (!errors.edad) {
+      setStudentData(prev => ({
+        ...prev,
+        edad: edadNum.toString(),
+      }));
+    }
+    return Object.keys(errors).length === 0;
+  };
+
+  const saveStudentData = async () => {
+    if (!validateForm()) return;
+    setIsSubmitting(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setShowStudentForm(false);
+    } catch (error) {
+      console.error('Error al guardar datos:', error);
+      alert('Ocurrió un error al guardar los datos. Por favor intenta nuevamente.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const startTest = () => {
+    setTestStarted(true);
+    setTimerActive(true);
+    const now = new Date();
+    setTestStartTime(now.toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short', timeZone: 'America/Guayaquil' }));
+  };
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   const handleAnswer = (selectedAnswer: string | number) => {
     if (showFeedback || timeUp) return;
-    
     const currentQuestion = subtests[currentSubtest].items[currentItem];
     const isCorrect = normalizeText(selectedAnswer.toString()) === normalizeText(currentQuestion.answer.toString());
-    
+
+    setSubtests(prevSubtests => {
+      const newSubtests = [...prevSubtests];
+      newSubtests[currentSubtest].items[currentItem] = {
+        ...newSubtests[currentSubtest].items[currentItem],
+        providedAnswer: selectedAnswer,
+      };
+      return newSubtests;
+    });
+
     setCorrectAnswer(isCorrect);
     setShowFeedback(true);
-    
     if (isCorrect) {
       const newScore = [...score];
       newScore[currentSubtest] += currentQuestion.points;
@@ -264,7 +292,6 @@ const ProCalculo7: React.FC = () => {
     } else {
       setAnimation('wrong');
     }
-    
     setTimeout(() => {
       moveToNextItem();
     }, 2000);
@@ -276,16 +303,13 @@ const ProCalculo7: React.FC = () => {
     setAnimation('');
     setWrittenAnswer('');
     setWrittenAnswerConfirmed(false);
-    
     if (currentItem + 1 >= subtests[currentSubtest].items.length) {
       const nextSubtest = currentSubtest + 1;
-      
       if (minigameSubtests.includes(currentSubtest)) {
         setShowMiniGame(true);
         setMiniGameType(currentSubtest === 3 || currentSubtest === 9 ? 'egg' : 'snake');
         return;
       }
-      
       if (nextSubtest < subtests.length) {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
@@ -310,11 +334,9 @@ const ProCalculo7: React.FC = () => {
   const handleMiniGameComplete = (success: boolean) => {
     setShowMiniGame(false);
     setAnimation(success ? 'correct' : 'wrong');
-    
     setTimeout(() => {
       setAnimation('');
       const nextSubtest = currentSubtest + 1;
-      
       if (nextSubtest < subtests.length) {
         setCurrentSubtest(nextSubtest);
         setCurrentItem(0);
@@ -351,16 +373,21 @@ const ProCalculo7: React.FC = () => {
     setTestStartTime('');
     setTestStarted(false);
     setShowFinishScreen(false);
+    setSubtests(prevSubtests =>
+      prevSubtests.map(subtest => ({
+        ...subtest,
+        items: subtest.items.map(item => ({
+          ...item,
+          providedAnswer: undefined,
+        })),
+      }))
+    );
   };
 
   const getResultMessage = () => {
     const totalScore = score.reduce((a, b) => a + b, 0);
     const percentage = (totalScore / 87) * 100;
-    
-    if (timeUp) {
-      return "¡Tiempo terminado! ⏰";
-    }
-    
+    if (timeUp) return "¡Tiempo terminado! ⏰";
     if (percentage >= 80) return "¡Excelente trabajo! 🎉";
     if (percentage >= 60) return "¡Muy bien hecho! 🌟";
     if (percentage >= 40) return "¡Buen intento! 👍";
@@ -390,7 +417,6 @@ const ProCalculo7: React.FC = () => {
       ...prev,
       [name]: value
     }));
-    
     if (formErrors[name]) {
       setFormErrors(prev => {
         const newErrors = { ...prev };
@@ -532,8 +558,8 @@ const ProCalculo7: React.FC = () => {
           yPos += 8;
         });
 
-        const providedAnswer = item.answer !== undefined && item.answer !== null
-          ? writtenAnswer || 'No proporcionada'
+        const providedAnswer = item.providedAnswer !== undefined && item.providedAnswer !== null
+          ? item.providedAnswer
           : 'No proporcionada';
         const providedAnswerText = `Respuesta proporcionada: ${providedAnswer}`;
         const providedAnswerLines = doc.splitTextToSize(providedAnswerText, maxWidth);
@@ -546,7 +572,9 @@ const ProCalculo7: React.FC = () => {
           yPos += 8;
         });
 
-        const pointsObtained = normalizeText(writtenAnswer || '') === normalizeText(item.answer.toString()) ? item.points : 0;
+        const pointsObtained = item.providedAnswer !== undefined && item.providedAnswer !== null
+          ? (normalizeText(item.providedAnswer.toString()) === normalizeText(item.answer.toString()) ? item.points : 0)
+          : 0;
         const pointsText = `Puntos obtenidos: ${pointsObtained} / ${item.points}`;
         const pointsLines = doc.splitTextToSize(pointsText, maxWidth);
         pointsLines.forEach((textLine: string) => {
@@ -569,7 +597,6 @@ const ProCalculo7: React.FC = () => {
         <h2 className={styles.formTitle}>
           <FaUser /> Datos del Estudiante
         </h2>
-        
         <div className={styles.formGroup}>
           <label htmlFor="nombres">
             <FaUser /> Nombres:
@@ -585,7 +612,6 @@ const ProCalculo7: React.FC = () => {
           />
           {formErrors.nombres && <span className={styles.errorMessage}>{formErrors.nombres}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="apellidos">
             <FaUser /> Apellidos:
@@ -601,7 +627,6 @@ const ProCalculo7: React.FC = () => {
           />
           {formErrors.apellidos && <span className={styles.errorMessage}>{formErrors.apellidos}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="edad">
             <FaBirthdayCake /> Edad:
@@ -619,7 +644,6 @@ const ProCalculo7: React.FC = () => {
           />
           {formErrors.edad && <span className={styles.errorMessage}>{formErrors.edad}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="genero">
             <FaVenusMars /> Género:
@@ -638,7 +662,6 @@ const ProCalculo7: React.FC = () => {
           </select>
           {formErrors.genero && <span className={styles.errorMessage}>{formErrors.genero}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="curso">
             <FaSchool /> Curso/Grado:
@@ -651,28 +674,33 @@ const ProCalculo7: React.FC = () => {
             onChange={handleInputChange}
             className={formErrors.curso ? styles.inputError : ''}
             disabled={isSubmitting}
+            placeholder="Ejemplo: 2do de Educación Básica"
           />
           {formErrors.curso && <span className={styles.errorMessage}>{formErrors.curso}</span>}
         </div>
-        
         <div className={styles.formGroup}>
           <label htmlFor="institucion">
             <FaSchool /> Institución Educativa:
           </label>
-          <input
-            type="text"
+          <select
             id="institucion"
             name="institucion"
             value={studentData.institucion}
             onChange={handleInputChange}
             className={formErrors.institucion ? styles.inputError : ''}
             disabled={isSubmitting}
-          />
+          >
+            <option value="">Selecciona tu institución...</option>
+            {institucionesEducativas.map((institucion, index) => (
+              <option key={index} value={institucion}>
+                {institucion}
+              </option>
+            ))}
+          </select>
           {formErrors.institucion && <span className={styles.errorMessage}>{formErrors.institucion}</span>}
         </div>
-        
         <div className={styles.formActions}>
-          <button 
+          <button
             className={styles.startTestButton}
             onClick={saveStudentData}
             disabled={isSubmitting}
@@ -686,7 +714,6 @@ const ProCalculo7: React.FC = () => {
 
   const renderInputField = () => {
     const currentQuestion = subtests[currentSubtest].items[currentItem];
-    
     return (
       <div className={styles.writtenAnswerContainer}>
         {currentQuestion.image && (
@@ -698,7 +725,6 @@ const ProCalculo7: React.FC = () => {
             />
           </div>
         )}
-        
         <div className={styles.inputContainer}>
           <input
             type="text"
@@ -724,7 +750,6 @@ const ProCalculo7: React.FC = () => {
             Enviar respuesta
           </button>
         </div>
-
         {writtenAnswerConfirmed && !showFeedback && (
           <div className={styles.confirmationButtons}>
             <p>Tu respuesta: <strong>"{writtenAnswer}"</strong></p>
@@ -754,14 +779,11 @@ const ProCalculo7: React.FC = () => {
   const renderQuestion = () => {
     const currentSubtestData = subtests[currentSubtest];
     const currentQuestion = currentSubtestData.items[currentItem];
-    
     return (
       <div className={styles.questionContent}>
         <h3 className={styles.subtestTitle}>{currentSubtestData.name}</h3>
         <p className={styles.questionPrompt}>{currentQuestion.question}</p>
-        
         {renderInputField()}
-        
         {showFeedback && (
           <div className={`${styles.feedback} ${correctAnswer ? styles.correctFeedback : styles.incorrectFeedback}`}>
             <p>
@@ -785,13 +807,45 @@ const ProCalculo7: React.FC = () => {
     </div>
   );
 
+  const renderStartTestScreen = () => (
+    <div className={styles.startTestContainer}>
+      <div className={styles.startTestCard}>
+        <h2>¡Todo listo para comenzar!</h2>
+        <p>El test tiene una duración máxima de 25 minutos.</p>
+        <p>Por favor, asegúrate de estar en un lugar tranquilo y sin distracciones.</p>
+        <button 
+          className={styles.startTestButton}
+          onClick={startTest}
+        >
+          <FaPlay /> Iniciar Test
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderFinishScreen = () => (
+    <div className={styles.finishTestContainer}>
+      <div className={styles.finishTestCard}>
+        <h2>¡Has completado todas las preguntas!</h2>
+        <p>Tiempo restante: {formatTime(timeLeft)}</p>
+        <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
+        <button 
+          className={styles.finishTestButton}
+          onClick={finishTest}
+          disabled={isSubmitting}
+        >
+          <FaFlagCheckered /> {isSubmitting ? 'Finalizando...' : 'Finalizar Test'}
+        </button>
+      </div>
+    </div>
+  );
+
   const renderResults = () => (
     <section className={styles.resultSection}>
       <div className={styles.resultContainer}>
         <h2 className={styles.resultTitle}>
           {getResultMessage()}
         </h2>
-        
         <div className={styles.scoreCard}>
           <div className={styles.scoreVisual}>
             <div className={styles.scoreCircle}>
@@ -804,11 +858,9 @@ const ProCalculo7: React.FC = () => {
               </div>
             )}
           </div>
-          
           <p className={styles.scoreText}>
             Puntuación total: <span className={styles.scoreHighlight}>{score.reduce((a, b) => a + b, 0)}</span> de 87 puntos
           </p>
-          
           <div className={styles.subtestScores}>
             <h3>Puntuación por subtest:</h3>
             <ul>
@@ -819,7 +871,6 @@ const ProCalculo7: React.FC = () => {
               ))}
             </ul>
           </div>
-          
           <div className={styles.actionsContainer}>
             <button 
               className={styles.restartButton}
@@ -847,41 +898,6 @@ const ProCalculo7: React.FC = () => {
     </section>
   );
 
-  const renderStartTestScreen = () => (
-    <div className={styles.startTestContainer}>
-      <div className={styles.startTestCard}>
-        <h2>¡Todo listo para comenzar!</h2>
-        <p>El test tiene una duración máxima de 25 minutos.</p>
-        <p>Por favor, asegúrate de estar en un lugar tranquilo y sin distracciones.</p>
-        
-        <button 
-          className={styles.startTestButton}
-          onClick={startTest}
-        >
-          <FaPlay /> Iniciar Test
-        </button>
-      </div>
-    </div>
-  );
-
-  const renderFinishScreen = () => (
-    <div className={styles.finishTestContainer}>
-      <div className={styles.finishTestCard}>
-        <h2>¡Has completado todas las preguntas!</h2>
-        <p>Tiempo restante: {formatTime(timeLeft)}</p>
-        <p>¿Deseas finalizar el test ahora y ver tus resultados?</p>
-        
-        <button 
-          className={styles.finishTestButton}
-          onClick={finishTest}
-          disabled={isSubmitting}
-        >
-          <FaFlagCheckered /> {isSubmitting ? 'Finalizando...' : 'Finalizar Test'}
-        </button>
-      </div>
-    </div>
-  );
-
   const renderTestInProgress = () => (
     <>
       <section className={styles.testHeader}>
@@ -891,14 +907,12 @@ const ProCalculo7: React.FC = () => {
             Pro-Cálculo <span className={styles.ageBadge}>7 años</span>
           </h1>
         </div>
-        
         <div className={styles.controlButtons}>
           <a href="/Herramientas/test" className={styles.backButton}>
             <FaArrowLeft /> Volver
           </a>
         </div>
       </section>
-
       <section className={`${styles.questionSection} ${animation ? styles[animation] : ''}`}>
         <div className={styles.progressBar}>
           <div 
@@ -908,7 +922,6 @@ const ProCalculo7: React.FC = () => {
             }}
           ></div>
         </div>
-        
         <div className={styles.questionInfo}>
           <div className={styles.questionCounter}>
             Subtest {currentSubtest + 1} de {subtests.length} - Ítem {currentItem + 1} de {subtests[currentSubtest].items.length}
@@ -917,7 +930,6 @@ const ProCalculo7: React.FC = () => {
             <FaClock /> Tiempo restante: {formatTime(timeLeft)}
           </div>
         </div>
-        
         <div className={styles.questionCard}>
           {renderQuestion()}
         </div>
@@ -929,7 +941,6 @@ const ProCalculo7: React.FC = () => {
     <div className={styles.pageContainer}>
       <main className={styles.testContainer}>
         <div className={styles.cloudBackground}></div>
-        
         {showStudentForm ? (
           renderStudentForm()
         ) : showMiniGame ? (

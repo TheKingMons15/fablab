@@ -7,6 +7,20 @@ import RompeCabezasHuevos from '../../Minijuego/RompeCabezasHuevos';
 import SnakeGame from '../../Minijuego/SnakeGame';
 import jsPDF from 'jspdf';
 
+// Lista de instituciones educativas predefinidas
+const institucionesEducativas = [
+  "Unidad Educativa Particular Bilingüe Jefferson",
+  "Unidad Educativa Particular Bilingüe Ecomundo",
+  "Unidad Educativa Particular Bilingüe Nuevo Mundo",
+  "Unidad Educativa Particular Bilingüe Delta",
+  "Unidad Educativa Particular Bilingüe Tomás Moro",
+  "Unidad Educativa Particular Bilingüe Academia Almirante Nelson",
+  "Unidad Educativa Particular Bilingüe American School",
+  "Unidad Educativa Particular Bilingüe Torremar",
+  "Unidad Educativa Fiscal",
+  "Otra institución"
+];
+
 // Interfaces
 interface QuestionItem {
   question: string;
@@ -23,6 +37,15 @@ interface Subtest {
   name: string;
   maxScore: number;
   items: QuestionItem[];
+}
+
+interface StudentData {
+  nombres: string;
+  apellidos: string;
+  edad: string;
+  genero: string;
+  curso: string;
+  institucion: string;
 }
 
 // Main Component
@@ -46,7 +69,7 @@ const ProCalculo6: React.FC = () => {
   const [timeUp, setTimeUp] = useState(false);
   const [testId, setTestId] = useState<number | null>(null);
   const [saveError, setSaveError] = useState(false);
-  const [studentData, setStudentData] = useState({
+  const [studentData, setStudentData] = useState<StudentData>({
     nombres: '',
     apellidos: '',
     edad: '',
@@ -218,7 +241,7 @@ const ProCalculo6: React.FC = () => {
     if (edadNum < 5 || edadNum > 12) errors.edad = 'La edad debe estar entre 5 y 12 años';
     if (!studentData.genero) errors.genero = 'Selecciona un género';
     if (!studentData.curso.trim()) errors.curso = 'Ingresa el curso/grado';
-    if (!studentData.institucion.trim()) errors.institucion = 'Ingresa la institución';
+    if (!studentData.institucion.trim()) errors.institucion = 'Selecciona la institución educativa';
     setFormErrors(errors);
     if (!errors.edad) {
       setStudentData(prev => ({
@@ -664,6 +687,7 @@ const ProCalculo6: React.FC = () => {
             onChange={handleInputChange}
             className={formErrors.curso ? styles.inputError : ''}
             disabled={isSubmitting}
+            placeholder="Ejemplo: 2do de Educación Básica"
           />
           {formErrors.curso && <span className={styles.errorMessage}>{formErrors.curso}</span>}
         </div>
@@ -671,15 +695,21 @@ const ProCalculo6: React.FC = () => {
           <label htmlFor="institucion">
             <FaSchool /> Institución Educativa:
           </label>
-          <input
-            type="text"
+          <select
             id="institucion"
             name="institucion"
             value={studentData.institucion}
             onChange={handleInputChange}
             className={formErrors.institucion ? styles.inputError : ''}
             disabled={isSubmitting}
-          />
+          >
+            <option value="">Selecciona tu institución...</option>
+            {institucionesEducativas.map((institucion, index) => (
+              <option key={index} value={institucion}>
+                {institucion}
+              </option>
+            ))}
+          </select>
           {formErrors.institucion && <span className={styles.errorMessage}>{formErrors.institucion}</span>}
         </div>
         <div className={styles.formActions}>
@@ -824,82 +854,82 @@ const ProCalculo6: React.FC = () => {
   );
 
   const renderResults = () => {
-  const totalScore = calculateTotalScore();
-  return (
-    <section className={styles.resultSection}>
-      <div className={styles.resultContainer}>
-        <h2 className={styles.resultTitle}>
-          {getResultMessage()}
-        </h2>
-        <div className={styles.scoreCard}>
-          <div className={styles.scoreVisual}>
-            <div className={styles.scoreCircle}>
-              <span className={styles.scoreNumber}>{totalScore}</span>
-              <span className={styles.scoreTotal}>/60</span>
+    const totalScore = calculateTotalScore();
+    return (
+      <section className={styles.resultSection}>
+        <div className={styles.resultContainer}>
+          <h2 className={styles.resultTitle}>
+            {getResultMessage()}
+          </h2>
+          <div className={styles.scoreCard}>
+            <div className={styles.scoreVisual}>
+              <div className={styles.scoreCircle}>
+                <span className={styles.scoreNumber}>{totalScore}</span>
+                <span className={styles.scoreTotal}>/60</span>
+              </div>
+              {timeUp && (
+                <div className={styles.timeUpWarning}>
+                  ⏰ El tiempo ha terminado
+                </div>
+              )}
+              {saveError && (
+                <div className={styles.saveError}>
+                  ⚠ Hubo un problema al guardar los resultados
+                </div>
+              )}
             </div>
-            {timeUp && (
-              <div className={styles.timeUpWarning}>
-                ⏰ El tiempo ha terminado
-              </div>
-            )}
-            {saveError && (
-              <div className={styles.saveError}>
-                ⚠ Hubo un problema al guardar los resultados
-              </div>
-            )}
-          </div>
-          <p className={styles.scoreText}>
-            Puntuación total: <span className={styles.scoreHighlight}>{totalScore}</span> de 60 puntos
-            {testId && (
-              <span className={styles.testId}>ID de prueba: {testId}</span>
-            )}
-          </p>
-          <div className={styles.subtestScores}>
-            <h3>Puntuación por subtest:</h3>
-            <ul>
-              {subtests.map((subtest, index) => (
-                <li key={index}>
-                  {subtest.name}: {score[index]} / {subtest.maxScore}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className={styles.actionsContainer}>
-            <button
-              className={styles.restartButton}
-              onClick={restartTest}
-              disabled={isSubmitting}
-            >
-              <FaRedo /> {isSubmitting ? 'Guardando...' : 'Intentar de nuevo'}
-            </button>
-            <button
-              className={styles.homeButton}
-              onClick={() => navigate('/herramientas/test')}
-            >
-              Elegir otra prueba
-            </button>
-            {saveError && (
+            <p className={styles.scoreText}>
+              Puntuación total: <span className={styles.scoreHighlight}>{totalScore}</span> de 60 puntos
+              {testId && (
+                <span className={styles.testId}>ID de prueba: {testId}</span>
+              )}
+            </p>
+            <div className={styles.subtestScores}>
+              <h3>Puntuación por subtest:</h3>
+              <ul>
+                {subtests.map((subtest, index) => (
+                  <li key={index}>
+                    {subtest.name}: {score[index]} / {subtest.maxScore}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className={styles.actionsContainer}>
               <button
-                className={styles.retryButton}
-                onClick={finishTest}
+                className={styles.restartButton}
+                onClick={restartTest}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Guardando...' : 'Reintentar guardado'}
+                <FaRedo /> {isSubmitting ? 'Guardando...' : 'Intentar de nuevo'}
               </button>
-            )}
-            <button
-              className={styles.restartButton}
-              onClick={generatePDF}
-              disabled={isSubmitting}
-            >
-              <FaRedo /> {isSubmitting ? 'Generando...' : 'Descargar PDF'}
-            </button>
+              <button
+                className={styles.homeButton}
+                onClick={() => navigate('/herramientas/test')}
+              >
+                Elegir otra prueba
+              </button>
+              {saveError && (
+                <button
+                  className={styles.retryButton}
+                  onClick={finishTest}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Guardando...' : 'Reintentar guardado'}
+                </button>
+              )}
+              <button
+                className={styles.restartButton}
+                onClick={generatePDF}
+                disabled={isSubmitting}
+              >
+                <FaRedo /> {isSubmitting ? 'Generando...' : 'Descargar PDF'}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
-};
+      </section>
+    );
+  };
 
   const renderTestInProgress = () => (
     <>
