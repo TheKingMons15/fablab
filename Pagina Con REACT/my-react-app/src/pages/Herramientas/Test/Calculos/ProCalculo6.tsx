@@ -824,82 +824,82 @@ const ProCalculo6: React.FC = () => {
   );
 
   const renderResults = () => {
-    const totalScore = calculateTotalScore();
-    return (
-      <section className={styles.resultSection}>
-        <div className={styles.resultContainer}>
-          <h2 className={styles.resultTitle}>
-            {getResultMessage()}
-          </h2>
-          <div className={styles.scoreCard}>
-            <div className={styles.scoreVisual}>
-              <div className={styles.scoreCircle}>
-                <span className={styles.scoreNumber}>{totalScore}</span>
-                <span className={styles.scoreTotal}>/60</span>
+  const totalScore = calculateTotalScore();
+  return (
+    <section className={styles.resultSection}>
+      <div className={styles.resultContainer}>
+        <h2 className={styles.resultTitle}>
+          {getResultMessage()}
+        </h2>
+        <div className={styles.scoreCard}>
+          <div className={styles.scoreVisual}>
+            <div className={styles.scoreCircle}>
+              <span className={styles.scoreNumber}>{totalScore}</span>
+              <span className={styles.scoreTotal}>/60</span>
+            </div>
+            {timeUp && (
+              <div className={styles.timeUpWarning}>
+                ⏰ El tiempo ha terminado
               </div>
-              {timeUp && (
-                <div className={styles.timeUpWarning}>
-                  ⏰ El tiempo ha terminado
-                </div>
-              )}
-              {saveError && (
-                <div className={styles.saveError}>
-                  ⚠ Hubo un problema al guardar los resultados
-                </div>
-              )}
-            </div>
-            <p className={styles.scoreText}>
-              Puntuación total: <span className={styles.scoreHighlight}>{totalScore}</span> de 60 puntos
-              {testId && (
-                <span className={styles.testId}>ID de prueba: {testId}</span>
-              )}
-            </p>
-            <div className={styles.subtestScores}>
-              <h3>Puntuación por subtest:</h3>
-              <ul>
-                {subtests.map((subtest, index) => (
-                  <li key={index}>
-                    {subtest.name}: {score[index]} / {subtest.maxScore}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className={styles.actionsContainer}>
+            )}
+            {saveError && (
+              <div className={styles.saveError}>
+                ⚠ Hubo un problema al guardar los resultados
+              </div>
+            )}
+          </div>
+          <p className={styles.scoreText}>
+            Puntuación total: <span className={styles.scoreHighlight}>{totalScore}</span> de 60 puntos
+            {testId && (
+              <span className={styles.testId}>ID de prueba: {testId}</span>
+            )}
+          </p>
+          <div className={styles.subtestScores}>
+            <h3>Puntuación por subtest:</h3>
+            <ul>
+              {subtests.map((subtest, index) => (
+                <li key={index}>
+                  {subtest.name}: {score[index]} / {subtest.maxScore}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className={styles.actionsContainer}>
+            <button
+              className={styles.restartButton}
+              onClick={restartTest}
+              disabled={isSubmitting}
+            >
+              <FaRedo /> {isSubmitting ? 'Guardando...' : 'Intentar de nuevo'}
+            </button>
+            <button
+              className={styles.homeButton}
+              onClick={() => navigate('/herramientas/test')}
+            >
+              Elegir otra prueba
+            </button>
+            {saveError && (
               <button
-                className={styles.restartButton}
-                onClick={restartTest}
+                className={styles.retryButton}
+                onClick={finishTest}
                 disabled={isSubmitting}
               >
-                <FaRedo /> {isSubmitting ? 'Guardando...' : 'Intentar de nuevo'}
+                {isSubmitting ? 'Guardando...' : 'Reintentar guardado'}
               </button>
-              <button
-                className={styles.homeButton}
-                onClick={() => navigate('/herramientas/test')}
-              >
-                Elegir otra prueba
-              </button>
-              {saveError && (
-                <button
-                  className={styles.retryButton}
-                  onClick={finishTest}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? 'Guardando...' : 'Reintentar guardado'}
-                </button>
-              )}
-              <button
-                className={styles.restartButton}
-                onClick={generatePDF}
-                disabled={isSubmitting}
-              >
-                <FaRedo /> {isSubmitting ? 'Generando...' : 'Descargar PDF'}
-              </button>
-            </div>
+            )}
+            <button
+              className={styles.restartButton}
+              onClick={generatePDF}
+              disabled={isSubmitting}
+            >
+              <FaRedo /> {isSubmitting ? 'Generando...' : 'Descargar PDF'}
+            </button>
           </div>
         </div>
-      </section>
-    );
-  };
+      </div>
+    </section>
+  );
+};
 
   const renderTestInProgress = () => (
     <>
